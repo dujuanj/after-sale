@@ -1,17 +1,49 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? '新建工单' : '修改工单'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item label="参数名" prop="paramKey">
-        <el-input v-model="dataForm.paramKey" placeholder="参数名"></el-input>
+    <el-form :inline="true" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+      <el-form-item label="工单编号" prop="paramKey">
+        <el-input v-model="dataForm.paramKey" placeholder="工单编号"></el-input>
+      </el-form-item> <br>
+      <el-form-item label="客户姓名" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="客户姓名"></el-input>
       </el-form-item>
-      <el-form-item label="参数值" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="参数值"></el-input>
+      <el-form-item label="电话" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+       <el-form-item label="地址" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
+        
+      </el-form-item> <br>
+       <el-form-item label="Mac地址" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item> <br>
+       <el-form-item label="产品类型" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+        <el-form-item label="产品型号" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+     
+        <el-form-item label="投诉问题" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+        <el-form-item label="问题描述" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+        <el-form-item label="处理方式" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+       <el-form-item label="服务人员" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+       <el-form-item label="服务时间" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
+      </el-form-item>
+       <el-form-item label="备注" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>        
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -97,3 +129,9 @@
     }
   }
 </script>
+<style>
+  .el-dialog{
+    width:33%;
+  }
+</style>
+

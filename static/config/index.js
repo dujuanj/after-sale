@@ -5,7 +5,7 @@
   window.SITE_CONFIG = {};
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://192.168.11.3:8002/htsys';
+  window.SITE_CONFIG['baseUrl'] = 'http://192.168.11.7:8002/htsys';
 
   // cdn地址 = 域名 + 版本号
   window.SITE_CONFIG['domain']  = './'; // 域名
