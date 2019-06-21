@@ -10,9 +10,12 @@ import '@/assets/scss/index.scss'
 import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/axios
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
+import global_ from './views/common/global'    //引用文件 
 
 Vue.use(VueCookie)
 Vue.config.productionTip = false
+
+Vue.prototype.GLOBAL = global_     //挂载到Vue实例上面
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock
 if (process.env.NODE_ENV !== 'production') {

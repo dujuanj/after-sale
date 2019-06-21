@@ -69,17 +69,20 @@ router.beforeEach((to, from, next) => {
         {
           'menuId': 1, 'parentId': 0, 'parentName': null, 'name': '售后管理', 'url': null, 'perms': null, 'type': 0, 'icon': 'system', 'orderNum': 0, 'open': null,
           'list': [
-            { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单管理', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 'list': null },
-            { 'menuId': 2, 'parentId': 1, 'parentName': null, 'name': '管理员列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
-            { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '角色管理', 'url': 'sales/role', 'perms': null, 'type': 1, 'icon': 'role', 'orderNum': 2, 'open': null, 'list': null }, 
-            { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
-            { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
-            { 'menuId': 6, 'parentId': 1, 'parentName': null, 'name': '定时任务', 'url': 'job/schedule', 'perms': null, 'type': 1, 'icon': 'job', 'orderNum': 5, 'open': null, 'list': null }, 
-            { 'menuId': 30, 'parentId': 1, 'parentName': null, 'name': '文件上传', 'url': 'oss/oss', 'perms': 'sys:oss:all', 'type': 1, 'icon': 'oss', 'orderNum': 6, 'open': null, 'list': null }, 
-            { 'menuId': 29, 'parentId': 1, 'parentName': null, 'name': '系统日志', 'url': 'sales/log', 'perms': 'sys:log:list', 'type': 1, 'icon': 'log', 'orderNum': 7, 'open': null, 'list': null }]
+            { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 'list': null },
+            { 'menuId': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+            { 'menuId': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
+            // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
+            // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '角色管理', 'url': 'sales/role', 'perms': null, 'type': 1, 'icon': 'role', 'orderNum': 2, 'open': null, 'list': null }, 
+            // { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
+            // { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
+            // { 'menuId': 6, 'parentId': 1, 'parentName': null, 'name': '定时任务', 'url': 'job/schedule', 'perms': null, 'type': 1, 'icon': 'job', 'orderNum': 5, 'open': null, 'list': null }, 
+            // { 'menuId': 30, 'parentId': 1, 'parentName': null, 'name': '文件上传', 'url': 'oss/oss', 'perms': 'sys:oss:all', 'type': 1, 'icon': 'oss', 'orderNum': 6, 'open': null, 'list': null }, 
+            // { 'menuId': 29, 'parentId': 1, 'parentName': null, 'name': '系统日志', 'url': 'sales/log', 'perms': 'sys:log:list', 'type': 1, 'icon': 'log', 'orderNum': 7, 'open': null, 'list': null }
+          ]
         },
-        { 'menuId': 31, 'parentId': 0, 'parentName': null, 'name': '我的菜单测试', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 'list': null }, 
-        { 'menuId': 32, 'parentId': 0, 'parentName': null, 'name': '我的菜单测试', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 'list': null }], 
+        { 'menuId': 31, 'parentId': 0, 'parentName': null, 'name': '产品管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 'list': null }, 
+        { 'menuId': 32, 'parentId': 0, 'parentName': null, 'name': '帐号管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 'list': null }], 
         'code': 0, 'permissions': ['sys:schedule:info', 'sys:menu:update', 'sys:menu:delete', 'sys:config:info', 'sys:menu:list', 'sys:config:save',
          'sys:config:update', 'sys:schedule:resume', 'sys:user:delete', 'sys:config:list', 'sys:user:update', 'sys:role:list', 'sys:menu:info',
           'sys:menu:select', 'sys:schedule:update', 'sys:schedule:save', 'sys:role:select', 'sys:user:list', 'sys:menu:save', 'sys:role:save', 

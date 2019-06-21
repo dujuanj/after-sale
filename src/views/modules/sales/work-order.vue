@@ -148,24 +148,40 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <router-link tag='a' :to="'/work-detail'" >跳转demo</router-link>
     <!-- 图表 -->
+  
+    <div class="mod-demo-echarts">
+    <el-alert
+      title="统计"
+      type="warning"
+      :closable="false">
+     
+    </el-alert>
+
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-card shadow="always">
-          <span>工单统计</span>
+        <el-card>
+          <div id="J_chartLineBox" class="chart-box"></div>
         </el-card>
       </el-col>
+     
       <el-col :span="12">
-        <el-card shadow="always">
-          <span>产品投诉占比</span>
+        <el-card>
+          <div id="J_chartPieBox" class="chart-box"></div>
         </el-card>
       </el-col>
+     
     </el-row>
   </div>
+  </div>
+  
 </template>
 
 <script>
+ import echarts from 'echarts'
 import AddOrUpdate from "./config-add-or-update";
+
 export default {
   data() {
     return {
@@ -179,9 +195,27 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false
+      addOrUpdateVisible: false,
+      // 图表
+      chartLine: null,       
+      chartPie: null,
+      
+
     };
   },
+    mounted () {
+       this.initChartLine()
+      this.initChartPie()
+    },
+      activated () {
+      // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
+      if (this.chartLine) {
+        this.chartLine.resize()
+      }   
+      if (this.chartPie) {
+        this.chartPie.resize()
+      }
+    },
   components: {
     AddOrUpdate
   },
@@ -189,25 +223,148 @@ export default {
     this.getDataList();
   },
   methods: {
+     // 折线图
+      initChartLine () {
+        var option = {
+          'title': {
+            'text': '工单统计'
+          },
+          'tooltip': {
+            'trigger': 'axis'
+          },
+          // 'legend': {
+          //   'data': [ '邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎' ]
+          // },
+          'grid': {
+            'left': '3%',
+            'right': '4%',
+            'bottom': '3%',
+            'containLabel': true
+          },
+          'toolbox': {
+            'feature': {
+              'saveAsImage': { }
+            }
+          },
+          'xAxis': {
+            'type': 'category',
+            'boundaryGap': false,
+            'data': [ '周一', '周二', '周三', '周四', '周五', '周六', '周日' ]
+          },
+          'yAxis': {
+            'type': 'value'
+          },
+          'series': [
+            {
+              'name': '邮件营销',
+              'type': 'line',
+              'stack': '总量',
+              'data': [ 120, 132, 101, 134, 90, 230, 210 ]
+            },
+            {
+              'name': '联盟广告',
+              'type': 'line',
+              'stack': '总量',
+              'data': [ 220, 182, 191, 234, 290, 330, 310 ]
+            },
+            {
+              'name': '视频广告',
+              'type': 'line',
+              'stack': '总量',
+              'data': [ 150, 232, 201, 154, 190, 330, 410 ]
+            },
+            {
+              'name': '直接访问',
+              'type': 'line',
+              'stack': '总量',
+              'data': [ 320, 332, 301, 334, 390, 330, 320 ]
+            },
+            {
+              'name': '搜索引擎',
+              'type': 'line',
+              'stack': '总量',
+              'data': [ 820, 932, 901, 934, 1290, 1330, 1320 ]
+            }
+          ]
+        }
+        this.chartLine = echarts.init(document.getElementById('J_chartLineBox'))
+        this.chartLine.setOption(option)
+        window.addEventListener('resize', () => {
+          this.chartLine.resize()
+        })
+      },
+      // 饼状图
+      initChartPie () {
+        var option = {
+    title : {
+        text: '投诉占比',
+        subtext: '纯属虚构',
+        x:'left'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'right',
+        data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+    },
+    series : [
+        {
+            name: '访问来源',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+                {value:335, name:'直接访问'},
+                {value:310, name:'邮件营销'},
+                {value:234, name:'联盟广告'},
+                {value:135, name:'视频广告'},
+                {value:1548, name:'搜索引擎'}
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+        this.chartPie = echarts.init(document.getElementById('J_chartPieBox'))
+        this.chartPie.setOption(option)
+        window.addEventListener('resize', () => {
+          this.chartPie.resize()
+        })
+      },
     // 获取数据列表
     getDataList() {
       this.dataListLoading = true;
       this.$http({
-        url: this.$http.adornUrl("/sys/config/list"),
-        method: "get",
+        url: "http://192.168.11.7:9010/api/postsale/worksheet.query",
+        // url: this.$http.adornUrl('/sys/config/list'),
+      
+        method: "POST",
         params: this.$http.adornParams({
-          page: this.pageIndex,
-          limit: this.pageSize,
-          paramKey: this.dataForm.paramKey
+          currentPage: this.pageIndex,
+          pageSize: this.pageSize
+          // paramKey: this.dataForm.paramKey
+            // 'page': this.pageIndex,
+            // 'limit': this.pageSize,
+            // 'paramKey': this.dataForm.paramKey
+            
         })
       }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
-        } else {
-          this.dataList = [];
-          this.totalPage = 0;
-        }
+        console.log(data)
+        // if (data && data.code === 0) {
+        //   this.dataList = data.page.list;
+        //   this.totalPage = data.page.totalCount;
+        // } else {
+        //   this.dataList = [];
+        //   this.totalPage = 0;
+        // }
         this.dataListLoading = false;
       });
     },
@@ -270,7 +427,8 @@ export default {
           });
         })
         .catch(() => {});
-    }
+    },
+    
   }
 };
 </script>
@@ -279,4 +437,20 @@ export default {
 .marbot_15 {
   margin-bottom: 15px;
 }
+  .mod-demo-echarts {
+    > .el-alert {
+      margin-bottom: 10px;
+    }
+    > .el-row {
+      margin-top: -10px;
+      margin-bottom: -10px;
+      .el-col {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+    }
+    .chart-box {
+      min-height: 400px;
+    }
+  }
 </style>

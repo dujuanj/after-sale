@@ -53,7 +53,7 @@ http.adornUrl = (actionName) => {
  */
 http.adornParams = (params = {}, openDefultParams = true) => {
   var defaults = {
-    't': new Date().getTime()
+    // 't': new Date().getTime()
   }
   return openDefultParams ? merge(defaults, params) : params
 }
