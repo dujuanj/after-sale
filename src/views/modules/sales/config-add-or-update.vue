@@ -11,15 +11,15 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="工单编号" prop="paramKey" style="width:50%;">
-        <el-input v-model="dataForm.paramKey" placeholder="工单编号"></el-input>
+      <el-form-item label="工单编号"  style="width:50%;">
+        <el-input v-model="dataForm.number" placeholder="工单编号"></el-input>
       </el-form-item>
 
       <el-form-item label="客户姓名" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.paramValue" placeholder="客户姓名"></el-input>
+        <el-input v-model="dataForm.customerRealName" placeholder="客户姓名"></el-input>
       </el-form-item>
       <el-form-item label="电话" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
+        <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input>
       </el-form-item>
       <!-- 地址省市区 -->
       <el-form-item label="省市区:">
@@ -48,44 +48,52 @@
       </el-form-item>
       <!-- 地址省市区结束 -->
       <el-form-item label="详细地址" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="输入地址"></el-input>
+        <el-input v-model="dataForm.customerDetailAddress" placeholder="输入地址"></el-input>
       </el-form-item>
 
       <el-form-item label="Mac地址" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
+        <el-input v-model="dataForm.mac" placeholder="Mac地址"></el-input>
       </el-form-item>
 
       <el-form-item label="产品类型" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
+        <!-- <el-input v-model="dataForm.productType" placeholder="电话"></el-input> -->
+        <select v-model="dataForm.productType" placeholder="选择产品类型" style="padding:0 10px;width:100%;">
+          <option value="">选择产品类型</option>
+          <option value="1">初柜</option>
+          <option value="5">门锁</option>
+          <option value="4">门禁</option>
+          <option value="2">2层屉柜</option>
+          <option value="3">3层屉柜</option>
+        </select>
       </el-form-item>
       <el-form-item label="产品型号" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
+        <el-input v-model="dataForm.productModel" placeholder="电话"></el-input>
       </el-form-item>
 
       <el-form-item label="投诉问题" prop="paramValue" style="width:50%;">
-        <select name id style="padding:0 10px;width:100%;">
-          <option value>请选择投诉问题类型</option>
-          <option value>指示灯不亮</option>
-          <option value>无法配网</option>
-          <option value>开门不成功</option>
-          <option value>工作状态异常</option>
-          <option value>无故报警</option>
-          <option value>物理损伤</option>
-          <option value>其它</option>
+        <select name  v-model="dataForm.contentType" id style="padding:0 10px;width:100%;">
+          <option value=''>请选择投诉问题类型</option>
+          <option value='1'>指示灯不亮</option>
+          <option value='2'>无法配网</option>
+          <option value='3'>开门不成功</option>
+          <option value='4'>工作状态异常</option>
+          <option value='5'>无故报警</option>
+          <option value='6'>物理损伤</option>
+          <option value='0'>其它</option>
         </select>
       </el-form-item>
       <el-form-item label="问题描述" prop="paramValue">
-        <el-input type="textarea" v-model="dataForm.paramValue"></el-input>
+        <el-input type="textarea" v-model="dataForm.contentDetail"></el-input>
       </el-form-item>
       <el-form-item label="处理方式" prop="paramValue" style="width:50%;">
-        <select name id style="padding:0 10px;width:100%;">
-          <option value>请选择处理方式</option>
-          <option value>上门维修</option>
-          <option value>远程协助</option>
+        <select v-model="dataForm.serviceType" name id style="padding:0 10px;width:100%;">
+          <option value=''>请选择处理方式</option>
+          <option value='2'>上门维修</option>
+          <option value='1'>电话支持</option>
         </select>
       </el-form-item>
       <el-form-item label="服务人员" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="电话"></el-input>
+        <el-input v-model="dataForm.revisitUserRealName" placeholder="服务人员"></el-input>
       </el-form-item>
       <el-form-item label="服务时间" prop="paramValue">
         <el-date-picker
@@ -93,37 +101,41 @@
           type="datetime"
           placeholder="选择日期时间"
           default-time="12:00:00"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="getSTime"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="备注" prop="paramValue">
-        <el-input type="textarea" v-model="dataForm.paramValue"></el-input>
+        <el-input type="textarea" v-model="dataForm.serviceStatusDetail"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      
     </span>
   </el-dialog>
 </template>
 
 <script>
 export default {
+  // props:{
+  //   dataForm:{
+  //     // type:Array,
+  //     required:true
+  //   }
+  // },
   data() {
     return {
       visible: false,
-      dataForm: {
-        id: 0,
-        paramKey: "",
-        paramValue: "",
-        remark: ""
-      },
+      dataForm:{},
       dataRule: {
-        paramKey: [
-          { required: true, message: "参数名不能为空", trigger: "blur" }
-        ],
-        paramValue: [
-          { required: true, message: "参数值不能为空", trigger: "blur" }
-        ]
+        // paramKey: [
+        //   { required: true, message: "参数名不能为空", trigger: "blur" }
+        // ],
+        // paramValue: [
+        //   { required: true, message: "参数值不能为空", trigger: "blur" }
+        // ]
       },
       // 省市区
       arr: this.GLOBAL.arrAll,
@@ -136,63 +148,116 @@ export default {
       cityArr: [],
       districtArr: [],
       // 处理类型的省市区
-      value3:''
+      value3:'',
+      newform:false
     };
   },
   methods: {
-    init(id) {
-      this.dataForm.id = id || 0;
+    init(id,datas) {
+      // console.log(datas);
+      console.log('add');
+      
+     
+      if(datas!=undefined){ //修改
+         this.dataForm=datas;
+         this.prov=this.dataForm.customerProvince;
+         this.dcity=this.dataForm.customerCity;
+         this.ddistrict=this.dataForm.customerCounty;
+         this.value3=this.dataForm.serviceAppointmentTime;//服务时间
+         this.newform=false;
+      }else{   //新建
+        this.newform=true;
+       
+      }
+      if(this.newform==true){
+        this.dataForm=[];
+      }
+      // this.dataForm.id = id || 0;
       this.visible = true;
       this.$nextTick(() => {
-        this.$refs["dataForm"].resetFields();
-        if (this.dataForm.id) {
-          this.$http({
-            url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
-            method: "get",
-            params: this.$http.adornParams()
-          }).then(({ data }) => {
-            if (data && data.code === 0) {
-              this.dataForm.paramKey = data.config.paramKey;
-              this.dataForm.paramValue = data.config.paramValue;
-              this.dataForm.remark = data.config.remark;
-            }
-          });
-        }
+        // this.$refs["dataForm"].resetFields();
+        // if (this.dataForm.id) {
+        //   this.$http({
+        //     url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
+        //     method: "get",
+        //     params: this.$http.adornParams()
+        //   }).then(({ data }) => {
+        //     if (data && data.code === 0) {
+        //       this.dataForm.paramKey = data.config.paramKey;
+        //       this.dataForm.paramValue = data.config.paramValue;
+        //       this.dataForm.remark = data.config.remark;
+        //     }
+        //   });
+        // }
       });
+    },
+    getSTime(){  //时间处理
+        console.log(this.value3);
     },
     // 表单提交
     dataFormSubmit() {
-      console.log(this.arr);
-      this.$refs["dataForm"].validate(valid => {
+      this.dataForm.customerProvince=this.prov;
+      this.dataForm.customerCity=this.dcity;
+      this.dataForm.customerCounty=this.ddistrict;
+      this.dataForm.serviceAppointmentTime=this.value3;
+      const _this=this;
+      if(this.newform==true){  //新建表单
+        this.$refs["dataForm"].validate(valid => {
         if (valid) {
-          this.$http({
-            url: this.$http.adornUrl(
-              `/sys/config/${!this.dataForm.id ? "save" : "update"}`
-            ),
-            method: "post",
-            data: this.$http.adornData({
-              id: this.dataForm.id || undefined,
-              paramKey: this.dataForm.paramKey,
-              paramValue: this.dataForm.paramValue,
-              remark: this.dataForm.remark
-            })
-          }).then(({ data }) => {
-            if (data && data.code === 0) {
-              this.$message({
+          this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/worksheet.add",
+          this.dataForm,
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        ).then(({ data }) => {
+          console.log(data.isSuccess);  
+          _this.$message({
                 message: "操作成功",
                 type: "success",
                 duration: 1500,
                 onClose: () => {
-                  this.visible = false;
-                  this.$emit("refreshDataList");
+                  _this.visible = false;
+                  _this.$emit("refreshDataList");
+                 
                 }
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
+              });           
           });
         }
       });
+      }else{
+         this.$refs["dataForm"].validate(valid => {      //修改表单
+        if (valid) {
+          this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/repair.update",
+          this.dataForm,
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        ).then(({ data }) => {
+          console.log(data.isSuccess);  
+          _this.$message({
+                message: "操作成功",
+                type: "success",
+                duration: 1500,
+                onClose: () => {
+                  _this.visible = false;
+                  _this.$emit("refreshDataList");
+                  
+                }
+              }); 
+                    
+          });
+        }
+      });
+      }
+     
     },
     // 省市区方法
     updateCity: function() {

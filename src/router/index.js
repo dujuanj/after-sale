@@ -36,6 +36,8 @@ const mainRoutes = {
     { path: '/home', component: _import('common/home'), name: 'home', meta: { title: '首页' } },
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' } },
     { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
+    { path: '/work-detail', component: _import('modules/detail/workorder-detail'), name: 'work-detail', meta: { title: '工单详情', isTab: true } },
+    { path: '/slip-detail', component: _import('modules/detail/slip-detail'), name: 'slip-detail', meta: { title: '回访单详情', isTab: true } },
     { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
   ],
   beforeEnter(to, from, next) {
@@ -69,7 +71,8 @@ router.beforeEach((to, from, next) => {
         {
           'menuId': 1, 'parentId': 0, 'parentName': null, 'name': '售后管理', 'url': null, 'perms': null, 'type': 0, 'icon': 'system', 'orderNum': 0, 'open': null,
           'list': [
-            { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 'list': null },
+            { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 
+              'list':null,'operation':[{'name':'修改','methods':'addOrUpdateHandle'},{'name':'删除','methods':'deleteHandle'},{'name':'详情','methods':'detail'}] },
             { 'menuId': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
             { 'menuId': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
             // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
@@ -159,7 +162,8 @@ function fnAddDynamicMenuRoutes(menuList = [], routes = []) {
           title: menuList[i].name,
           isDynamic: true,
           isTab: true,
-          iframeUrl: ''
+          iframeUrl: '',
+          operation: menuList[i].operation
         }
       }
       // url以http[s]://开头, 通过iframe展示

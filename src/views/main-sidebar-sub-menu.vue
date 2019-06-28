@@ -11,7 +11,12 @@
       v-for="item in menu.list" 
       :key="item.menuId"
       :menu="item"
-      :dynamicMenuRoutes="dynamicMenuRoutes">
+      :dynamicMenuRoutes="dynamicMenuRoutes"
+      
+       :id='item.menuId'
+       :opoperation='item.operation'
+      >
+     
     </sub-menu>
   </el-submenu>
   <el-menu-item v-else :index="menu.menuId + ''" @click="gotoRouteHandle(menu)">
@@ -47,7 +52,9 @@
       gotoRouteHandle (menu) {
         var route = this.dynamicMenuRoutes.filter(item => item.meta.menuId === menu.menuId)
         if (route.length >= 1) {
-          this.$router.push({ name: route[0].name })
+          console.log(route[0].meta.operation);
+          sessionStorage.setItem('opoperation',JSON.stringify(route[0].meta.operation));
+          this.$router.push({ name: route[0].name})
         }
       }
     }

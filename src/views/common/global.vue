@@ -8,8 +8,8 @@
 <script>
 
 const serverSrc='www.baidu.com';
-const xgurl='http://192.168.10.30:57073';
-//const xgurl='http://116.196.90.98:57073';
+const baseUrl='http://58.87.111.66:9010/api/postsale';
+
 const token='12345678';
 const hasEnter=false;
 const userSite="中国钓鱼岛";
@@ -2026,9 +2026,9 @@ var arrAll =[
     token,//用户token身份
     serverSrc,//服务器地址
     hasEnter,//用户登录状态
-    xgurl,
+   
     imgUrl,
-    imgbaseUrl,
+    baseUrl,
     arrAll,
   }
 </script>

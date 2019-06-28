@@ -2,23 +2,7 @@
   <div class="mod-home">
       <el-button type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()" class="marbot_15" style='float:right;'>修改</el-button>
     <div class="layui-card detail" style="margin-top: 10px;">
-      <div class="layui-card-header">工单 SS190529001</div>
-      <div class="layui-card-body">
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>房间类型:</span> 办公室
-          </label>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>房间名称:</span> 平行宇宙办公室
-          </label>
-        </div>
-      </div>
-    </div>
-    <!-- 基本信息 -->
-    <div class="layui-card detail" style="margin-top: 10px;">
-      <div class="layui-card-header">基本信息</div>
+      <div class="layui-card-header">工单 TSB119052901 回访记录</div>
       <div class="layui-card-body">
         <div class="layui-form-item">
           <label class="layui-form-label">
@@ -27,53 +11,48 @@
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>电 话:</span> 平行宇宙办公室
+            <span>回访时间:</span> 平行宇宙办公室
           </label>
         </div>
-        <div class="layui-form-item">
+         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>创建时间:</span>
+            <span>客户姓名:</span> 平行宇宙办公室
           </label>
         </div>
-        <div class="layui-form-item">
+         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>地 址:</span>
+            <span>产品:</span> 平行宇宙办公室
           </label>
         </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>客户姓名:</span>
-          </label>
-        </div>
-      </div>
-    </div>
-    <!-- 工单详情 -->
-    <div class="layui-card detail" style="margin-top: 10px;">
-      <div class="layui-card-header">工单详情</div>
-      <div class="layui-card-body">
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>产品:</span> 办公室
-          </label>
-        </div>
-        <div class="layui-form-item">
+         <div class="layui-form-item">
           <label class="layui-form-label">
             <span>Mac地址:</span> 平行宇宙办公室
           </label>
         </div>
-        <div class="layui-form-item">
+         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>投诉问题:</span>
+            <span>回访记录:</span> 平行宇宙办公室
           </label>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>问题描述:</span>
+            <span>回访人员:</span> 平行宇宙办公室
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- 基本信息 -->
+    <div class="layui-card detail" style="margin-top: 10px;">
+      <div class="layui-card-header">工单概况</div>
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>投诉时间:</span> 办公室
           </label>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>处理方式:</span>
+            <span>投诉内容:</span> 平行宇宙办公室
           </label>
         </div>
         <div class="layui-form-item">
@@ -88,38 +67,12 @@
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>完成时间:</span>
+            <span>解决方案:</span>
           </label>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>解决方法:</span>
-          </label>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>备注:</span>
-          </label>
-        </div>
-        <div class="layui-form-item">
-          <!-- <label class="layui-form-label">
-            <span>上传照片:</span>
-          </label> -->
-          <!-- 上传照片 -->
-          <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :file-list="fileList"
-            list-type="picture"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
-            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-          </el-upload>
         </div>
       </div>
     </div>
+   
      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
@@ -127,7 +80,7 @@
 <script>
 import AddOrUpdate from "../sales/config-add-or-update";
 export default {
-  name: "workDetail",
+  name: "slipDetail",
    data() {
       return {
         fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],

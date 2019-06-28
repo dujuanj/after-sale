@@ -120,20 +120,36 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="id" header-align="center" align="center" width="80" label="工单编号"></el-table-column>
-      <el-table-column prop="paramKey" header-align="center" align="center" label="客户姓名"></el-table-column>
-      <el-table-column prop="paramValue" header-align="center" align="center" label="联系电话"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="地址"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="产品"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="Mac码"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="投诉内容"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="时间"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="服务人员"></el-table-column>
-      <el-table-column prop="remark" header-align="center" align="center" label="执行状态"></el-table-column>
+      <el-table-column prop="number" header-align="center" align="center" width="110" label="工单编号"></el-table-column>
+      <el-table-column prop="customerRealName" header-align="center" align="center" label="客户姓名"></el-table-column>
+      <el-table-column prop="customerPhone" header-align="center" align="center" label="联系电话"></el-table-column>
+      <el-table-column header-align="center" align="center" label="地址" :show-overflow-tooltip="true">
+        <!-- <span>{{customerCity}}</span> -->
+        <template slot-scope="scope" >         
+              <span>{{ scope.row.customerCity }} {{ scope.row.customerCounty }} {{ scope.row.customerDetailAddress }}</span>           
+        </template>
+      </el-table-column>
+      <el-table-column header-align="center" align="center" label="产品">
+        <template
+          slot-scope="scope"
+        >{{scope.row.productType==1?"初柜":scope.row.productType==2?"2层屉柜":scope.row.productType==3?"3层屉柜":scope.row.productType==4?"门禁":scope.row.productType==5?"门锁":''}}</template>
+      </el-table-column>
+      <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
+      <el-table-column prop="revisitContent" header-align="center" align="center" label="投诉内容" :show-overflow-tooltip="true">
+        
+      </el-table-column>
+      <el-table-column prop="revisitTime" header-align="center" align="center" label="时间" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="serviceUserName" header-align="center" align="center" label="服务人员"></el-table-column>
+      <el-table-column  header-align="center" align="center" label="执行状态">
+        <template slot-scope="scope" >         
+              <span>{{ scope.row.serviceStatusType==1?"电话支持":scope.row.serviceStatusType==2?"上门解决":'' }} </span>           
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <!-- <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button> -->
+          <el-button :id='scope.row.id' v-for='item in opoperation' type="text" size="small" @click="listenCall(item.methods,scope.row.id,scope.row)" >{{item.name}}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -147,42 +163,43 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-    <router-link tag='a' :to="'/work-detail'" >跳转demo</router-link>
+        <add-or-update   v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    
+    <!-- 详情 -->
+    <span index="work-detail" @click="$router.push({ name: 'work-detail' })">详情</span>
     <!-- 图表 -->
-  
-    <div class="mod-demo-echarts">
-    <el-alert
-      title="统计"
-      type="warning"
-      :closable="false">
-     
-    </el-alert>
 
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-card>
-          <div id="J_chartLineBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
-     
-      <el-col :span="12">
-        <el-card>
-          <div id="J_chartPieBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
-     
-    </el-row>
+    <div class="mod-demo-echarts">
+      <el-alert title="统计" type="warning" :closable="false"></el-alert>
+
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-card>
+            <div id="J_chartLineBox" class="chart-box"></div>
+          </el-card>
+        </el-col>
+
+        <el-col :span="12">
+          <el-card>
+            <div id="J_chartPieBox" class="chart-box"></div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
-  </div>
-  
 </template>
 
 <script>
- import echarts from 'echarts'
+import echarts from "echarts";
 import AddOrUpdate from "./config-add-or-update";
-
+var opoperation=JSON.parse(sessionStorage.getItem('opoperation'))
 export default {
+  // props:{
+  //   opoperation:{
+  //     type:Array,
+  //     required:true
+  //   }
+  // },
   data() {
     return {
       values: "",
@@ -197,25 +214,28 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       // 图表
-      chartLine: null,       
+      chartLine: null,
       chartPie: null,
-      
-
+      menuList: JSON.parse(sessionStorage.getItem("menuList") || "[]"),
+      opoperation: opoperation
     };
   },
-    mounted () {
-       this.initChartLine()
-      this.initChartPie()
-    },
-      activated () {
-      // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
-      if (this.chartLine) {
-        this.chartLine.resize()
-      }   
-      if (this.chartPie) {
-        this.chartPie.resize()
-      }
-    },
+  mounted() {
+    this.initChartLine();
+    this.initChartPie();
+    // this.handleUserList()
+    console.log(this.opoperation);
+    
+  },
+  activated() {
+    // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
+    if (this.chartLine) {
+      this.chartLine.resize();
+    }
+    if (this.chartPie) {
+      this.chartPie.resize();
+    }
+  },
   components: {
     AddOrUpdate
   },
@@ -223,150 +243,193 @@ export default {
     this.getDataList();
   },
   methods: {
-     // 折线图
-      initChartLine () {
-        var option = {
-          'title': {
-            'text': '工单统计'
-          },
-          'tooltip': {
-            'trigger': 'axis'
-          },
-          // 'legend': {
-          //   'data': [ '邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎' ]
-          // },
-          'grid': {
-            'left': '3%',
-            'right': '4%',
-            'bottom': '3%',
-            'containLabel': true
-          },
-          'toolbox': {
-            'feature': {
-              'saveAsImage': { }
-            }
-          },
-          'xAxis': {
-            'type': 'category',
-            'boundaryGap': false,
-            'data': [ '周一', '周二', '周三', '周四', '周五', '周六', '周日' ]
-          },
-          'yAxis': {
-            'type': 'value'
-          },
-          'series': [
-            {
-              'name': '邮件营销',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 120, 132, 101, 134, 90, 230, 210 ]
-            },
-            {
-              'name': '联盟广告',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 220, 182, 191, 234, 290, 330, 310 ]
-            },
-            {
-              'name': '视频广告',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 150, 232, 201, 154, 190, 330, 410 ]
-            },
-            {
-              'name': '直接访问',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 320, 332, 301, 334, 390, 330, 320 ]
-            },
-            {
-              'name': '搜索引擎',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 820, 932, 901, 934, 1290, 1330, 1320 ]
-            }
-          ]
-        }
-        this.chartLine = echarts.init(document.getElementById('J_chartLineBox'))
-        this.chartLine.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartLine.resize()
-        })
+     listenCall(methodsWords,id,detailDatas) {  //监听子组件点击哪个按钮(促发哪个函数)     
+      this[methodsWords](id,detailDatas) //调取操作方法    
+  },
+      detail(){
+        this.$router.push({ name: 'work-detail' })        
       },
-      // 饼状图
-      initChartPie () {
-        var option = {
-    title : {
-        text: '投诉占比',
-        subtext: '纯属虚构',
-        x:'left'
+    // 折线图
+    initChartLine() {
+      var option = {
+        title: {
+          text: "工单统计"
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        // 'legend': {
+        //   'data': [ '邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎' ]
+        // },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        },
+        yAxis: {
+          type: "value"
+        },
+        series: [
+          {
+            name: "邮件营销",
+            type: "line",
+            stack: "总量",
+            data: [120, 132, 101, 134, 90, 230, 210]
+          },
+          {
+            name: "联盟广告",
+            type: "line",
+            stack: "总量",
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+            name: "视频广告",
+            type: "line",
+            stack: "总量",
+            data: [150, 232, 201, 154, 190, 330, 410]
+          },
+          {
+            name: "直接访问",
+            type: "line",
+            stack: "总量",
+            data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+            name: "搜索引擎",
+            type: "line",
+            stack: "总量",
+            data: [820, 932, 901, 934, 1290, 1330, 1320]
+          }
+        ]
+      };
+      this.chartLine = echarts.init(document.getElementById("J_chartLineBox"));
+      this.chartLine.setOption(option);
+      window.addEventListener("resize", () => {
+        this.chartLine.resize();
+      });
     },
-    tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-    },
-    legend: {
-        orient: 'vertical',
-        left: 'right',
-        data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
-    },
-    series : [
-        {
-            name: '访问来源',
-            type: 'pie',
-            radius : '55%',
-            center: ['50%', '60%'],
-            data:[
-                {value:335, name:'直接访问'},
-                {value:310, name:'邮件营销'},
-                {value:234, name:'联盟广告'},
-                {value:135, name:'视频广告'},
-                {value:1548, name:'搜索引擎'}
+    // 饼状图
+    initChartPie() {
+      var option = {
+        title: {
+          text: "投诉占比",
+          subtext: "纯属虚构",
+          x: "left"
+        },
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+          orient: "vertical",
+          left: "right",
+          data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"]
+        },
+        series: [
+          {
+            name: "访问来源",
+            type: "pie",
+            radius: "55%",
+            center: ["50%", "60%"],
+            data: [
+              { value: 335, name: "直接访问" },
+              { value: 310, name: "邮件营销" },
+              { value: 234, name: "联盟广告" },
+              { value: 135, name: "视频广告" },
+              { value: 1548, name: "搜索引擎" }
             ],
             itemStyle: {
-                emphasis: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)"
+              }
             }
-        }
-    ]
-};
-        this.chartPie = echarts.init(document.getElementById('J_chartPieBox'))
-        this.chartPie.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartPie.resize()
-        })
-      },
+          }
+        ]
+      };
+      this.chartPie = echarts.init(document.getElementById("J_chartPieBox"));
+      this.chartPie.setOption(option);
+      window.addEventListener("resize", () => {
+        this.chartPie.resize();
+      });
+    },
     // 获取数据列表
+    // getDataList() {
+    //   this.dataListLoading = true;
+    // this.$http({
+    //   // url: "http://192.168.11.7:9010/api/postsale/worksheet.query",
+    //   // url: this.$http.adornUrl('/sys/config/list'),
+    //   url:'http://192.168.10.30:57073/park-api/park/parkingLot/queryParkingLot',
+
+    //   method: "POST",
+    //   data:{
+    //      pageNumber: 1,
+    //       pageSize: 10
+    //   }
+    //   // params: this.$http.adornParams({
+    //   //   // currentPage: this.pageIndex,
+    //   //   // pageSize: this.pageSize
+    //   //   // paramKey: this.dataForm.paramKey
+    //   //     // 'page': this.pageIndex,
+    //   //     // 'limit': this.pageSize,
+    //   //     // 'paramKey': this.dataForm.paramKey
+    //   //     pageNumber: 1,
+    //   //     pageSize: 10
+    //   // })
+    // }).then(({ data }) => {
+    //   console.log(data)
+    //   // if (data && data.code === 0) {
+    //   //   this.dataList = data.page.list;
+    //   //   this.totalPage = data.page.totalCount;
+    //   // } else {
+    //   //   this.dataList = [];
+    //   //   this.totalPage = 0;
+    //   // }
+    //   this.dataListLoading = false;
+    // });
+
+    // },
     getDataList() {
       this.dataListLoading = true;
-      this.$http({
-        url: "http://192.168.11.7:9010/api/postsale/worksheet.query",
-        // url: this.$http.adornUrl('/sys/config/list'),
-      
-        method: "POST",
-        params: this.$http.adornParams({
-          currentPage: this.pageIndex,
-          pageSize: this.pageSize
-          // paramKey: this.dataForm.paramKey
-            // 'page': this.pageIndex,
-            // 'limit': this.pageSize,
-            // 'paramKey': this.dataForm.paramKey
-            
+      const _this = this;
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/worksheet.query",
+          {
+            currentPage: this.pageIndex,
+            pageSize: this.pageSize
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res.data.data);
+            _this.dataList = res.data.data;
+            console.log(_this.dataList);
+            this.totalPage = _this.dataList.length;
+          }
+          this.dataListLoading = false;
         })
-      }).then(({ data }) => {
-        console.log(data)
-        // if (data && data.code === 0) {
-        //   this.dataList = data.page.list;
-        //   this.totalPage = data.page.totalCount;
-        // } else {
-        //   this.dataList = [];
-        //   this.totalPage = 0;
-        // }
-        this.dataListLoading = false;
-      });
+        .catch(res => {
+          console.log("err");
+        });
     },
     // 每页数
     sizeChangeHandle(val) {
@@ -384,10 +447,11 @@ export default {
       this.dataListSelections = val;
     },
     // 新增 / 修改
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,detailDatas) {     
       this.addOrUpdateVisible = true;
+      
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id);
+        this.$refs.addOrUpdate.init(id,detailDatas);
       });
     },
     // 删除
@@ -428,7 +492,15 @@ export default {
         })
         .catch(() => {});
     },
-    
+    // 通过menuId与动态(菜单)路由进行匹配跳转至指定路由
+    gotoRouteHandle(menu) {
+      var route = this.dynamicMenuRoutes.filter(
+        item => item.meta.menuId === menu.menuId
+      );
+      if (route.length >= 1) {
+        this.$router.push({ name: route[0].name });
+      }
+    }
   }
 };
 </script>
@@ -437,20 +509,20 @@ export default {
 .marbot_15 {
   margin-bottom: 15px;
 }
-  .mod-demo-echarts {
-    > .el-alert {
-      margin-bottom: 10px;
-    }
-    > .el-row {
-      margin-top: -10px;
-      margin-bottom: -10px;
-      .el-col {
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
-    }
-    .chart-box {
-      min-height: 400px;
+.mod-demo-echarts {
+  > .el-alert {
+    margin-bottom: 10px;
+  }
+  > .el-row {
+    margin-top: -10px;
+    margin-bottom: -10px;
+    .el-col {
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
   }
+  .chart-box {
+    min-height: 400px;
+  }
+}
 </style>
