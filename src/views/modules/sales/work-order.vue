@@ -56,50 +56,52 @@
     <!-- 查询 -->
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.paramKey" placeholder="输入客户姓名" clearable></el-input>
+        <el-input v-model="customerRealName" placeholder="输入客户姓名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="values" placeholder="选择产品类型">
+        <select v-model="productType">
           <!-- <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           ></el-option>-->
-          <el-option value="初柜">初柜</el-option>
-          <!-- <el-option>门锁</el-option>
-          <el-option>门禁</el-option>
-          <el-option>2层屉柜</el-option>
-          <el-option>3层屉柜</el-option>-->
-        </el-select>
+          <option value>请选择产品类型</option>
+          <option value="1">初柜</option>
+          <option value="5">门锁</option>
+          <option value="4">门禁</option>
+          <option value="2">2层屉柜</option>
+          <option value="3">3层屉柜</option>
+        </select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.paramKey" placeholder="输入Mac地址" clearable></el-input>
+        <el-input v-model="mac" placeholder="输入Mac地址" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="dataForm.paramKey" placeholder="输入服务人员" clearable></el-input>
+        <el-input v-model="serviceUserRealName" placeholder="输入服务人员" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-input v-model="dataForm.paramKey" placeholder="输入问题关键词" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="values" placeholder="选择产品类型">
+        <select>
           <!-- <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           ></el-option>-->
-          <el-option value="新建">新建</el-option>
-          <el-option value="已分派">已分派</el-option>
-          <el-option value="执行中">执行中</el-option>
-          <el-option value="处理完成">处理完成</el-option>
-          <el-option value="结束">结束</el-option>
-        </el-select>
+          <option value>请选择执行状态</option>
+          <option value="1">新建</option>
+          <option value="2">已分派</option>
+          <option value="3">执行中</option>
+          <option value="4">处理完成</option>
+          <option value="5">结束</option>
+        </select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getDataList()">查询</el-button>
-        <el-button icon="el-icon-document" @click="getDataList()">重置</el-button>
+        <el-button icon="el-icon-document" @click="reset()">重置</el-button>
 
         <!-- <el-button
           type="danger"
@@ -123,10 +125,15 @@
       <el-table-column prop="number" header-align="center" align="center" width="110" label="工单编号"></el-table-column>
       <el-table-column prop="customerRealName" header-align="center" align="center" label="客户姓名"></el-table-column>
       <el-table-column prop="customerPhone" header-align="center" align="center" label="联系电话"></el-table-column>
-      <el-table-column header-align="center" align="center" label="地址" :show-overflow-tooltip="true">
+      <el-table-column
+        header-align="center"
+        align="center"
+        label="地址"
+        :show-overflow-tooltip="true"
+      >
         <!-- <span>{{customerCity}}</span> -->
-        <template slot-scope="scope" >         
-              <span>{{ scope.row.customerCity }} {{ scope.row.customerCounty }} {{ scope.row.customerDetailAddress }}</span>           
+        <template slot-scope="scope">
+          <span>{{ scope.row.customerCity }} {{ scope.row.customerCounty }} {{ scope.row.customerDetailAddress }}</span>
         </template>
       </el-table-column>
       <el-table-column header-align="center" align="center" label="产品">
@@ -135,21 +142,37 @@
         >{{scope.row.productType==1?"初柜":scope.row.productType==2?"2层屉柜":scope.row.productType==3?"3层屉柜":scope.row.productType==4?"门禁":scope.row.productType==5?"门锁":''}}</template>
       </el-table-column>
       <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
-      <el-table-column prop="revisitContent" header-align="center" align="center" label="投诉内容" :show-overflow-tooltip="true">
-        
-      </el-table-column>
-      <el-table-column prop="revisitTime" header-align="center" align="center" label="时间" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="serviceUserName" header-align="center" align="center" label="服务人员"></el-table-column>
-      <el-table-column  header-align="center" align="center" label="执行状态">
-        <template slot-scope="scope" >         
-              <span>{{ scope.row.serviceStatusType==1?"电话支持":scope.row.serviceStatusType==2?"上门解决":'' }} </span>           
+      <el-table-column
+        prop="revisitContent"
+        header-align="center"
+        align="center"
+        label="投诉内容"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column
+        prop="revisitTime"
+        header-align="center"
+        align="center"
+        label="时间"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column prop="serviceUserRealName" header-align="center" align="center" label="服务人员"></el-table-column>
+      <el-table-column header-align="center" align="center" label="执行状态">
+        <template slot-scope="scope">
+          <span>{{ scope.row.worksheetStatus==1?"创建":scope.row.worksheetStatus==2?"已分派":scope.row.worksheetStatus==3?"执行中":scope.row.worksheetStatus==4?"处理完成":scope.row.worksheetStatus==5?"结束":'' }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
         <template slot-scope="scope">
           <!-- <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button> -->
-          <el-button :id='scope.row.id' v-for='item in opoperation' type="text" size="small" @click="listenCall(item.methods,scope.row.id,scope.row)" >{{item.name}}</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>-->
+          <el-button
+            :id="scope.row.id"
+            v-for="item in opoperation"
+            type="text"
+            size="small"
+            @click="listenCall(item.methods,scope.row.id,scope.row)"
+          >{{item.name}}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -163,10 +186,10 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-        <add-or-update   v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-    
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+
     <!-- 详情 -->
-    <span index="work-detail" @click="$router.push({ name: 'work-detail' })">详情</span>
+    <!-- <span index="work-detail" @click="$router.push({ name: 'work-detail' })">详情</span> -->
     <!-- 图表 -->
 
     <div class="mod-demo-echarts">
@@ -192,7 +215,7 @@
 <script>
 import echarts from "echarts";
 import AddOrUpdate from "./config-add-or-update";
-var opoperation=JSON.parse(sessionStorage.getItem('opoperation'))
+var opoperation = JSON.parse(sessionStorage.getItem("opoperation"));
 export default {
   // props:{
   //   opoperation:{
@@ -217,7 +240,12 @@ export default {
       chartLine: null,
       chartPie: null,
       menuList: JSON.parse(sessionStorage.getItem("menuList") || "[]"),
-      opoperation: opoperation
+      opoperation: opoperation,
+      // 查询
+      customerRealName: "",
+      productType: "",
+      mac: "",
+      serviceUserRealName: ""
     };
   },
   mounted() {
@@ -225,7 +253,6 @@ export default {
     this.initChartPie();
     // this.handleUserList()
     console.log(this.opoperation);
-    
   },
   activated() {
     // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
@@ -243,12 +270,19 @@ export default {
     this.getDataList();
   },
   methods: {
-     listenCall(methodsWords,id,detailDatas) {  //监听子组件点击哪个按钮(促发哪个函数)     
-      this[methodsWords](id,detailDatas) //调取操作方法    
-  },
-      detail(){
-        this.$router.push({ name: 'work-detail' })        
-      },
+    listenCall(methodsWords, id, detailDatas) {
+      //监听子组件点击哪个按钮(促发哪个函数)
+      this[methodsWords](id, detailDatas); //调取操作方法
+    },
+    detail(id, detailDatas) {
+      console.log(id);
+      this.$router.push({
+        name: "work-detail",
+        params: { id: id, detailDatas: detailDatas }
+      });
+      // window.sessionStorage.setItem('detaiId',id);
+      // window.sessionStorage.setItem('detailDatas',JSON.stringify(detailDatas));
+    },
     // 折线图
     initChartLine() {
       var option = {
@@ -366,41 +400,6 @@ export default {
       });
     },
     // 获取数据列表
-    // getDataList() {
-    //   this.dataListLoading = true;
-    // this.$http({
-    //   // url: "http://192.168.11.7:9010/api/postsale/worksheet.query",
-    //   // url: this.$http.adornUrl('/sys/config/list'),
-    //   url:'http://192.168.10.30:57073/park-api/park/parkingLot/queryParkingLot',
-
-    //   method: "POST",
-    //   data:{
-    //      pageNumber: 1,
-    //       pageSize: 10
-    //   }
-    //   // params: this.$http.adornParams({
-    //   //   // currentPage: this.pageIndex,
-    //   //   // pageSize: this.pageSize
-    //   //   // paramKey: this.dataForm.paramKey
-    //   //     // 'page': this.pageIndex,
-    //   //     // 'limit': this.pageSize,
-    //   //     // 'paramKey': this.dataForm.paramKey
-    //   //     pageNumber: 1,
-    //   //     pageSize: 10
-    //   // })
-    // }).then(({ data }) => {
-    //   console.log(data)
-    //   // if (data && data.code === 0) {
-    //   //   this.dataList = data.page.list;
-    //   //   this.totalPage = data.page.totalCount;
-    //   // } else {
-    //   //   this.dataList = [];
-    //   //   this.totalPage = 0;
-    //   // }
-    //   this.dataListLoading = false;
-    // });
-
-    // },
     getDataList() {
       this.dataListLoading = true;
       const _this = this;
@@ -409,7 +408,11 @@ export default {
           this.GLOBAL.baseUrl + "/worksheet.query",
           {
             currentPage: this.pageIndex,
-            pageSize: this.pageSize
+            pageSize: this.pageSize,
+            customerRealName: this.customerRealName,
+            productType: this.productType,
+            mac: this.mac,
+            serviceUserRealName: this.serviceUserRealName
           },
           {
             headers: {
@@ -431,6 +434,13 @@ export default {
           console.log("err");
         });
     },
+    reset() {
+      (this.customerRealName = ""),
+        (this.productType = ""),
+        (this.mac = ""),
+        (this.serviceUserRealName = "")
+        this.getDataList();
+    },
     // 每页数
     sizeChangeHandle(val) {
       this.pageSize = val;
@@ -447,11 +457,11 @@ export default {
       this.dataListSelections = val;
     },
     // 新增 / 修改
-    addOrUpdateHandle(id,detailDatas) {     
+    addOrUpdateHandle(id, detailDatas) {
       this.addOrUpdateVisible = true;
-      
+
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id,detailDatas);
+        this.$refs.addOrUpdate.init(id, detailDatas);
       });
     },
     // 删除
@@ -462,7 +472,7 @@ export default {
             return item.id;
           });
       this.$confirm(
-        `确定对[id=${ids.join(",")}]进行[${id ? "删除" : "批量删除"}]操作?`,
+        `确定对 工单${ids.join(",")} 进行${id ? "删除" : "批量删除"}操作?`,
         "提示",
         {
           confirmButtonText: "确定",
@@ -471,12 +481,36 @@ export default {
         }
       )
         .then(() => {
-          this.$http({
-            url: this.$http.adornUrl("/sys/config/delete"),
-            method: "post",
-            data: this.$http.adornData(ids, false)
-          }).then(({ data }) => {
-            if (data && data.code === 0) {
+          // this.$http({
+          //   url: this.$http.adornUrl("/sys/config/delete"),
+          //   method: "post",
+          //   data: this.$http.adornData(ids, false)
+          // }).then(({ data }) => {
+          //   if (data && data.code === 0) {
+          //     this.$message({
+          //       message: "操作成功",
+          //       type: "success",
+          //       duration: 1500,
+          //       onClose: () => {
+          //         this.getDataList();
+          //       }
+          //     });
+          //   } else {
+          //     this.$message.error(data.msg);
+          //   }
+          // });
+          this.$http_
+            .post(
+              this.GLOBAL.baseUrl + "/worksheet.delete",
+              { id: id, sid: "" },
+              {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+                }
+              }
+            )
+            .then(({ data }) => {
+              console.log(data.isSuccess);
               this.$message({
                 message: "操作成功",
                 type: "success",
@@ -485,10 +519,7 @@ export default {
                   this.getDataList();
                 }
               });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+            });
         })
         .catch(() => {});
     },
@@ -524,5 +555,11 @@ export default {
   .chart-box {
     min-height: 400px;
   }
+}
+select {
+  border: 1px solid #dcdfe6;
+  color: #606266;
+  border-radius: 3px;
+  height: 37px;
 }
 </style>
