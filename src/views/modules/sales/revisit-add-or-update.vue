@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新建工单' : '修改工单'"
+    :title="!dataForm.id ? '新建回访单' : '修改回访单'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -23,7 +23,7 @@
         <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input>
       </el-form-item>
       <!-- 地址省市区 -->
-      <el-form-item label="省市区:">
+      <!-- <el-form-item label="省市区:">
         <select
           id="province1"
           name="province"
@@ -46,15 +46,15 @@
         >
           <option v-for="option in districtArr" :value="option.name">{{ option.name }}</option>
         </select>
-      </el-form-item>
+      </el-form-item> -->
       <!-- 地址省市区结束 -->
-      <el-form-item label="详细地址" prop="paramValue">
+      <!-- <el-form-item label="详细地址" prop="paramValue">
         <el-input v-model="dataForm.customerDetailAddress" placeholder="输入地址"></el-input>
-      </el-form-item>
+      </el-form-item> -->
 
-      <el-form-item label="Mac地址" prop="paramValue">
+      <!-- <el-form-item label="Mac地址" prop="paramValue">
         <el-input v-model="dataForm.mac" placeholder="Mac地址"></el-input>
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item label="产品类型" prop="paramValue" style="width:50%;">
         <!-- <el-input v-model="dataForm.productType" placeholder="电话"></el-input> -->
@@ -71,11 +71,11 @@
           <option value="3">3层屉柜</option>
         </select>
       </el-form-item>
-      <el-form-item label="产品型号" prop="paramValue" style="width:50%;">
+      <!-- <el-form-item label="产品型号" prop="paramValue" style="width:50%;">
         <el-input v-model="dataForm.productModel" placeholder="电话"></el-input>
-      </el-form-item>
+      </el-form-item> -->
 
-      <el-form-item label="投诉问题" prop="paramValue" style="width:50%;">
+      <!-- <el-form-item label="投诉问题" prop="paramValue" style="width:50%;">
         <select name v-model="dataForm.contentType" id style="padding:0 10px;width:100%;">
           <option value>请选择投诉问题类型</option>
           <option value="1">指示灯不亮</option>
@@ -96,10 +96,10 @@
           <option value="2">上门维修</option>
           <option value="1">电话支持</option>
         </select>
-      </el-form-item>
-      <el-form-item label="服务人员" prop="paramValue">
+      </el-form-item> -->
+      <!-- <el-form-item label="服务人员" prop="paramValue">
         <el-input v-model="dataForm.revisitUserRealName" placeholder="服务人员"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="服务时间" prop="paramValue">
         <el-date-picker
           v-model="value3"
@@ -110,8 +110,21 @@
           @change="getSTime"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="备注" prop="paramValue">
+      <!-- <el-form-item label="备注" prop="paramValue">
         <el-input type="textarea" v-model="dataForm.serviceStatusDetail"></el-input>
+      </el-form-item> -->
+       <el-form-item label="回访记录" prop="paramValue">
+        <el-input type="textarea" v-model="dataForm.revisitContent"></el-input>
+      </el-form-item>
+       <el-form-item label="回访人员" prop="paramValue" style="width:50%;">
+        <el-input v-model="dataForm.revisitUserRealName" placeholder="电话"></el-input>
+      </el-form-item>
+      <el-form-item label="满意度评分" prop="paramValue" style="width:51%;">
+        <!-- <el-input v-model="dataForm.revisitScore" placeholder=""></el-input> -->
+        <el-rate
+          v-model="dataForm.revisitScore"
+          show-text>
+        </el-rate>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -142,15 +155,15 @@ export default {
         // ]
       },
       // 省市区
-      arr: this.GLOBAL.arrAll,
-      prov: "省",
-      dcity: "市",
-      ddistrict: "区",
+      // arr: this.GLOBAL.arrAll,
+      // prov: "省",
+      // dcity: "市",
+      // ddistrict: "区",
       // 页面绑定的
-      citys: "",
-      districtDatas: "",
-      cityArr: [],
-      districtArr: [],
+      // citys: "",
+      // districtDatas: "",
+      // cityArr: [],
+      // districtArr: [],
       // 处理类型的省市区
       value3: "",
       newform: false,
@@ -158,31 +171,22 @@ export default {
     };
   },
   methods: {
+    // 新建回访单
     init(id, datas) {
       var _this = this;
       // console.log(datas);
       console.log("add");
-
+      this.newform = true;
       if (datas != undefined) {
         //修改
         this.dataForm = datas;
-        this.prov = this.dataForm.customerProvince;
-        this.dcity = this.dataForm.customerCity;
-        this.ddistrict = this.dataForm.customerCounty;
+        // this.prov = this.dataForm.customerProvince;
+        // this.dcity = this.dataForm.customerCity;
+        // this.ddistrict = this.dataForm.customerCounty;
         this.value3 = this.dataForm.serviceAppointmentTime; //服务时间
         this.newform = false;
-      } else {
-        //新建
-        this.newform = true;
-
-        // console.log(this.createNum);
-        // this.dataForm.number=this.createNum;
-      }
-      if (this.newform == true) {
-        this.dataForm = { number: "" };
-        this.createNumber();
-        console.log(this.dataForm);
-      }
+      };
+     
       // this.dataForm.id = id || 0;
       this.visible = true;
       this.$nextTick(() => {
@@ -208,18 +212,18 @@ export default {
     },
     // 表单提交
     dataFormSubmit() {
-      this.dataForm.customerProvince = this.prov;
-      this.dataForm.customerCity = this.dcity;
-      this.dataForm.customerCounty = this.ddistrict;
+      // this.dataForm.customerProvince = this.prov;
+      // this.dataForm.customerCity = this.dcity;
+      // this.dataForm.customerCounty = this.ddistrict;
       this.dataForm.serviceAppointmentTime = this.value3;
       const _this = this;
       if (this.newform == true) {
         //新建表单
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
-            // 新建工单
+            // 新建回访单
             this.$http_
-              .post(this.GLOBAL.baseUrl + "/worksheet.add", this.dataForm, {
+              .post(this.GLOBAL.baseUrl + "/revisit.add", this.dataForm, {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"
                 }
@@ -236,35 +240,16 @@ export default {
                   }
                 });
               });
-            // 新建维修单
-            this.$http_
-              .post(this.GLOBAL.baseUrl + "/repair.add", this.dataForm, {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
-                }
-              })
-              .then(({ data }) => {
-                console.log(data);
-                console.log(data.isSuccess);
-                _this.$message({
-                  message: "操作成功",
-                  type: "success",
-                  duration: 1500,
-                  onClose: () => {
-                    _this.visible = false;
-                    _this.$emit("refreshDataList");
-                  }
-                });
-              });
+          
           }
         });
       } else {
         this.$refs["dataForm"].validate(valid => {
           //修改表单
           if (valid) {
-            // 修改售工单
+            // 修改回访单
             this.$http_
-              .post(this.GLOBAL.baseUrl + "/worksheet.update", this.dataForm, {
+              .post(this.GLOBAL.baseUrl + "/revisit.update", this.dataForm, {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"
                 }
@@ -281,25 +266,7 @@ export default {
                   }
                 });
               });
-              // 修改维修单
-               this.$http_
-              .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
-                }
-              })
-              .then(({ data }) => {
-                console.log(data.isSuccess);
-                _this.$message({
-                  message: "操作成功",
-                  type: "success",
-                  duration: 1500,
-                  onClose: () => {
-                    _this.visible = false;
-                    _this.$emit("refreshDataList");
-                  }
-                });
-              });
+              
           }
         });
       }
@@ -392,6 +359,9 @@ select {
   div {
     width: 72.4%;
   }
+}
+.el-form-item__label{
+  // width:85px!important;
 }
 </style>
 

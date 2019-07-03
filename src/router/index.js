@@ -72,7 +72,7 @@ router.beforeEach((to, from, next) => {
           'menuId': 1, 'parentId': 0, 'parentName': null, 'name': '售后管理', 'url': null, 'perms': null, 'type': 0, 'icon': 'system', 'orderNum': 0, 'open': null,
           'list': [
             { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 
-              'list':null,'operation':[{'name':'修改','methods':'addOrUpdateHandle'},{'name':'删除','methods':'deleteHandle'},{'name':'详情','methods':'detail'}] },
+              'list':null,'operation':[{'name':'修改','methods':'addOrUpdateHandle'},{'name':'详情','methods':'detail'},{'name':'回访','methods':'revisitHandle'},{'name':'删除','methods':'deleteHandle'}] },
             { 'menuId': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
             { 'menuId': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
             // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 

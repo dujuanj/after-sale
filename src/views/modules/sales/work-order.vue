@@ -110,8 +110,8 @@
         >批量删除</el-button>-->
       </el-form-item>
     </el-form>
-    <el-button icon="el-icon-download" @click="addOrUpdateHandle()">导入</el-button>
-    <el-button icon="el-icon-upload" @click="addOrUpdateHandle()">导出</el-button>
+    <!-- <el-button icon="el-icon-download" @click="addOrUpdateHandle()">导入</el-button>
+    <el-button icon="el-icon-upload" @click="addOrUpdateHandle()">导出</el-button> -->
     <el-button type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()" class="marbot_15">新增</el-button>
     <!-- 表格 -->
     <el-table
@@ -162,7 +162,7 @@
           <span>{{ scope.row.worksheetStatus==1?"创建":scope.row.worksheetStatus==2?"已分派":scope.row.worksheetStatus==3?"执行中":scope.row.worksheetStatus==4?"处理完成":scope.row.worksheetStatus==5?"结束":'' }}</span>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
+      <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
         <template slot-scope="scope">
           <!-- <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>-->
@@ -185,11 +185,11 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-    <!-- 弹窗, 新增 / 修改 -->
+    <!-- 工单弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
 
-    <!-- 详情 -->
-    <!-- <span index="work-detail" @click="$router.push({ name: 'work-detail' })">详情</span> -->
+    <!-- 回访单弹窗，新增 -->
+    <revisit-add-or-update v-if="revisitVisible" ref="revisitaddOrUpdate" @refreshDataList="getDataList"></revisit-add-or-update>
     <!-- 图表 -->
 
     <div class="mod-demo-echarts">
@@ -215,6 +215,7 @@
 <script>
 import echarts from "echarts";
 import AddOrUpdate from "./config-add-or-update";
+import RevisitAddOrUpdate from './revisit-add-or-update'
 var opoperation = JSON.parse(sessionStorage.getItem("opoperation"));
 export default {
   // props:{
@@ -236,6 +237,7 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
+      revisitVisible:false,
       // 图表
       chartLine: null,
       chartPie: null,
@@ -264,7 +266,9 @@ export default {
     }
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    RevisitAddOrUpdate
+
   },
   activated() {
     this.getDataList();
@@ -456,12 +460,20 @@ export default {
     selectionChangeHandle(val) {
       this.dataListSelections = val;
     },
-    // 新增 / 修改
+    // 新增 / 修改工单
     addOrUpdateHandle(id, detailDatas) {
       this.addOrUpdateVisible = true;
 
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id, detailDatas);
+      });
+    },
+    // 新增回访单
+    revisitHandle(id,detailDatas){
+      this.revisitVisible = true;
+      console.log(this.revisitVisible);
+        this.$nextTick(() => {
+        this.$refs.revisitaddOrUpdate.init(id, detailDatas);
       });
     },
     // 删除
