@@ -10,7 +10,9 @@
 const serverSrc='www.baidu.com';
 const baseUrl='http://58.87.111.66:9010/api/postsale';
 // const baseUrl='http://192.168.11.7:9010/api/postsale';
-
+const sid='11';
+const createUserName='duju'
+const createUserRealName='dj'
 const token='12345678';
 const hasEnter=false;
 const userSite="中国钓鱼岛";

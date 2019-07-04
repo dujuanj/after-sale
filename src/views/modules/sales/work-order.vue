@@ -143,7 +143,7 @@
       </el-table-column>
       <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
       <el-table-column
-        prop="revisitContent"
+        prop="contentDetail"
         header-align="center"
         align="center"
         label="投诉内容"

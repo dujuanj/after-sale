@@ -73,63 +73,64 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
+        prop="number"
         header-align="center"
         align="center"
         width="80"
         label="工单编号">
       </el-table-column>
       <el-table-column
-        prop="username"
+        prop="customerRealName"
         header-align="center"
         align="center"
         label="客户姓名">
       </el-table-column>
       <el-table-column
-        prop="email"
+        prop="customerPhone"
         header-align="center"
         align="center"
         label="联系电话">
       </el-table-column>
-      <el-table-column
-        prop="mobile"
-        header-align="center"
-        align="center"
-        label="产品">
+      <el-table-column header-align="center" align="center" label="产品">
+        <template
+          slot-scope="scope"
+        >{{scope.row.productType==1?"初柜":scope.row.productType==2?"2层屉柜":scope.row.productType==3?"3层屉柜":scope.row.productType==4?"门禁":scope.row.productType==5?"门锁":''}}</template>
       </el-table-column>
       <el-table-column
-        prop="status"
+        prop="contentDetail"
         header-align="center"
         align="center"
+         :show-overflow-tooltip="true"
         label="投诉内容">
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
           <el-tag v-else size="small">正常</el-tag>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="revisitTime"
         header-align="center"
         align="center"
         width="180"
         label="回访时间">
       </el-table-column>
        <el-table-column
-        prop="createTime"
+        prop="revisitUserRealName"
         header-align="center"
         align="center"
         width="180"
         label="回访人员">
       </el-table-column>
        <el-table-column
-        prop="createTime"
+        prop="revisitContent"
         header-align="center"
         align="center"
         width="180"
+         :show-overflow-tooltip="true"
         label="回访信息">
       </el-table-column>
        <el-table-column
-        prop="createTime"
+        prop="revisitScore"
         header-align="center"
         align="center"
         width="180"
@@ -142,9 +143,10 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button  type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button>
-           <el-button  type="text" size="small" index="slip-detail" @click="$router.push({ name: 'slip-detail' })">详情</el-button>
-          <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button>
+          <!-- <el-button  type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button> -->
+           <el-button  type="text" size="small" index="slip-detail"  @click="listenCall(scope.row.id,scope.row)" >详情</el-button>
+           <el-button type="text"   size="mini" @click="addOrUpdateHandle(scope.row.id,scope.row)" >修改</el-button>
+          <!-- <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -158,12 +160,14 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+   <!-- 回访单弹窗，修改 -->
+    <revisit-add-or-update v-if="revisitVisible" ref="revisitaddOrUpdate" @refreshDataList="getDataList"></revisit-add-or-update>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './user-add-or-update'
+  import RevisitAddOrUpdate from '../sales/revisit-add-or-update'
   export default {
     data () {
       return {
@@ -176,38 +180,60 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        revisitVisible:false
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      RevisitAddOrUpdate
     },
     activated () {
       this.getDataList()
     },
     methods: {
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/user/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'username': this.dataForm.userName
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
-          }
-          this.dataListLoading = false
-        })
+      // 详情跳转
+      listenCall(id,datas){
+        this.$router.push({
+        name: "slip-detail",
+        params: { id: id, detailDatas: datas }
+      });
       },
+      // 获取数据列表
+    getDataList() {
+      this.dataListLoading = true;
+      const _this = this;
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/worksheet.query",
+          {
+            currentPage: this.pageIndex,
+            pageSize: this.pageSize,
+            customerRealName: this.customerRealName,
+            productType: this.productType,
+            mac: this.mac,
+            serviceUserRealName: this.serviceUserRealName
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res.data.data);
+            _this.dataList = res.data.data;
+            console.log(_this.dataList);
+            this.totalPage = _this.dataList.length;
+          }
+          this.dataListLoading = false;
+        })
+        .catch(res => {
+          console.log("err");
+        });
+    },
       // 每页数
       sizeChangeHandle (val) {
         this.pageSize = val
@@ -223,13 +249,7 @@
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 新增 / 修改
-      addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-        })
-      },
+      
       // 删除
       deleteHandle (id) {
         var userIds = id ? [id] : this.dataListSelections.map(item => {
@@ -259,7 +279,15 @@
             }
           })
         }).catch(() => {})
-      }
+      },
+        // 新增 / 修改
+    addOrUpdateHandle(id,detailDatas) {
+        this.revisitVisible = true;
+      console.log(this.revisitVisible);
+        this.$nextTick(() => {
+        this.$refs.revisitaddOrUpdate.update(id, detailDatas);
+      });
+    },
     }
   }
 </script>
