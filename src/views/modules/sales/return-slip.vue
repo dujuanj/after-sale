@@ -36,7 +36,7 @@
         <el-input v-model="dataForm.userName" placeholder="输入客户姓名 " clearable></el-input>
       </el-form-item>
        <el-form-item>
-        <el-select v-model="values" placeholder="选择产品类型">
+        <el-select v-model="productType" placeholder="选择产品类型">
           <!-- <el-option
             v-for="item in options"
             :key="item.value"
@@ -56,8 +56,8 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getDataList()">查询</el-button>
          <el-button icon="el-icon-document" @click="getDataList()">重置</el-button>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+        <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -76,7 +76,7 @@
         prop="number"
         header-align="center"
         align="center"
-        width="80"
+        width="110"
         label="工单编号">
       </el-table-column>
       <el-table-column
@@ -144,8 +144,8 @@
         label="操作">
         <template slot-scope="scope">
           <!-- <el-button  type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button> -->
-           <el-button  type="text" size="small" index="slip-detail"  @click="listenCall(scope.row.id,scope.row)" >详情</el-button>
-           <el-button type="text"   size="mini" @click="addOrUpdateHandle(scope.row.id,scope.row)" >修改</el-button>
+           <el-button  type="text" v-if="isAuth('sys:menu:detail')"  size="small" index="slip-detail"  @click="listenCall(scope.row.id,scope.row)" >详情</el-button>
+           <el-button type="text" v-if="isAuth('sys:menu:update')"  size="mini" @click="addOrUpdateHandle(scope.row.id,scope.row)" >修改</el-button>
           <!-- <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button> -->
         </template>
       </el-table-column>
@@ -181,7 +181,9 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        revisitVisible:false
+        revisitVisible:false,
+        // 查询
+        productType:''
       }
     },
     components: {

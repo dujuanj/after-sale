@@ -1,5 +1,12 @@
 <template>
   <div class="mod-home">
+     <!-- 导航 -->
+    <el-breadcrumb separator="/" class="marbot_15" style='margin-bottom:15px;'>
+      <el-breadcrumb-item :to="{ path: './sales-return-slip' }"> <a href='javascript:;'>回访单</a> </el-breadcrumb-item>
+
+      <el-breadcrumb-item>回访单详情</el-breadcrumb-item>
+      
+    </el-breadcrumb>
        <el-button type="primary" icon="el-icon-edit-outline"  size="mini" @click="addOrUpdateHandle(id,datas)" class="marbot_15" style='float:left;'>修改</el-button>
     <div class="layui-card detail" style="margin-top: 10px;">
       <div class="layui-card-header">回访记录</div>
@@ -78,6 +85,7 @@
 </template>
 
 <script>
+
 import RevisitAddOrUpdate from '../sales/revisit-add-or-update'
 export default {
   name: "slipDetail",
@@ -92,6 +100,8 @@ export default {
     activated() {
      this.datas=this.$route.params.detailDatas, 
       this.id=this.$route.params.id, 
+      // sessionStorage.setItem('id',this.$route.params.id);
+      // sessionStorage.setItem('datas',JSON.stringify(this.$route.params.detailDatas) )
      console.log(this.id);
       console.log(this.datas);
   },

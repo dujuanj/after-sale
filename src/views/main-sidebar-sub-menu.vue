@@ -14,7 +14,7 @@
       :dynamicMenuRoutes="dynamicMenuRoutes"
       
        :id='item.menuId'
-       :opoperation='item.operation'
+     
       >
      
     </sub-menu>
@@ -54,7 +54,7 @@
         var route = this.dynamicMenuRoutes.filter(item => item.meta.menuId === menu.menuId)
         if (route.length >= 1) {
           console.log(route[0].meta.operation);
-          sessionStorage.setItem('opoperation',JSON.stringify(route[0].meta.operation));
+        
           console.log(route[0]);
           this.$router.push({ name: route[0].name})
           

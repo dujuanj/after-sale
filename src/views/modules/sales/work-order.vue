@@ -164,15 +164,17 @@
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
         <template slot-scope="scope">
-          <!-- <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>-->
-          <el-button
+           <el-button type="text" size="small" v-if="isAuth('sys:menu:detail')"  @click="detail(scope.row.id,scope.row)">详情</el-button>
+            <el-button type="text" size="small" v-if="isAuth('sys:menu:revist')" @click="revisitHandle(scope.row.id,scope.row)">回访</el-button>
+           <el-button type="text" size="small" v-if="isAuth('sys:menu:update')" @click="addOrUpdateHandle(scope.row.id,scope.row)">修改</el-button>
+          <el-button type="text" size="small" v-if="isAuth('sys:menu:delete')" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <!-- <el-button
             :id="scope.row.id"
             v-for="item in opoperation"
             type="text"
             size="small"
             @click="listenCall(item.methods,scope.row.id,scope.row)"
-          >{{item.name}}</el-button>
+          >{{item.name}}</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -216,14 +218,9 @@
 import echarts from "echarts";
 import AddOrUpdate from "./config-add-or-update";
 import RevisitAddOrUpdate from './revisit-add-or-update'
-var opoperation = JSON.parse(sessionStorage.getItem("opoperation"));
+
 export default {
-  // props:{
-  //   opoperation:{
-  //     type:Array,
-  //     required:true
-  //   }
-  // },
+ 
   data() {
     return {
       values: "",
@@ -242,7 +239,7 @@ export default {
       chartLine: null,
       chartPie: null,
       menuList: JSON.parse(sessionStorage.getItem("menuList") || "[]"),
-      opoperation: opoperation,
+    
       // 查询
       customerRealName: "",
       productType: "",
@@ -253,8 +250,7 @@ export default {
   mounted() {
     this.initChartLine();
     this.initChartPie();
-    // this.handleUserList()
-    console.log(this.opoperation);
+  
   },
   activated() {
     // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
@@ -278,6 +274,7 @@ export default {
       //监听子组件点击哪个按钮(促发哪个函数)
       this[methodsWords](id, detailDatas); //调取操作方法
     },
+    // 详情
     detail(id, detailDatas) {
       console.log(id);
       this.$router.push({
