@@ -3,8 +3,8 @@
     <div class="site-content__wrapper">
       <div class="site-content">
         <div class="brand-info">
-          <h2 class="brand-info__text">前后分离快速开发框架</h2>
-          <p class="brand-info__intro">基于vue、element-ui构建开发，实现后台管理前端功能，提供一套更优的前端解决方案。</p>
+          <h2 class="brand-info__text">HISS 售后服务管理系统</h2>
+          <p class="brand-info__intro">基于vue、element-ui构建开发，实现后台管理前端功能</p>
         </div>
         <div class="login-main">
           <h3 class="login-title">管理员登录</h3>
@@ -99,8 +99,8 @@ export default {
                 this.$router.replace({ name: 'home' }) //跳转首页--
                this.$cookie.set('token',res.data.data.sid);
                if(res.data.data!=''||res.data.data!= null)
-               alert('eee');
-                this.getnav();
+                
+                this.getnav(res.data.data.sid);
               }
               this.dataListLoading = false;
             })
@@ -132,13 +132,14 @@ export default {
       });
     },
     // 获取菜单
-  getnav(){
+  getnav(sid){
+    console.log(sid);
     this.$http_
             .post(
               this.GLOBAL.baseUrl + "/user.queryUserAndResource",
               {
-                sid:window.sessionStorage.getItem('sid'),
-                userId:'36'
+                sid:sid,
+              
               },
               {
                 headers: {

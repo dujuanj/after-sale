@@ -3,7 +3,6 @@
     :title="!dataForm.id ? '新增用户' : '修改用户'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-   
   >
     <el-form
       :model="dataForm"
@@ -12,7 +11,6 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-
       <el-form-item label="帐号名" prop="userName">
         <el-input v-model="dataForm.userName" placeholder="登录帐号" style="width:50%;"></el-input>
       </el-form-item>
@@ -29,16 +27,16 @@
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-form-item label="工号" >
+      <el-form-item label="工号">
         <el-input v-model="dataForm.employeeNumber" type="text" placeholder="工号"></el-input>
       </el-form-item>
-      <el-form-item label="职位" >
+      <el-form-item label="职位">
         <el-input v-model="dataForm.position" type="text" placeholder="职位"></el-input>
       </el-form-item>
       <el-form-item label="性别" prop="mobile">
         <el-radio-group v-model="dataForm.sex">
-          <el-radio  label= "男" >男</el-radio>
-          <el-radio  label= "女" >女</el-radio>
+          <el-radio label="男">男</el-radio>
+          <el-radio label="女">女</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="角色" size="mini" prop="roleIdList">
@@ -52,26 +50,18 @@
           <el-radio :label="1">正常</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item  style='position:absolute;top:50px;right:50px'>
-         <el-upload
-            action
-            accept="image/*"
-            :multiple="false"
-            list-type="picture-card"
-            name="uploadFile"
-            :file-list="picList"
-            :http-request="httpRequest"
-            :on-remove="handleRemove"
-            :show-file-list="true"
-            limit="1"
-          >
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt>
-          </el-dialog>
+      <el-form-item label="添加头像" size="mini"  style="position:absolute;top:80px;right:70px">
+        <el-upload
+          class="avatar-uploader"
+          :http-request="httpRequest"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
       </el-form-item>
-      
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -118,6 +108,7 @@ export default {
       visible: false,
       options: "",
       roleIdList: [],
+       imageUrl: '',
       dataForm: {
         // id: 0,
         userName: "",
@@ -149,46 +140,34 @@ export default {
           { validator: validateMobile, trigger: "blur" }
         ]
       },
-      newform: true
+      newform: false //新建
     };
   },
   methods: {
-    init(id) {
+    init(id,datas) {
       this.dataForm.id = id || 0;
+      this.dataForm.sid=window.sessionStorage.getItem('sid')
       this.visible = true;
-      // this.$http({
-      //   url: this.$http.adornUrl('/sys/role/select'),
-      //   method: 'get',
-      //   params: this.$http.adornParams()
-      // }).then(({data}) => {
-      //   this.roleList = data && data.code === 0 ? data.list : []
-      // }).then(() => {
-      //   this.visible = true
-      //   this.$nextTick(() => {
-      //     this.$refs['dataForm'].resetFields()
-      //   })
-      // }).then(() => {
-      //   if (this.dataForm.id) {
-      //     // this.$http({
-      //     //   url: this.$http.adornUrl(`/sys/user/info/${this.dataForm.id}`),
-      //     //   method: 'get',
-      //     //   params: this.$http.adornParams()
-      //     // }).then(({data}) => {
-      //     //   if (data && data.code === 0) {
-      //     //     this.dataForm.userName = data.user.username
-      //     //     this.dataForm.salt = data.user.salt
-      //     //     this.dataForm.email = data.user.email
-      //     //     this.dataForm.mobile = data.user.mobile
-      //     //     this.dataForm.roleIdList = data.user.roleIdList
-      //     //     this.dataForm.status = data.user.status
-      //     //   }
-      //     // })
-      //   }
-      // })
+      alert(id);
+      console.log(datas);
+       if (datas != undefined) {
+        //修改
+        this.roleIdList=[];
+        this.dataForm = datas;
+        // this.roleIdList=datas.roleList
+        datas.roleList.forEach((val,index,val_arr)=>{
+            console.log(val.id);
+            this.roleIdList.push(val.id);
+        });
+        this.newform = false;
+      } else {
+        //新建
+        this.newform = true;
+      }
       this.$http_
         .post(
           this.GLOBAL.baseUrl + "/role.query",
-          {},
+          {sid:window.sessionStorage.getItem('sid')},
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -212,6 +191,7 @@ export default {
     // 表单提交
     dataFormSubmit() {
       if (this.newform == true) {
+        console.log(this.roleIdList);
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
             // 新建用户
@@ -223,9 +203,40 @@ export default {
               })
               .then(({ data }) => {
                 console.log(data);
-                 if (res.status == "200") {
-                   alert('true')
-                 }
+                console.log(data.data.userId);
+                var userId = data.data.userId;
+                // 为新建用户添加角色
+                if (
+                  data.data.userId != "" ||
+                  data.data.userId != null ||
+                  data.data.userId != undefined
+                ) {
+                  this.$http_
+                    .post(
+                      this.GLOBAL.baseUrl + "/user.grant.role",
+                      {
+                        sid: window.sessionStorage.getItem('sid'),
+                        userId: userId,
+                        roleIdList: this.roleIdList
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json;charset=UTF-8"
+                        }
+                      }
+                    )
+                    .then(({ data }) => {
+                      console.log(data.isSuccess);
+                      this.$message({
+                        message: "操作成功",
+                        type: "success",
+                        duration: 1500,
+                        onClose: () => {
+                          this.getDataList();
+                        }
+                      });
+                    });
+                }
                 this.$message({
                   message: "操作成功",
                   type: "success",
@@ -238,10 +249,144 @@ export default {
               });
           }
         });
-      }else{
-
+      } else {
+        this.dataForm.sid=window.sessionStorage.getItem('sid');
+         this.$refs["dataForm"].validate(valid => {
+          //修改用户帐号列表
+          if (valid) {
+           
+            this.$http_
+              .post(this.GLOBAL.baseUrl + "/user.update", this.dataForm, {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+                }
+              })
+              .then(({ data }) => {
+                console.log(data.isSuccess);
+                // 为用户修改角色
+                this.$http_
+                    .post(
+                      this.GLOBAL.baseUrl + "/user.grant.role",
+                      {
+                        sid: window.sessionStorage.getItem('sid'),
+                        userId: this.dataForm.id,
+                        roleIdList: this.roleIdList
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json;charset=UTF-8"
+                        }
+                      }
+                    )
+                    .then(({ data }) => {
+                      console.log(data.isSuccess);
+                      this.$message({
+                        message: "操作成功",
+                        type: "success",
+                        duration: 1500,
+                        onClose: () => {
+                          this.visible = false;
+                          this.$emit("refreshDataList");
+                        }
+                      });
+                    });
+                
+              });
+              // 修改维修单
+              //  this.$http_
+              // .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
+              //   headers: {
+              //     "Content-Type": "application/json;charset=UTF-8"
+              //   }
+              // })
+              // .then(({ data }) => {
+              //   console.log(data.isSuccess);
+              //   _this.$message({
+              //     message: "操作成功",
+              //     type: "success",
+              //     duration: 1500,
+              //     onClose: () => {
+              //       _this.visible = false;
+              //       _this.$emit("refreshDataList");
+              //     }
+              //   });
+              // });
+          }
+        });
       }
-    }
+    },
+    //图片上传转流
+    httpRequest(file) {
+      //alert(999);
+
+      console.log(file.file);
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file.file);
+
+      reader.onload = e => {
+        var imgurlbase = e.target.result.split(",");
+        imgurlbase.shift();
+        imgurlbase = imgurlbase.toString();
+        console.log(imgurlbase);
+        this.picupload(imgurlbase);
+      };
+    },
+    // 删除图片
+    handleRemove(file) {
+      alert("222");
+      console.log(file);
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/pic.delete",
+          {
+            id: ""
+            // createUserRealName:this.GLOBAL.createUserRealName,
+            // sid:this.GLOBAL.sid
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(({ data }) => {
+          console.log(data.data);
+        });
+    },
+    // 上传图片
+    picupload(imgurlbase) {
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/pic.upload",
+          {
+            worksheetId: this.id,
+            // worksheetNumber: this.datas.number,
+            picData: imgurlbase,
+            filePostfix: ".jpg",
+            createUserRealName: this.GLOBAL.createUserRealName,
+            createUserName: this.GLOBAL.createUserName,
+            sid: this.GLOBAL.sid
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(({ data }) => {
+          console.log(data.data);
+        });
+    },
+     handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
+        console.log(res);
+        console.log(file);
+      },
+       handlePictureCardPreview(file) {
+        this.imageUrl = file.url;
+        // this.dialogVisible = true;
+      },
   }
 };
 </script>
@@ -250,9 +395,27 @@ export default {
 .el-dialog {
   width: 40%;
 }
-.el-upload--picture-card{
-  width:200px;
-  height: 200px;
-  line-height: 200px;
-}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

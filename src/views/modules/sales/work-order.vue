@@ -402,6 +402,7 @@ export default {
     },
     // 获取数据列表
     getDataList() {
+      console.log(window.sessionStorage.getItem('sid'));
       this.dataListLoading = true;
       const _this = this;
       this.$http_
@@ -413,7 +414,8 @@ export default {
             customerRealName: this.customerRealName,
             productType: this.productType,
             mac: this.mac,
-            serviceUserRealName: this.serviceUserRealName
+            serviceUserRealName: this.serviceUserRealName,
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {
@@ -425,9 +427,9 @@ export default {
           console.log(res);
           if (res.status == "200") {
             console.log(res.data.data);
-            _this.dataList = res.data.data;
+            _this.dataList = res.data.data.list;
             console.log(_this.dataList);
-            this.totalPage = _this.dataList.length;
+            this.totalPage = res.data.data.total;
           }
           this.dataListLoading = false;
         })
@@ -511,7 +513,9 @@ export default {
           this.$http_
             .post(
               this.GLOBAL.baseUrl + "/worksheet.delete",
-              { id: id, sid: "" },
+              { id: id,
+                sid:window.sessionStorage.getItem('sid')
+              },
               {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"

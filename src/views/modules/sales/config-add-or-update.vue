@@ -212,6 +212,7 @@ export default {
       this.dataForm.customerCity = this.dcity;
       this.dataForm.customerCounty = this.ddistrict;
       this.dataForm.serviceAppointmentTime = this.value3;
+      this.dataForm.sid=window.sessionStorage.getItem('sid')
       const _this = this;
       if (this.newform == true) {
         //新建表单
@@ -340,7 +341,9 @@ export default {
       this.$http_
         .post(
           this.GLOBAL.baseUrl + "/worksheet.number.create",
-          {},
+          {
+            sid:window.sessionStorage.getItem('sid')
+          },
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"

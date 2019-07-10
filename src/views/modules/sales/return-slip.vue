@@ -214,7 +214,8 @@
             customerRealName: this.customerRealName,
             productType: this.productType,
             mac: this.mac,
-            serviceUserRealName: this.serviceUserRealName
+            serviceUserRealName: this.serviceUserRealName,
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {
@@ -226,9 +227,9 @@
           console.log(res);
           if (res.status == "200") {
             console.log(res.data.data);
-            _this.dataList = res.data.data;
+            _this.dataList = res.data.data.list;
             console.log(_this.dataList);
-            this.totalPage = _this.dataList.length;
+            this.totalPage = res.data.data.total;
           }
           this.dataListLoading = false;
         })

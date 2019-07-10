@@ -45,12 +45,16 @@
       </el-table-column>
       <el-table-column prop="password" header-align="center" align="center" width="180" label="密码"></el-table-column>
       <el-table-column
-        prop="roleList"
+        prop="roleList.name"
         header-align="center"
         align="center"
         width="180"
         label="用户角色"
-      ></el-table-column>
+      >
+       <template slot-scope="scope">
+         <span v-for='item in scope.row.roleList'>{{item.name}}  --</span>
+       </template>
+      </el-table-column>
       <el-table-column prop="status" header-align="center" align="center" width="180" label="登录许可">
         <template slot-scope="scope">
           <el-switch
@@ -72,7 +76,7 @@
             v-if="isAuth('sys:user:update')"
             type="text"
             size="small"
-            @click="addOrUpdateHandle(scope.row.id)"
+            @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >修改</el-button>
           <el-button
             v-if="isAuth('sys:user:delete')"
@@ -134,7 +138,8 @@ export default {
           this.GLOBAL.baseUrl + "/user.queryUserAndRoles",
           {
             currentPage: this.pageIndex,
-            pageSize: this.pageSize
+            pageSize: this.pageSize,
+             sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {
@@ -148,7 +153,7 @@ export default {
             console.log(res.data.data);
             this.dataList = res.data.data;
             console.log(this.dataList);
-            this.totalPage = this.dataList.length;
+            this.totalPage = res.data.data.total;
           }
           this.dataListLoading = false;
         })
@@ -172,10 +177,11 @@ export default {
       this.dataListSelections = val;
     },
     // 新增 / 修改
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,datas) {
       this.addOrUpdateVisible = true;
+      // alert(id);
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id);
+        this.$refs.addOrUpdate.init(id,datas);
       });
     },
     // 删除
@@ -234,7 +240,8 @@ export default {
               this.GLOBAL.baseUrl + "/user.update",
               {
                 status: value == 1 ? 2 : 1,
-                id: id
+                id: id,
+                 sid:window.sessionStorage.getItem('sid')
                 // createUserRealName:this.GLOBAL.createUserRealName,
                 // createUserName:this.GLOBAL.createUserName,
                 // sid:this.GLOBAL.sid

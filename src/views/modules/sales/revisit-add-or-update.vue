@@ -17,17 +17,20 @@
       </el-form-item>
 
       <el-form-item label="客户姓名" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.customerRealName" placeholder="客户姓名"></el-input>
+        <!-- <el-input v-model="dataForm.customerRealName" placeholder="客户姓名"></el-input> -->
+         <span>{{dataForm.customerRealName}}</span>
       </el-form-item>
       <el-form-item label="电话" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input>
+        <!-- <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input> -->
+           <span>{{dataForm.customerPhone}}</span>
       </el-form-item>
       <el-form-item label="产品类型" prop="paramValue" style="width:50%;">
         <!-- <el-input v-model="dataForm.productType" placeholder="电话"></el-input> -->
         <select
           v-model="dataForm.productType"
+          disabled 
           placeholder="选择产品类型"
-          style="padding:0 10px;width:100%;"
+          style="padding:0 10px;width:100%;background:#eee;" 
         >
           <option value>选择产品类型</option>
           <option value="1">初柜</option>
@@ -57,7 +60,7 @@
        <el-form-item label="回访人员" prop="paramValue" style="width:50%;">
         <el-input v-model="dataForm.revisitUserRealName" placeholder="电话"></el-input>
       </el-form-item>
-      <el-form-item label="满意度评分" prop="paramValue" style="width:51%;">
+      <el-form-item label="满意度评分" prop="paramValue" style="width:51%;" class="score">
         <!-- <el-input v-model="dataForm.revisitScore" placeholder=""></el-input> -->
         <el-rate
           v-model="dataForm.revisitScore"
@@ -131,7 +134,8 @@ export default {
        this.newform = false;
        if (datas != undefined) {
         //修改
-        this.dataForm = datas;       
+        this.dataForm = datas;  
+        this.dataForm.sid=window.sessionStorage.getItem('sid')     
         // this.newform = false;
       };
       this.visible = true;
@@ -218,8 +222,11 @@ select {
     width: 72.4%;
   }
 }
-.el-form-item__label{
-  // width:85px!important;
+.score label{
+  width:82px!important;
+}
+.el-rate{
+  line-height: 2!important;
 }
 </style>
 
