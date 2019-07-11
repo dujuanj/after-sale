@@ -10,8 +10,10 @@
       <el-form-item>
         <el-input v-model="phone" placeholder="输入电话号码" clearable></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-input v-model="role" placeholder="选择角色" clearable></el-input>
+      <el-form-item label="角色" size="mini" prop="roleIdList">
+        <el-select v-model="roleList" multiple placeholder="请选择">
+          <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -51,9 +53,9 @@
         width="180"
         label="用户角色"
       >
-       <template slot-scope="scope">
-         <span v-for='item in scope.row.roleList'>{{item.name}}  --</span>
-       </template>
+        <template slot-scope="scope">
+          <span v-for="item in scope.row.roleList">{{item.name}} --</span>
+        </template>
       </el-table-column>
       <el-table-column prop="status" header-align="center" align="center" width="180" label="登录许可">
         <template slot-scope="scope">
@@ -117,10 +119,12 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       // 查询
-      userName:'',
-      realName:'',
-      phone:'',
-      role:''
+      userName: "",
+      realName: "",
+      phone: "",
+      role: "",
+      options: "",
+      roleList: []
     };
   },
   components: {
@@ -128,6 +132,7 @@ export default {
   },
   activated() {
     this.getDataList();
+    this.getRole();
   },
   methods: {
     // 获取数据列表
@@ -139,7 +144,11 @@ export default {
           {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
-             sid:window.sessionStorage.getItem('sid')
+            sid: window.sessionStorage.getItem("sid"),
+            userName: this.userName,
+            realName: this.realName,
+            phone: this.phone,
+            roleList: this.roleList
           },
           {
             headers: {
@@ -151,7 +160,7 @@ export default {
           console.log(res);
           if (res.status == "200") {
             console.log(res.data.data);
-            this.dataList = res.data.data;
+            this.dataList = res.data.data.list;
             console.log(this.dataList);
             this.totalPage = res.data.data.total;
           }
@@ -160,6 +169,38 @@ export default {
         .catch(res => {
           console.log("err");
         });
+    },
+    getRole() {
+      // 查询角色
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/role.query",
+          { sid: window.sessionStorage.getItem("sid") },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res);
+            console.log(res.data);
+            console.log(res.data.data);
+            this.options = res.data.data;
+          }
+        })
+        .catch(res => {
+          console.log("err");
+        });
+    },
+    reset() {
+      (this.userName = ""),
+        (this.realName = ""),
+        (this.phone = ""),
+        (this.roleList = "");
+      this.getDataList();
     },
     // 每页数
     sizeChangeHandle(val) {
@@ -177,11 +218,11 @@ export default {
       this.dataListSelections = val;
     },
     // 新增 / 修改
-    addOrUpdateHandle(id,datas) {
+    addOrUpdateHandle(id, datas) {
       this.addOrUpdateVisible = true;
       // alert(id);
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id,datas);
+        this.$refs.addOrUpdate.init(id, datas);
       });
     },
     // 删除
@@ -201,24 +242,36 @@ export default {
         }
       )
         .then(() => {
-          this.$http({
-            url: this.$http.adornUrl("/sys/user/delete"),
-            method: "post",
-            data: this.$http.adornData(userIds, false)
-          }).then(({ data }) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: "操作成功",
-                type: "success",
+          // 删除用户
+          this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/user.delete",
+          {
+            id:id,
+            sid:window.sessionStorage.getItem('sid')
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+
+           this.$message({
+                message: res.data.isSuccess=="true" ? "操作成功" : res.data.errorMsg,
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.getDataList();
+                  this.getDataList()
                 }
-              });
-            } else {
-              this.$message.error(data.msg);
-            }
-          });
+              })
+          this.dataListLoading = false;
+        })
+        .catch(res => {
+          console.log("err");
+        });
         })
         .catch(() => {});
     },
@@ -241,7 +294,7 @@ export default {
               {
                 status: value == 1 ? 2 : 1,
                 id: id,
-                 sid:window.sessionStorage.getItem('sid')
+                sid: window.sessionStorage.getItem("sid")
                 // createUserRealName:this.GLOBAL.createUserRealName,
                 // createUserName:this.GLOBAL.createUserName,
                 // sid:this.GLOBAL.sid

@@ -31,20 +31,23 @@ export function treeDataTranslate (data, id = 'id', pid = 'parentId') {
   for (var i = 0; i < data.length; i++) {
     temp[data[i][id]] = data[i]
   }
+  console.log(temp)
   for (var k = 0; k < data.length; k++) {
     if (temp[data[k][pid]] && data[k][id] !== data[k][pid]) {
-      if (!temp[data[k][pid]]['children']) {
-        temp[data[k][pid]]['children'] = []
+      if (!temp[data[k][pid]]['childList']) {
+        temp[data[k][pid]]['childList'] = []
       }
-      if (!temp[data[k][pid]]['_level']) {
-        temp[data[k][pid]]['_level'] = 1
+      if (!temp[data[k][pid]]['type']) {
+        temp[data[k][pid]]['type'] = 1
       }
-      data[k]['_level'] = temp[data[k][pid]]._level + 1
-      temp[data[k][pid]]['children'].push(data[k])
+      // data[k]['type'] = temp[data[k][pid]]._level + 1
+      data[k]['type'] = temp[data[k][pid]].type + 1
+      temp[data[k][pid]]['childList'].push(data[k])
     } else {
       res.push(data[k])
-    }
+    }    
   }
+  console.log(temp)
   return res
 }
 

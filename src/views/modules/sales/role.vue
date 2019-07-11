@@ -2,12 +2,12 @@
   <div class="mod-role">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <!-- <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input> -->
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <!-- <el-button @click="getDataList()">查询</el-button> -->
         <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <!-- <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -23,39 +23,39 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
         width="80"
         label="ID">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="name"
         header-align="center"
         align="center"
         label="角色名称">
       </el-table-column>
       <el-table-column
-        prop="remark"
+        prop="detail"
         header-align="center"
         align="center"
-        label="备注">
+        label="角色描述">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        width="180"
+        width="210"
         label="创建时间">
       </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
-        width="150"
+        width="200"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
+          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">配置</el-button>
           <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
         </template>
       </el-table-column>
@@ -101,24 +101,32 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/role/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'roleName': this.dataForm.roleName
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
+         this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/role.query",
+          {
+           
+            sid:window.sessionStorage.getItem('sid')
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
           }
-          this.dataListLoading = false
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res.data.data);
+            this.dataList = res.data.data;
+            console.log(this.dataList);
+            // this.totalPage = res.data.data.total;
+          }
+          this.dataListLoading = false;
         })
+        .catch(res => {
+          console.log("err");
+        });
       },
       // 每页数
       sizeChangeHandle (val) {
