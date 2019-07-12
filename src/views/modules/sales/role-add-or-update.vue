@@ -21,7 +21,7 @@
         <el-tree
           :data="menuList"
           :props="menuListTreeProps"
-          node-key="menuId"
+          node-key="id"
           ref="menuListTree"
           :default-expand-all="true"
           show-checkbox
@@ -46,6 +46,8 @@ export default {
         label: "name",
         children: "childList"
       },
+      roleId: "",
+      arrs: [],
       dataForm: {
         sid: window.sessionStorage.getItem("sid"),
         name: "",
@@ -85,40 +87,11 @@ export default {
           this.visible = true;
           this.$nextTick(() => {
             this.$refs["dataForm"].resetFields();
-            this.$refs.menuListTree.setCheckedKeys([]);
+            // this.$refs.menuListTree.setCheckedKeys([]);
+            // console.log(this.$refs.menuListTree.setCheckedKeys([]))
+            console.log(this.$refs.menuListTree.getCheckedKeys());
           });
         });
-      // this.$http({
-      //   url: this.$http.adornUrl('/sys/menu/list'),
-      //   method: 'get',
-      //   params: this.$http.adornParams()
-      // }).then(({data}) => {
-      //   this.menuList = treeDataTranslate(data, 'menuId')
-      // }).then(() => {
-      //   this.visible = true
-      //   this.$nextTick(() => {
-      //     this.$refs['dataForm'].resetFields()
-      //     this.$refs.menuListTree.setCheckedKeys([])
-      //   })
-      // }).then(() => {
-      //   if (this.dataForm.id) {
-      //     this.$http({
-      //       url: this.$http.adornUrl(`/sys/role/info/${this.dataForm.id}`),
-      //       method: 'get',
-      //       params: this.$http.adornParams()
-      //     }).then(({data}) => {
-      //       if (data && data.code === 0) {
-      //         this.dataForm.roleName = data.role.roleName
-      //         this.dataForm.remark = data.role.remark
-      //         var idx = data.role.menuIdList.indexOf(this.tempKey)
-      //         if (idx !== -1) {
-      //           data.role.menuIdList.splice(idx, data.role.menuIdList.length - idx)
-      //         }
-      //         this.$refs.menuListTree.setCheckedKeys(data.role.menuIdList)
-      //       }
-      //     })
-      //   }
-      // })
     },
     // 表单提交
     dataFormSubmit() {
@@ -134,33 +107,65 @@ export default {
             .then(({ data }) => {
               console.log(data);
               console.log(data.data);
-              var roleId = data.data.roleId;
+              this.roleId = data.data.roleId;
+              this.arrs = this.uniqueArr(
+                this.$refs.menuListTree.getCheckedKeys(),
+                this.$refs.menuListTree.getHalfCheckedKeys()
+              ); //角色权限id
             })
             .then(() => {
               // 为角色授权
-              if (roleId) {
+              if (this.roleId) {
+                console.log(this.arrs);
                 this.$http_
-                  .post(this.GLOBAL.baseUrl + "/role.grant.resource", this.dataForm, {
-                    headers: {
-                      "Content-Type": "application/json;charset=UTF-8"
+                  .post(
+                    this.GLOBAL.baseUrl + "/role.grant.resource",
+                    {
+                      sid: window.sessionStorage.getItem("sid"),
+                      roleId: this.roleId,
+                      resourceIdList: this.arrs
+                    },
+                    {
+                      headers: {
+                        "Content-Type": "application/json;charset=UTF-8"
+                      }
                     }
-                  })
+                  )
                   .then(({ data }) => {
                     console.log(data.isSuccess);
-                    this.$message({
-                      message: "操作成功",
-                      type: "success",
-                      duration: 1500,
-                      onClose: () => {
-                        this.visible = false;
-                        this.$emit("refreshDataList");
-                      }
-                    });
+                    if (data.isSuccess == "true") {
+                      this.$message({
+                        message: "操作成功",
+                        type: "success",
+                        duration: 1500,
+                        onClose: () => {
+                          this.visible = false;
+                          this.$emit("refreshDataList");
+                        }
+                      });
+                    }else{
+                      this.$message({
+                        message: data.errorMsg,
+                        type: "success",
+                        duration: 1500,
+                        onClose: () => {
+                          this.visible = false;
+                          this.$emit("refreshDataList");
+                        }
+                      });
+                    }
                   });
               }
             });
         }
       });
+    },
+    uniqueArr(arr1, arr2) {
+      arr1.push(...arr2); //或者arr1 = [...arr1,...arr2]
+      //去重
+      let arr3 = Array.from(new Set(arr1)); //let arr3 = [...new Set(arr1)]
+      console.log(arr3);
+      return arr3;
     }
   }
 };

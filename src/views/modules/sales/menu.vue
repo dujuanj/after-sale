@@ -8,9 +8,12 @@
     <el-table
       :data="dataList"
       border
+      :tree-props="{children: 'childList', hasChildren: 'childList'}"
+      stripe
+      row-key='id'
       style="width: 100%;">
       <el-table-column
-        prop="menuId"
+        prop="id"
         header-align="center"
         align="center"
         width="80"
@@ -19,9 +22,10 @@
       <table-tree-column
         prop="name"
         header-align="center"
-        treeKey="menuId"
+        treeKey="id"
         width="150"
-        label="名称">
+        label="名称"
+         :tree-props="{children: 'childList', hasChildren: 'childList'}">
       </table-tree-column>
       <el-table-column
         prop="parentName"
@@ -112,16 +116,41 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/menu/list'),
-          method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
+        // this.$http({
+        //   url: this.$http.adornUrl('/sys/menu/list'),
+        //   method: 'get',
+        //   params: this.$http.adornParams()
+        // }).then(({data}) => {
          
-          this.dataList = treeDataTranslate(data, 'menuId');
-           console.log(this.dataList);
-          this.dataListLoading = false
+        //   this.dataList = treeDataTranslate(data, 'menuId');
+        //    console.log(this.dataList);
+        //   this.dataListLoading = false
+        // })
+        this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/resource.queryAll",
+          {
+            sid: window.sessionStorage.getItem("sid")
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res.data.data);
+            this.dataList = res.data.data.menuList;
+            console.log(this.dataList);
+            // this.totalPage = res.data.data.total;
+          }
+          this.dataListLoading = false;
         })
+        .catch(res => {
+          console.log("err");
+        });
       },
       // 新增 / 修改
       addOrUpdateHandle (id) {

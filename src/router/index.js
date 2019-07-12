@@ -92,7 +92,12 @@ router.beforeEach((to, from, next) => {
         'list': [
           { 'menuId': 3, 'parentId': 0, 'parentName': null, 'name': '帐号列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
           { 'menuId': 4, 'parentId': 0, 'parentName': null, 'name': '角色管理', 'url': 'sales/role', 'perms': null, 'type': 1, 'icon': 'role', 'orderNum': 2, 'open': null, 'list': null }, 
-        ] }], 
+        ] },
+        { 'menuId': 35, 'parentId': 0, 'parentName': null, 'name': '系统管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null,
+         'list': [
+          { 'menuId': 8, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+         ] }, 
+      ], 
         'code': 0, 'permissions': ['sys:schedule:info', 'sys:menu:update', 'sys:menu:delete','sys:menu:detail','sys:menu:revist', 'sys:config:info', 'sys:menu:list', 'sys:config:save',
          'sys:config:update', 'sys:schedule:resume', 'sys:user:delete', 'sys:config:list', 'sys:user:update', 'sys:role:list', 'sys:menu:info',
           'sys:menu:select', 'sys:schedule:update', 'sys:schedule:save', 'sys:role:select', 'sys:user:list', 'sys:menu:save', 'sys:role:save', 
