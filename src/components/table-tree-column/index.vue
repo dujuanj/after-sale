@@ -27,16 +27,20 @@
       },
       levelKey: {
         type: String,
-        default: '_level'
+        default: 'parentId'
       },
       childKey: {
         type: String,
-        default: 'children'
+        default: 'childList'
       }
     },
     methods: {
       childStyles (row) {
-        return { 'padding-left': (row[this.levelKey] > 1 ? row[this.levelKey] * 7 : 0) + 'px' }
+        console.log((row[this.levelKey]));
+        return { 'padding-left': (row[this.levelKey] > 1 ? row[this.levelKey] * 20 : 0) + 'px' }
+        // console.log(row);
+        // console.log(row[row.type]);
+        // return { 'padding-left': (row[row.type] > 1 ? row[row.type] * 17 : 0) + 'px' }
       },
       iconClasses (row) {
         return [ !row._expanded ? 'el-icon-caret-right' : 'el-icon-caret-bottom' ]
@@ -53,9 +57,11 @@
           var data = this.$parent.store.states.data.slice(0)
           data[index]._expanded = !data[index]._expanded
           if (data[index]._expanded) {
+            console.log(this.childKey);
             data = data.splice(0, index + 1).concat(row[this.childKey]).concat(data)
           } else {
-            data = this.removeChildNode(data, row[this.treeKey])
+            console.log(this.treeKey);
+            data = this.removeChildNode(data, row[this.treeKey]);
           }
           this.$parent.store.commit('setData', data)
           this.$nextTick(() => {

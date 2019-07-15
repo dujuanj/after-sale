@@ -367,7 +367,9 @@ export default {
             filePostfix: ".jpg",
             // createUserRealName: this.GLOBAL.createUserRealName,
             // createUserName: this.GLOBAL.createUserName,
-            sid: window.sessionStorage.getItem("sid")
+            sid: window.sessionStorage.getItem("sid"),
+            type:3,
+            
           },
           {
             headers: {
