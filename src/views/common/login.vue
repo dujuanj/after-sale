@@ -96,6 +96,7 @@ export default {
                 console.log(res.data);
                 console.log(res.data.data); //sid
                 window.sessionStorage.setItem('sid',res.data.data.sid);
+                window.sessionStorage.setItem('userName',this.dataForm.userName);
                 this.$router.replace({ name: 'home' }) //跳转首页--
                this.$cookie.set('token',res.data.data.sid);
                if(res.data.data!=''||res.data.data!= null)

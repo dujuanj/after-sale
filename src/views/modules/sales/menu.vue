@@ -66,10 +66,10 @@
         label="菜单URL">
       </el-table-column>
       <el-table-column
-        prop="perms"
+        prop="api"
         header-align="center"
         align="center"
-        width="150"
+        width="250"
         :show-overflow-tooltip="true"
         label="授权标识">
       </el-table-column>
@@ -219,24 +219,33 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http({
-            url: this.$http.adornUrl(`/sys/menu/delete/${id}`),
-            method: 'post',
-            data: this.$http.adornData()
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getDataList()
+           this.$http_
+              .post(this.GLOBAL.baseUrl + "/resource.delete", 
+              {
+                sid:window.sessionStorage.getItem('sid'),
+                id:id
+              }, {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
                 }
               })
-            } else {
-              this.$message.error(data.msg)
-            }
-          })
+              .then(({ data }) => {
+                console.log(data.isSuccess);
+                if(data.isSuccess=='true'){
+                  this.$message({
+                  message: "操作成功",
+                  type: "success",
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false;
+                    this.getDataList()
+                  }
+                });
+                }else{
+                   this.$message.error(data.errorMsg);
+                }
+                
+              });
         }).catch(() => {})
       }
     }

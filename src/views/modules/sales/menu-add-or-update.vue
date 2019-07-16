@@ -21,9 +21,11 @@
       <el-form-item :label=" '名称'" prop="name">
         <el-input v-model="dataForm.name" :placeholder="'名称'"></el-input>
       </el-form-item>
-      <el-form-item label="上级菜单" prop="parentName" v-if='!dataForm.parentId'>
-        <el-popover ref="menuListPopover" placement="bottom-start" trigger="click">
+      <el-form-item label="上级菜单" prop="parentName" v-if='!dataForm.id'>
+        <el-popover  placement="bottom-start" trigger="click"  >
+          <span id='1'  @click="menuListTreeCurrentChangeHandle({'id':'1','name':'根菜单'})">根菜单</span>
           <el-tree
+         
             :data="menuList"
             :props="menuListTreeProps"
             node-key="id"
@@ -33,14 +35,16 @@
             :highlight-current="true"
             :expand-on-click-node="false"
           ></el-tree>
-        </el-popover>
-        <el-input
-          v-model="dataForm.parentName"
-          v-popover:menuListPopover
+           <!-- <el-button slot="reference">click 激活</el-button> -->
+            <el-input
+          v-model= "upname"
+          slot="reference"
           :readonly="true"
           placeholder="点击选择上级菜单"
           class="menu-list__input"
-        ></el-input>
+        ></el-input> 
+        </el-popover>
+        
       </el-form-item>
       <el-form-item v-if="dataForm.type == 1" label="菜单路由" prop="url">
         <el-input v-model="dataForm.url" placeholder="菜单路由"></el-input>
@@ -105,6 +109,7 @@ export default {
     return {
       visible: false,
       newform:false,
+      upname:'',
       dataForm: {
         id: 0,
         type: '',
@@ -123,9 +128,9 @@ export default {
         name: [
           { required: true, message: "菜单名称不能为空", trigger: "blur" }
         ],
-        // parentName: [
-        //   { required: true, message: "上级菜单不能为空", trigger: "change" }
-        // ],
+        parentName: [
+          { required: true, message: "上级菜单不能为空", trigger: "change" }
+        ],
         url: [{ validator: validateUrl, trigger: "blur" }]
       },
       menuList: [],
@@ -217,14 +222,19 @@ export default {
     },
     // 菜单树选中
     menuListTreeCurrentChangeHandle(data, node) {
-      this.dataForm.parentId = data.parentId;
+      this.dataForm.parentId = data.id;
       this.dataForm.parentName = data.name;
+      this.upname=data.name;
+      // console.log(this.dataForm.name);
+      console.log(this.dataForm.parentId);
+      document.getElementsByClassName('el-popover')[0].style.display="none"
     },
     // 菜单树设置当前选中节点
     menuListTreeSetCurrentNode() {
       this.$refs.menuListTree.setCurrentKey(this.dataForm.parentId);
-      this.dataForm.parentName = (this.$refs.menuListTree.getCurrentNode() ||
+      this.dataForm.name = (this.$refs.menuListTree.getCurrentNode() ||
         {})["name"];
+        console.log(this.dataForm.name);
     },
     // 图标选中
     iconActiveHandle(iconName) {
@@ -290,7 +300,7 @@ export default {
                 }
               });
             } else {
-              this.$message.error(data.msg);
+              this.$message.error(data.errorMsg);
             }
           });
         }

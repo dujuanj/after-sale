@@ -30,7 +30,7 @@
               <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
+              <el-dropdown-item @click.native="updatePasswordHandle(userName)">修改密码</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -48,7 +48,8 @@
   export default {
     data () {
       return {
-        updatePassowrdVisible: false
+        updatePassowrdVisible: false,
+        userName:window.sessionStorage.getItem('userName')
       }
     },
     components: {
@@ -72,10 +73,10 @@
     },
     methods: {
       // 修改密码
-      updatePasswordHandle () {
+      updatePasswordHandle (userName) {
         this.updatePassowrdVisible = true
         this.$nextTick(() => {
-          this.$refs.updatePassowrd.init()
+          this.$refs.updatePassowrd.init(userName)
         })
       },
       // 退出

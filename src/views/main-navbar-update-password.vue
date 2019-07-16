@@ -40,7 +40,8 @@
         dataForm: {
           password: '',
           newPassword: '',
-          confirmPassword: ''
+          confirmPassword: '',
+          userName:''
         },
         dataRule: {
           password: [
@@ -77,14 +78,16 @@
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            this.$http({
-              url: this.$http.adornUrl('/sys/user/password'),
-              method: 'post',
-              data: this.$http.adornData({
-                'password': this.dataForm.password,
-                'newPassword': this.dataForm.newPassword
-              })
-            }).then(({data}) => {
+             this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/password.update",        
+           this.dataForm,
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        ).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
                   message: '操作成功',

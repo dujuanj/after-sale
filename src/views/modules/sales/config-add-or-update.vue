@@ -11,10 +11,10 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="工单编号" style="width:50%;">
+      <!-- <el-form-item label="工单编号" style="width:50%;"> -->
         <!-- <el-input v-model="dataForm.number" placeholder="工单编号"></el-input> -->
-        <span>{{dataForm.number}}</span>
-      </el-form-item>
+        <!-- <span>{{dataForm.number}}</span> -->
+      <!-- </el-form-item> -->
 
       <el-form-item label="客户姓名" prop="paramValue" style="width:50%;">
         <el-input v-model="dataForm.customerRealName" placeholder="客户姓名"></el-input>
@@ -180,7 +180,7 @@ export default {
       }
       if (this.newform == true) {
         this.dataForm = { number: "" };
-        this.createNumber();
+        // this.createNumber();
         console.log(this.dataForm);
       }
       // this.dataForm.id = id || 0;
@@ -335,32 +335,32 @@ export default {
       }
     },
     // 省市区方法结束
-    createNumber() {
-      //新售后工单编号
-      var _this = this;
-      this.$http_
-        .post(
-          this.GLOBAL.baseUrl + "/worksheet.number.create",
-          {
-            sid:window.sessionStorage.getItem('sid')
-          },
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
-          }
-        )
-        .then(res => {
-          console.log(res.data.data.number);
-          this.dataForm.number = res.data.data.number;
-          _this.createNum = res.data.data.number;
-          // console.log(this.createNum);
-          //  console.log(_this.createNum);
-        })
-        .catch(res => {
-          console.log("err");
-        });
-    }
+    // createNumber() {
+    //   //新售后工单编号
+    //   var _this = this;
+    //   this.$http_
+    //     .post(
+    //       this.GLOBAL.baseUrl + "/worksheet.number.create",
+    //       {
+    //         sid:window.sessionStorage.getItem('sid')
+    //       },
+    //       {
+    //         headers: {
+    //           "Content-Type": "application/json;charset=UTF-8"
+    //         }
+    //       }
+    //     )
+    //     .then(res => {
+    //       console.log(res.data.data.number);
+    //       this.dataForm.number = res.data.data.number;
+    //       _this.createNum = res.data.data.number;
+    //       // console.log(this.createNum);
+    //       //  console.log(_this.createNum);
+    //     })
+    //     .catch(res => {
+    //       console.log("err");
+    //     });
+    // }
   },
   watch: {
     prov: function() {
