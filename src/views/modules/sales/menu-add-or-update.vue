@@ -52,6 +52,11 @@
       <el-form-item v-if="dataForm.type !== 0" label="api" prop="perms">
         <el-input v-model="dataForm.api" placeholder="对应的api接口"></el-input>
       </el-form-item>
+      <el-form-item v-if="dataForm.type !== 0" label="菜单级别" prop="perms">
+         <el-radio v-model="dataForm.level" label="1">一级菜单</el-radio>
+         <el-radio v-model="dataForm.level" label="2">二级菜单</el-radio>
+         <el-radio v-model="dataForm.level" label="3">三级按扭</el-radio>
+      </el-form-item>
       <el-form-item label="详细说明" prop="perms">
         <el-input v-model="dataForm.detail" placeholder="详细说明"></el-input>
       </el-form-item>

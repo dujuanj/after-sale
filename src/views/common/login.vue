@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { getUUID } from "@/utils";
+import { getUUID,clearLoginInfo } from "@/utils";
 export default {
   data() {
     return {
@@ -91,17 +91,46 @@ export default {
             )
             .then(res => {
               console.log(res);
-              if (res.status == "200") {
+              if (res.data.isSuccess == "true") {
                 console.log(res);
                 console.log(res.data);
                 console.log(res.data.data); //sid
-                window.sessionStorage.setItem('sid',res.data.data.sid);
-                window.sessionStorage.setItem('userName',this.dataForm.userName);
-                this.$router.replace({ name: 'home' }) //跳转首页--
-               this.$cookie.set('token',res.data.data.sid);
-               if(res.data.data!=''||res.data.data!= null)
-                
-                this.getnav(res.data.data.sid);
+                // 验证sid是否有效互踢
+                if(res.data.data.sid){
+                  this.$http_
+                      .post(
+                        this.GLOBAL.baseUrl + "/user.sid",
+                        {
+                          sid:res.data.data.sid,
+                         
+                        },
+                        {
+                          headers: {
+                            "Content-Type": "application/json;charset=UTF-8"
+                          }
+                        }
+                      )
+                      .then(({ data }) => {
+                        console.log(data.isSuccess);
+                        if(data.isSuccess=='true'){
+                             window.sessionStorage.setItem('sid',res.data.data.sid);
+                             window.sessionStorage.setItem('userName',data.data.userName);
+                             this.getnav(res.data.data.sid); //获取菜单列表
+                             this.$router.replace({ name: 'home' }) //跳转首页--
+                              this.$cookie.set('token',res.data.data.sid);
+                             
+                        }else{
+                           this.$message.error(data.errorMsg);
+                           clearLoginInfo();
+                        }
+                      });
+                }
+                // 互踢结束
+               
+              
+              
+              }else{
+                 this.$message.error(res.data.errorMsg);
               }
               this.dataListLoading = false;
             })
@@ -154,6 +183,7 @@ export default {
                 console.log(res);
                 console.log(res.data);
                 console.log(res.data.data); //sid
+                window.sessionStorage.setItem('menuData',res.data.data)
               //   window.sessionStorage.setItem('sid',res.data.data);
               //   this.$router.replace({ name: 'home' }) //跳转首页--
               //  this.$cookie.set('token',res.data.data);

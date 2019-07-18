@@ -27,7 +27,7 @@
       },
       levelKey: {
         type: String,
-        default: 'parentId'
+        default: 'level'
       },
       childKey: {
         type: String,
@@ -37,7 +37,7 @@
     methods: {
       childStyles (row) {
         console.log((row[this.levelKey]));
-        return { 'padding-left': (row[this.levelKey] > 1 ? row[this.levelKey] * 20 : 0) + 'px' }
+        return { 'padding-left': (row[this.levelKey] > 1 ? row[this.levelKey] * 30 : 0) + 'px' }
         // console.log(row);
         // console.log(row[row.type]);
         // return { 'padding-left': (row[row.type] > 1 ? row[row.type] * 17 : 0) + 'px' }

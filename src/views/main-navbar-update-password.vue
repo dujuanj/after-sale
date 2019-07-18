@@ -5,10 +5,10 @@
     :append-to-body="true">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="账号">
-        <span>{{ userName }}</span>
+        <span>{{ dataForm.userName }}</span>
       </el-form-item>
-      <el-form-item label="原密码" prop="password">
-        <el-input type="password" v-model="dataForm.password"></el-input>
+      <el-form-item label="原密码" prop="oldPassword">
+        <el-input type="password" v-model="dataForm.oldPassword"></el-input>
       </el-form-item>
       <el-form-item label="新密码" prop="newPassword">
         <el-input type="password" v-model="dataForm.newPassword"></el-input>
@@ -38,13 +38,14 @@
       return {
         visible: false,
         dataForm: {
-          password: '',
+          sid: window.sessionStorage.getItem('sid'),
           newPassword: '',
           confirmPassword: '',
-          userName:''
+          oldPassword:'',
+          userName: window.sessionStorage.getItem('userName')
         },
         dataRule: {
-          password: [
+          oldPassword: [
             { required: true, message: '原密码不能为空', trigger: 'blur' }
           ],
           newPassword: [
@@ -88,7 +89,8 @@
             }
           }
         ).then(({data}) => {
-              if (data && data.code === 0) {
+             console.log(data);
+              if (data.isSuccess == 'true') {
                 this.$message({
                   message: '操作成功',
                   type: 'success',

@@ -15,7 +15,7 @@
         <el-input v-model="dataForm.userName" placeholder="登录帐号" style="width:50%;"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="dataForm.password" type="password" placeholder="密码" style="width:50%;"></el-input>
+        <el-input v-model="dataForm.password" type="text" placeholder="密码" style="width:50%;"></el-input>
       </el-form-item>
 
       <el-form-item label="邮箱" prop="email">
@@ -112,7 +112,7 @@ export default {
       dataForm: {
         // id: 0,
         userName: "",
-        password: "",
+        password: "123456",
         realName: "",
         employeeNumber: "",
         email: "",
@@ -217,7 +217,7 @@ export default {
                 } else {
                   console.log(data);
                   console.log(data.data.userId);
-                  var userId = data.data.userId;
+                  var userId = data.data.userId; //新建用户的用户id
                   // 为新建用户添加角色
                   if (
                     data.data.userId != "" ||
@@ -331,7 +331,7 @@ export default {
         imgurlbase.shift();
         imgurlbase = imgurlbase.toString();
         console.log(imgurlbase);
-        this.picupload(imgurlbase);
+        // this.picupload(imgurlbase);
       };
     },
     // 删除图片

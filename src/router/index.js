@@ -87,7 +87,10 @@ router.beforeEach((to, from, next) => {
             // { 'menuId': 29, 'parentId': 1, 'parentName': null, 'name': '系统日志', 'url': 'sales/log', 'perms': 'sys:log:list', 'type': 1, 'icon': 'log', 'orderNum': 7, 'open': null, 'list': null }
           ]
         },
-        { 'menuId': 31, 'parentId': 0, 'parentName': null, 'name': '产品管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 'list': null }, 
+        { 'menuId': 31, 'parentId': 0, 'parentName': null, 'name': '产品管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
+        'list': [
+          { 'menuId': 6, 'parentId': 0, 'parentName': null, 'name': '产品列表', 'url': 'sales/productlist', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
+        ] }, 
         { 'menuId': 32, 'parentId': 0, 'parentName': null, 'name': '帐号管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
         'list': [
           { 'menuId': 3, 'parentId': 0, 'parentName': null, 'name': '帐号列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
@@ -96,6 +99,7 @@ router.beforeEach((to, from, next) => {
         { 'menuId': 35, 'parentId': 0, 'parentName': null, 'name': '系统管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null,
          'list': [
           { 'menuId': 8, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+          { 'menuId': 9, 'parentId': 1, 'parentName': null, 'name': '登陆日志', 'url': 'sales/log', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
          ] }, 
       ], 
         'code': 0, 'permissions': ['sys:schedule:info', 'sys:menu:update', 'sys:menu:delete','sys:menu:detail','sys:menu:revist', 'sys:config:info', 'sys:menu:list', 'sys:config:save',

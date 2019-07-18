@@ -14,23 +14,23 @@
       v-loading="dataListLoading"
       style="width: 100%">
       <el-table-column
-        prop="id"
+        prop="userName"
         header-align="center"
         align="center"
         width="80"
-        label="ID">
+        label="账号名">
       </el-table-column>
       <el-table-column
         prop="username"
         header-align="center"
         align="center"
-        label="用户名">
+        label="姓名">
       </el-table-column>
       <el-table-column
         prop="operation"
         header-align="center"
         align="center"
-        label="用户操作">
+        label="角色">
       </el-table-column>
       <el-table-column
         prop="method"
@@ -38,7 +38,7 @@
         align="center"
         width="150"
         :show-overflow-tooltip="true"
-        label="请求方法">
+        label="登录IP">
       </el-table-column>
       <el-table-column
         prop="params"
@@ -46,27 +46,27 @@
         align="center"
         width="150"
         :show-overflow-tooltip="true"
-        label="请求参数">
+        label="登录位置">
       </el-table-column>
       <el-table-column
         prop="time"
         header-align="center"
         align="center"
-        label="执行时长(毫秒)">
+        label="登录方式">
       </el-table-column>
       <el-table-column
-        prop="ip"
+        prop="loginTime"
         header-align="center"
         align="center"
-        width="150"
-        label="IP地址">
+        width="200"
+        label="上线时间">
       </el-table-column>
       <el-table-column
-        prop="createDate"
+        prop="logoutTime"
         header-align="center"
         align="center"
-        width="180"
-        label="创建时间">
+        width="200"
+        label="下线时间">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -103,24 +103,53 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/log/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'key': this.dataForm.key
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
+        // this.$http({
+        //   url: this.$http.adornUrl('/sys/log/list'),
+        //   method: 'get',
+        //   params: this.$http.adornParams({
+        //     'page': this.pageIndex,
+        //     'limit': this.pageSize,
+        //     'key': this.dataForm.key
+        //   })
+        // }).then(({data}) => {
+        //   if (data && data.code === 0) {
+        //     this.dataList = data.page.list
+        //     this.totalPage = data.page.totalCount
+        //   } else {
+        //     this.dataList = []
+        //     this.totalPage = 0
+        //   }
+        //   this.dataListLoading = false
+        // })
+         this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/log.login.query",
+          {
+            currentPage: this.pageIndex,
+            pageSize: this.pageSize,
+            userName: this.userName,
+           
+            sid:window.sessionStorage.getItem('sid')
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
           }
-          this.dataListLoading = false
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res.data.data);
+            this.dataList = res.data.data.list;
+            console.log(this.dataList);
+            this.totalPage = res.data.data.total;
+          }
+          this.dataListLoading = false;
         })
+        .catch(res => {
+          console.log("err");
+        });
       },
       // 每页数
       sizeChangeHandle (val) {

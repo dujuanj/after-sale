@@ -115,16 +115,16 @@
           </label>-->
           <!-- 上传照片 -->
           <el-upload
-            action
+          
             accept="image/*"
-            :multiple="false"
+            
             list-type="picture-card"
             name="uploadFile"
             :file-list="picList"
             :http-request="httpRequest"
             :on-remove="handleRemove"
             :show-file-list="true"
-            limit="5"
+            
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -144,18 +144,7 @@ export default {
   name: "workDetail",
   data() {
     return {
-      fileList: [
-        {
-          name: "food.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        },
-        {
-          name: "food2.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        }
-      ],
+      picList: [],
        dialogImageUrl: '',
         dialogVisible: false,
         disabled: false,
@@ -178,15 +167,15 @@ export default {
   methods: {
     // 删除图片
      handleRemove(file) {
-       alert('222')
+      //  alert('222')
         console.log(file);
         this.$http_
         .post(
           this.GLOBAL.baseUrl + "/pic.delete",
           {
-            id: ''
+            id: file.id,
             // createUserRealName:this.GLOBAL.createUserRealName,
-            // sid:this.GLOBAL.sid
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {
@@ -195,7 +184,17 @@ export default {
           }
         )
         .then(({ data }) => {
-          console.log(data.data);
+          console.log(data);
+          if(data.isSuccess=='true'){
+            this.$message({
+                message: "操作成功",
+                type: "success",
+                duration: 1500,
+                onClose: () => {
+                  // this.getDataList();
+                }
+              });
+          }
         });
       },
       handlePictureCardPreview(file) {
@@ -231,26 +230,40 @@ export default {
     },
     // 上传图片
     picupload(imgurlbase){
+      var params = new URLSearchParams();
+      params.append('worksheetId', this.id);  
+      params.append('worksheetNumber', this.datas.number);
+      params.append('filePostfix', '.jpg');  
+      params.append('type', 2);
+       params.append('sid', window.sessionStorage.getItem('sid'));
+      params.append('picData', imgurlbase); 
+      params.append('ownerUserId', 36);
+       
        this.$http_
         .post(
           this.GLOBAL.baseUrl + "/pic.upload",
-          {
-            worksheetId: this.id,
-            worksheetNumber:this.datas.number,
-            picData:imgurlbase,
-            filePostfix:'.jpg',
-            createUserRealName:this.GLOBAL.createUserRealName,
-            createUserName:this.GLOBAL.createUserName,
-            sid:this.GLOBAL.sid
-          },
-          {
+          params,
+         
+           {            
             headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
+              // "Content-Type": "application/json;charset=UTF-8"
+              // "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+            },
+            dataType: "form"
           }
         )
         .then(({ data }) => {
-          console.log(data.data);
+          console.log(data);
+          if(data.isSuccess=='true'){
+            this.$message({
+                message: "操作成功",
+                type: "success",
+                duration: 1500,
+                onClose: () => {
+                  // this.getDataList();
+                }
+              });
+          }
         });
     },
     // 查询图片
@@ -259,9 +272,9 @@ export default {
         .post(
           this.GLOBAL.baseUrl + "/pic.query",
           {
-            worksheetId: this.id
+            worksheetId: this.id,
             // createUserRealName:this.GLOBAL.createUserRealName,
-            // sid:this.GLOBAL.sid
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {
@@ -271,6 +284,7 @@ export default {
         )
         .then(({ data }) => {
           console.log(data.data);
+          this.picList=data.data
         });
     }
   }
@@ -324,7 +338,7 @@ export default {
   line-height: 20px;
   text-align: right;
 }
-.el-upload-list--picture .el-upload-list__item-status-label {
+/* .el-upload-list--picture .el-upload-list__item-status-label {
   width: 46px !important;
 }
 .el-upload-list--picture .el-upload-list__item {
@@ -334,6 +348,9 @@ export default {
 .el-upload-list--picture .el-upload-list__item-status-label i {
   margin-top: 12px;
   margin-left: 16px;
+} */
+.el-upload-list--picture-card .el-upload-list__item-status-label{
+  width:0px!important;
 }
 </style>
 

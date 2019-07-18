@@ -403,7 +403,7 @@ export default {
     // 获取数据列表
     getDataList() {
       console.log(window.sessionStorage.getItem('sid'));
-      this.dataListLoading = true;
+      // this.dataListLoading = true;
       const _this = this;
       this.$http_
         .post(
@@ -425,13 +425,17 @@ export default {
         )
         .then(res => {
           console.log(res);
-          if (res.status == "200") {
+          if (res.data.isSuccess == "true") {
             console.log(res.data.data);
             _this.dataList = res.data.data.list;
             console.log(_this.dataList);
             this.totalPage = res.data.data.total;
+          }else if(res.data.isSuccess == "false"){
+             this.$message.error(res.data.errorMsg);
+              this.$router.replace({ name: 'login' })
           }
-          this.dataListLoading = false;
+          
+         
         })
         .catch(res => {
           console.log("err");
@@ -492,24 +496,6 @@ export default {
         }
       )
         .then(() => {
-          // this.$http({
-          //   url: this.$http.adornUrl("/sys/config/delete"),
-          //   method: "post",
-          //   data: this.$http.adornData(ids, false)
-          // }).then(({ data }) => {
-          //   if (data && data.code === 0) {
-          //     this.$message({
-          //       message: "操作成功",
-          //       type: "success",
-          //       duration: 1500,
-          //       onClose: () => {
-          //         this.getDataList();
-          //       }
-          //     });
-          //   } else {
-          //     this.$message.error(data.msg);
-          //   }
-          // });
           this.$http_
             .post(
               this.GLOBAL.baseUrl + "/worksheet.delete",
