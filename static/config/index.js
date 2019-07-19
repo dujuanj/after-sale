@@ -5,8 +5,8 @@
   window.SITE_CONFIG = {};
 
   // api接口请求地址
-  window.SITE_CONFIG['baseUrl'] = 'http://localhost:8002/htsys';
-  // window.SITE_CONFIG['baseUrl'] = 'http://192.168.11.7:8002/';
+  // window.SITE_CONFIG['baseUrl'] = 'http://localhost:8002/htsys';
+  window.SITE_CONFIG['baseUrl'] = 'http://58.87.111.66:9010/api/postsale';
 
   // cdn地址 = 域名 + 版本号
   window.SITE_CONFIG['domain']  = './'; // 域名

@@ -9,7 +9,7 @@ import Router from 'vue-router'
 import http from '@/utils/httpRequest'
 import { isURL } from '@/utils/validate'
 import { clearLoginInfo } from '@/utils'
-import axios from 'axios'
+
 
 
 
@@ -68,105 +68,84 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     // 手动改静态菜单
-    const data = {
-      'msg': 'success',
-      'menuList': [
-        {
-          'menuId': 1, 'parentId': 0, 'parentName': null, 'name': '售后管理', 'url': null, 'perms': null, 'type': 0, 'icon': 'system', 'orderNum': 0, 'open': null,
-          'list': [
-            { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 
-              'list':null},
-            { 'menuId': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
-            { 'menuId': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
-            // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
-           
-            // { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
-            // { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
-            // { 'menuId': 6, 'parentId': 1, 'parentName': null, 'name': '定时任务', 'url': 'job/schedule', 'perms': null, 'type': 1, 'icon': 'job', 'orderNum': 5, 'open': null, 'list': null }, 
-            // { 'menuId': 30, 'parentId': 1, 'parentName': null, 'name': '文件上传', 'url': 'oss/oss', 'perms': 'sys:oss:all', 'type': 1, 'icon': 'oss', 'orderNum': 6, 'open': null, 'list': null }, 
-            // { 'menuId': 29, 'parentId': 1, 'parentName': null, 'name': '系统日志', 'url': 'sales/log', 'perms': 'sys:log:list', 'type': 1, 'icon': 'log', 'orderNum': 7, 'open': null, 'list': null }
-          ]
-        },
-        { 'menuId': 31, 'parentId': 0, 'parentName': null, 'name': '产品管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
-        'list': [
-          { 'menuId': 6, 'parentId': 0, 'parentName': null, 'name': '产品列表', 'url': 'sales/productlist', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
-        ] }, 
-        { 'menuId': 32, 'parentId': 0, 'parentName': null, 'name': '帐号管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
-        'list': [
-          { 'menuId': 3, 'parentId': 0, 'parentName': null, 'name': '帐号列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
-          { 'menuId': 4, 'parentId': 0, 'parentName': null, 'name': '角色管理', 'url': 'sales/role', 'perms': null, 'type': 1, 'icon': 'role', 'orderNum': 2, 'open': null, 'list': null }, 
-        ] },
-        { 'menuId': 35, 'parentId': 0, 'parentName': null, 'name': '系统管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null,
-         'list': [
-          { 'menuId': 8, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
-          { 'menuId': 9, 'parentId': 1, 'parentName': null, 'name': '登陆日志', 'url': 'sales/log', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
-         ] }, 
-      ], 
-        'code': 0, 'permissions': ['sys:schedule:info', 'sys:menu:update', 'sys:menu:delete','sys:menu:detail','sys:menu:revist', 'sys:config:info', 'sys:menu:list', 'sys:config:save',
-         'sys:config:update', 'sys:schedule:resume', 'sys:user:delete', 'sys:config:list', 'sys:user:update', 'sys:role:list', 'sys:menu:info',
-          'sys:menu:select', 'sys:schedule:update', 'sys:schedule:save', 'sys:role:select', 'sys:user:list', 'sys:menu:save', 'sys:role:save', 
-          'test', 'sys:schedule:log', 'sys:role:info', 'sys:schedule:delete', 'sys:role:update', 'sys:schedule:list', 'sys:user:info',
-           'sys:schedule:run', 'sys:config:delete', 'sys:role:delete', 'sys:user:save', 'sys:schedule:pause', 'sys:log:list',
-            'sys:oss:all']
-    }
-    router.options.isAddDynamicMenuRoutes = true
-    fnAddDynamicMenuRoutes(data.menuList)
-    sessionStorage.setItem('menuList', JSON.stringify(data.menuList || '[]'))
-    sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
-    console.log(data)
-    next({ ...to, replace: true })
-    // 手动静太菜单结束
-    // 动态菜单的接口位置
-    // this.$http_
-    //         .post(
-    //           this.GLOBAL.baseUrl + "/user.queryUserAndResource",
-    //           {
-    //            sid:window.sessionStorage.getItem('sid'),
-    //            userId:''
-    //           },
-    //           {
-    //             headers: {
-    //               "Content-Type": "application/json;charset=UTF-8"
-    //             }
-    //           }
-    //         )
-    //         .then(res => {
-    //           console.log(res);
-    //           if (res.status == "200") {
-    //             console.log(res);
-    //             console.log(res.data);
-    //             console.log(res.data.data); //sid
-    //             window.sessionStorage.setItem('sid',res.data.data);
-    //             this.$router.replace({ name: 'home' }) //跳转首页--
-    //            this.$cookie.set('token',res.data.data)
-    //           }
-    //           this.dataListLoading = false;
-    //         })
-    //         .catch(res => {
-    //           console.log("err");
-    //         });
-    // http({
-    //   url: http.adornUrl('/sys/menu/nav'),
-    //   method: 'get',
-    //   params: http.adornParams()
-    // }).then(({data}) => {
-    //   if (data && data.code === 0) {
-    //     fnAddDynamicMenuRoutes(data.menuList)
-    //     router.options.isAddDynamicMenuRoutes = true
-    //     sessionStorage.setItem('menuList', JSON.stringify(data.menuList || '[]'))
-    //     // sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
-    //     console.log(data)  // 动态一级菜单
-    //     next({ ...to, replace: true })
-    //   } else {
-    //     sessionStorage.setItem('menuList', '[]')
-    //     sessionStorage.setItem('permissions', '[]')
-    //     next()
-    //   }
-    // }).catch((e) => {
-    //   console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
-    //   router.push({ name: 'login' })
-    //   // router.push({ name: 'home' })
-    // })
+   
+    // const data = {
+    //   'msg': 'success',
+    //   'menuList': [
+    //     {
+    //       'menuId': 1, 'parentId': 0, 'parentName': null, 'name': '售后管理', 'url': null, 'perms': null, 'type': 0, 'icon': 'system', 'orderNum': 0, 'open': null,
+    //       'list': [
+    //         { 'menuId': 27, 'parentId': 1, 'parentName': null, 'name': '工单', 'url': 'sales/work-order', 'perms': 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 'type': 1, 'icon': 'config', 'orderNum': 0, 'open': null, 
+    //           'list':null},
+    //         { 'menuId': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+    //         { 'menuId': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
+    //         // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
+
+    //         // { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
+    //         // { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
+    //         // { 'menuId': 6, 'parentId': 1, 'parentName': null, 'name': '定时任务', 'url': 'job/schedule', 'perms': null, 'type': 1, 'icon': 'job', 'orderNum': 5, 'open': null, 'list': null }, 
+    //         // { 'menuId': 30, 'parentId': 1, 'parentName': null, 'name': '文件上传', 'url': 'oss/oss', 'perms': 'sys:oss:all', 'type': 1, 'icon': 'oss', 'orderNum': 6, 'open': null, 'list': null }, 
+    //         // { 'menuId': 29, 'parentId': 1, 'parentName': null, 'name': '系统日志', 'url': 'sales/log', 'perms': 'sys:log:list', 'type': 1, 'icon': 'log', 'orderNum': 7, 'open': null, 'list': null }
+    //       ]
+    //     },
+    //     { 'menuId': 31, 'parentId': 0, 'parentName': null, 'name': '产品管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
+    //     'list': [
+    //       { 'menuId': 6, 'parentId': 0, 'parentName': null, 'name': '产品列表', 'url': 'sales/productlist', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
+    //     ] }, 
+    //     { 'menuId': 32, 'parentId': 0, 'parentName': null, 'name': '帐号管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
+    //     'list': [
+    //       { 'menuId': 3, 'parentId': 0, 'parentName': null, 'name': '帐号列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
+    //       { 'menuId': 4, 'parentId': 0, 'parentName': null, 'name': '角色管理', 'url': 'sales/role', 'perms': null, 'type': 1, 'icon': 'role', 'orderNum': 2, 'open': null, 'list': null }, 
+    //     ] },
+    //     { 'menuId': 35, 'parentId': 0, 'parentName': null, 'name': '系统管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null,
+    //      'list': [
+    //       { 'menuId': 8, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+    //       { 'menuId': 9, 'parentId': 1, 'parentName': null, 'name': '登陆日志', 'url': 'sales/log', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+    //      ] }, 
+    //   ], 
+    //     'code': 0, 'permissions': ['sys:schedule:info', 'sys:menu:update', 'sys:menu:delete','sys:menu:detail','sys:menu:revist', 'sys:config:info', 'sys:menu:list', 'sys:config:save',
+    //      'sys:config:update', 'sys:schedule:resume', 'sys:user:delete', 'sys:config:list', 'sys:user:update', 'sys:role:list', 'sys:menu:info',
+    //       'sys:menu:select', 'sys:schedule:update', 'sys:schedule:save', 'sys:role:select', 'sys:user:list', 'sys:menu:save', 'sys:role:save', 
+    //       'test', 'sys:schedule:log', 'sys:role:info', 'sys:schedule:delete', 'sys:role:update', 'sys:schedule:list', 'sys:user:info',
+    //        'sys:schedule:run', 'sys:config:delete', 'sys:role:delete', 'sys:user:save', 'sys:schedule:pause', 'sys:log:list',
+    //         'sys:oss:all']
+    // }
+ 
+
+ 
+    http
+    .post(
+       "http://58.87.111.66:9010/api/postsale/user.queryUserAndResource",
+      {
+        sid:window.sessionStorage.getItem('sid'),
+        userId:'36'
+      
+      },
+      {
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        }
+      }
+    ).then(({data}) => {
+      console.log(data);
+      if (data && data.isSuccess == 'true') {
+        console.log(data.data.menuList);
+        fnAddDynamicMenuRoutes(data.data.menuList)
+        router.options.isAddDynamicMenuRoutes = true
+        sessionStorage.setItem('menuList', JSON.stringify(data.data.menuList || '[]'))
+        // sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
+        console.log(data)  // 动态一级菜单
+        next({ ...to, replace: true })
+      } else {
+        sessionStorage.setItem('menuList', '[]')
+        sessionStorage.setItem('permissions', '[]')
+        next()
+      }
+    }).catch((e) => {
+      console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
+      router.push({ name: 'login' })
+      // router.push({ name: 'home' })
+    })
   }
 })
 
@@ -194,8 +173,8 @@ function fnCurrentRouteType(route, globalRoutes = []) {
 function fnAddDynamicMenuRoutes(menuList = [], routes = []) {
   var temp = []
   for (var i = 0; i < menuList.length; i++) {
-    if (menuList[i].list && menuList[i].list.length >= 1) {
-      temp = temp.concat(menuList[i].list)
+    if (menuList[i].childList && menuList[i].childList.length >= 1) {
+      temp = temp.concat(menuList[i].childList)
     } else if (menuList[i].url && /\S/.test(menuList[i].url)) {
       menuList[i].url = menuList[i].url.replace(/^\//, '')
       var route = {
@@ -203,7 +182,7 @@ function fnAddDynamicMenuRoutes(menuList = [], routes = []) {
         component: null,
         name: menuList[i].url.replace('/', '-'),
         meta: {
-          menuId: menuList[i].menuId,
+          menuId: menuList[i].id,
           title: menuList[i].name,
           isDynamic: true,
           isTab: true,
@@ -213,8 +192,8 @@ function fnAddDynamicMenuRoutes(menuList = [], routes = []) {
       }
       // url以http[s]://开头, 通过iframe展示
       if (isURL(menuList[i].url)) {
-        route['path'] = `i-${menuList[i].menuId}`
-        route['name'] = `i-${menuList[i].menuId}`
+        route['path'] = `i-${menuList[i].id}`
+        route['name'] = `i-${menuList[i].id}`
         route['meta']['iframeUrl'] = menuList[i].url
       } else {
         try {

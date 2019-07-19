@@ -111,11 +111,11 @@ export default {
                         }
                       )
                       .then(({ data }) => {
-                        console.log(data.isSuccess);
+                        console.log(data);
                         if(data.isSuccess=='true'){
                              window.sessionStorage.setItem('sid',res.data.data.sid);
                              window.sessionStorage.setItem('userName',data.data.userName);
-                             this.getnav(res.data.data.sid); //获取菜单列表
+                            //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
                              this.$router.replace({ name: 'home' }) //跳转首页--
                               this.$cookie.set('token',res.data.data.sid);
                              
@@ -162,13 +162,14 @@ export default {
       });
     },
     // 获取菜单
-  getnav(sid){
+  getnav(sid,userId){
     console.log(sid);
     this.$http_
             .post(
               this.GLOBAL.baseUrl + "/user.queryUserAndResource",
               {
                 sid:sid,
+                userId:userId
               
               },
               {
@@ -182,8 +183,8 @@ export default {
               if (res.status == "200") {
                 console.log(res);
                 console.log(res.data);
-                console.log(res.data.data); //sid
-                window.sessionStorage.setItem('menuData',res.data.data)
+                console.log(res.data.data); 
+                window.sessionStorage.setItem('menuData', JSON.stringify(res.data.data))
               //   window.sessionStorage.setItem('sid',res.data.data);
               //   this.$router.replace({ name: 'home' }) //跳转首页--
               //  this.$cookie.set('token',res.data.data);
