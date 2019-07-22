@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增用户' : '修改用户'"
+    :title="!dataForm.id ? '新增批次' : '修改用户'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -11,57 +11,24 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="帐号名" prop="userName">
-        <el-input v-model="dataForm.userName" placeholder="登录帐号" style="width:50%;"></el-input>
+      <el-form-item label="生产批号" prop="batchNumber">
+        <el-input v-model="dataForm.batchNumber" placeholder="生产批号" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item label="产品" prop="password">
         <el-input v-model="dataForm.password" type="text" placeholder="密码" style="width:50%;"></el-input>
       </el-form-item>
 
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="dataForm.email" placeholder="邮箱" style="width:50%;"></el-input>
+      <el-form-item label="生产厂商" prop="email">
+        <el-input v-model="dataForm.manufacturer" placeholder="生产厂商" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="姓名" prop="realName">
-        <el-input v-model="dataForm.realName" placeholder="姓名" style="width:50%;"></el-input>
+      <el-form-item label="生产监督" prop="realName">
+        <el-input v-model="dataForm.supervisioner" placeholder="多个监督人以逗号 , 隔开" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="dataForm.phone" placeholder="手机号"></el-input>
+      <el-form-item label="备注" prop="phone">
+        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
-      <el-form-item label="工号">
-        <el-input v-model="dataForm.employeeNumber" type="text" placeholder="工号"></el-input>
-      </el-form-item>
-      <el-form-item label="职位">
-        <el-input v-model="dataForm.position" type="text" placeholder="职位"></el-input>
-      </el-form-item>
-      <el-form-item label="性别">
-        <el-radio-group v-model="dataForm.sex">
-          <el-radio label="男">男</el-radio>
-          <el-radio label="女">女</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="角色" size="mini" prop="roleIdList">
-        <el-select v-model="roleIdList" multiple placeholder="请选择">
-          <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态" size="mini" prop="status">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">冻结</el-radio>
-          <el-radio :label="1">正常</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="添加头像" size="mini" style="position:absolute;top:80px;right:70px">
-        <el-upload
-          class="avatar-uploader"
-          :http-request="httpRequest"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
-      </el-form-item>
+    
+      
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -107,9 +74,7 @@ export default {
     return {
       visible: false,
       options: "",
-      roleIdList: [],
-      imageUrl: "",
-      imgurlbase:'',
+    
       dataForm: {
         // id: 0,
         userName: "",
@@ -123,8 +88,8 @@ export default {
         phone: ""
       },
       dataRule: {
-        userName: [
-          { required: true, message: "用户名不能为空", trigger: "blur" }
+        batchNumber: [
+          { required: true, message: "产品批次不能为空", trigger: "blur" }
         ],
         password: [
           { required: true, validator: validatePassword, trigger: "blur" }
@@ -166,30 +131,7 @@ export default {
         // this.dataForm=[];
         // this.roleIdList=[];
       }
-      // 查询角色
-      this.$http_
-        .post(
-          this.GLOBAL.baseUrl + "/role.query",
-          { sid: window.sessionStorage.getItem("sid") },
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
-          }
-        )
-        .then(res => {
-          console.log(res);
-          if (res.status == "200") {
-            console.log(res);
-            console.log(res.data);
-            console.log(res.data.data);
-            this.options = res.data.data;
-          }
-          this.dataListLoading = false;
-        })
-        .catch(res => {
-          console.log("err");
-        });
+     
     },
     // 表单提交
     dataFormSubmit() {
@@ -226,32 +168,7 @@ export default {
                     data.data.userId != null ||
                     data.data.userId != undefined
                   ) {
-                    this.$http_
-                      .post(
-                        this.GLOBAL.baseUrl + "/user.grant.role",
-                        {
-                          sid: window.sessionStorage.getItem("sid"),
-                          userId: userId,
-                          roleIdList: this.roleIdList
-                        },
-                        {
-                          headers: {
-                            "Content-Type": "application/json;charset=UTF-8"
-                          }
-                        }
-                      )
-                      .then(({ data }) => {
-                        console.log(data.isSuccess);
-                        this.$message({
-                          message: "操作成功",
-                          type: "success",
-                          duration: 1500,
-                          onClose: () => {
-                             this.$emit("refreshDataList");
-                            this.visible=false;
-                          }
-                        });
-                      });
+                    
                   }
                 }
               });
@@ -298,100 +215,12 @@ export default {
                     });
                   });
               });
-            // 修改维修单
-            //  this.$http_
-            // .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
-            //   headers: {
-            //     "Content-Type": "application/json;charset=UTF-8"
-            //   }
-            // })
-            // .then(({ data }) => {
-            //   console.log(data.isSuccess);
-            //   _this.$message({
-            //     message: "操作成功",
-            //     type: "success",
-            //     duration: 1500,
-            //     onClose: () => {
-            //       _this.visible = false;
-            //       _this.$emit("refreshDataList");
-            //     }
-            //   });
-            // });
+       
           }
         });
       }
     },
-    //图片上传转流
-    httpRequest(file) {
-      console.log(file.file);
-
-      var reader = new FileReader();
-      reader.readAsDataURL(file.file);
-
-      reader.onload = e => {
-        var imgurlbase = e.target.result.split(",");
-        imgurlbase.shift();
-        imgurlbase = imgurlbase.toString();
-        console.log(imgurlbase);
-        this.imgurlbase=imgurlbase;
-       
-      };
-    },
-    // 删除图片
-    handleRemove(file) {
-      console.log(file);
-      this.$http_
-        .post(
-          this.GLOBAL.baseUrl + "/pic.delete",
-          {
-            id: ""
-            // createUserRealName:this.GLOBAL.createUserRealName,
-            // sid:this.GLOBAL.sid
-          },
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
-          }
-        )
-        .then(({ data }) => {
-          console.log(data.data);
-        });
-    },
-    // 上传用户头像
-    picupload(imgurlbase) {
-      var params = new URLSearchParams();
-       params.append('worksheetId', '2');  
-      params.append('filePostfix', '.jpg');  
-      params.append('type', 3);
-       params.append('sid', window.sessionStorage.getItem('sid'));
-      params.append('picData', imgurlbase); 
-      // params.append('ownerUserId', 36);
-      this.$http_
-        .post(
-          this.GLOBAL.baseUrl + "/pic.upload",
-          params,
-          {
-            headers: {
-              // "Content-Type": "application/json;charset=UTF-8"
-            },
-             dataType: "form"
-          }
-        )
-        .then(({ data }) => {
-          console.log(data.data);
-          this.imageUrl=data.data;
-        });
-    },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-      console.log(res);
-      console.log(file);
-    },
-    handlePictureCardPreview(file) {
-      this.imageUrl = file.url;
-      // this.dialogVisible = true;
-    }
+  
   }
 };
 </script>

@@ -9,6 +9,7 @@
 
 const serverSrc='www.baidu.com';
 const baseUrl='http://58.87.111.66:9010/api/postsale';
+const baseUrlxg='http://58.87.111.66:9020/api/postsale'
 // const baseUrl='http://192.168.11.7:9010/api/postsale';
 const sid= window.sessionStorage.getItem('sid');
 const createUserName='duju'
@@ -2029,7 +2030,7 @@ var arrAll =[
     token,//用户token身份
     serverSrc,//服务器地址
     hasEnter,//用户登录状态
-   
+    baseUrlxg,
     imgUrl,
     baseUrl,
     arrAll,
