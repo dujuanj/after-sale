@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增批次' : '修改用户'"
+    :title="!dataForm.id ? '新增产品' : '修改产品'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -11,59 +11,18 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="生产批号" >
-        <el-input v-model="dataForm.batchNumber" placeholder="生产批号" style="width:50%;"></el-input>
+      <el-form-item label="产品名称" prop="productName">
+        <el-input v-model="dataForm.productName" placeholder="产品名称" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="产品" >
-        <el-form-item
-          v-for="(domain, index) in dynamicValidateForm.domains"
-          :key="domain.key"
-          
-        
-        >
-          <!-- 产品列表  -->
-          <el-select v-model="domain.productName" placeholder="请选择产品" @change="modellist(domain.productName)">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.productName"
-              :value="item.productName"
-            ></el-option>
-          </el-select>
-           <!-- <el-input v-model="domain.productModel" style="width:20%;" placeholder="产品型号"></el-input> -->
-          <el-select v-model="domain.productModel" placeholder="产品型号">
-            <el-option
-              v-for="item in optionss"
-              :key="item.value"
-              :label="item.product_model"
-              :value="item.product_model"
-            ></el-option>
-          </el-select>
-          <!-- 数量 -->
-          <el-input v-model="domain.number" style="width:20%;" placeholder="输入数量"></el-input>
-          <el-button @click.prevent="removeDomain(domain)">删除</el-button>
-        </el-form-item>
-        <el-button @click="addDomain" style="margin-top:10px;">新增产品</el-button>
+      
+     
+      <el-form-item label="产品型号" prop="productModel">
+        <el-input v-model="dataForm.productModel" placeholder="产品型号" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="生产时间">
-        <el-date-picker
-          v-model="productTime"
-          type="datetimerange"
-          align="right"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="['12:00:00', '08:00:00']"
-          value-format="timestamp"
-          
-        ></el-date-picker>
+      <el-form-item label="供应商" prop="provider">
+        <el-input v-model="dataForm.provider" placeholder="供应商" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="生产厂商" >
-        <el-input v-model="dataForm.manufacturer" placeholder="生产厂商" style="width:50%;"></el-input>
-      </el-form-item>
-      <el-form-item label="生产监督">
-        <el-input v-model="dataForm.supervisioner" placeholder="多个监督人以逗号 , 隔开" style="width:50%;"></el-input>
-      </el-form-item>
-      <el-form-item label="备注" >
+      <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
     </el-form>
@@ -78,6 +37,7 @@
 import { isEmail, isMobile } from "@/utils/validate";
 export default {
   data() {
+  
     var validateMobile = (rule, value, callback) => {
       if (!isMobile(value)) {
         callback(new Error("手机号格式错误"));
@@ -88,33 +48,34 @@ export default {
     return {
       visible: false,
       options: "",
-      optionss: "",
       productTime: "",
-      value: "",
-      valuetype: "",
 
       dataForm: {
         // id: 0,
-        batchNumber: "",
+        productName: "",
+        productModel: "",
+        provider: "",
+        Remark: "",
        
       },
       dataRule: {
-        batchNumber: [
-          { required: true, message: "产品批次不能为空", trigger: "blur" }
+        productName: [
+          { required: true, message: "产品名称不能为空", trigger: "blur" }
         ],
 
-        mobile: [
-          { required: true, message: "手机号不能为空", trigger: "blur" },
-          { validator: validateMobile, trigger: "blur" }
-        ]
+        productModel: [
+          { required: true, message: "产品型号不能为空", trigger: "blur" },
+          
+        ],
+         provider: [
+          { required: true, message: "供应商不能为空", trigger: "blur" }
+        ],
       },
       newform: false, //新建
       dynamicValidateForm: {
         domains: [
           {
-            number: "",
-            productModel: "",
-            productName: ""
+            value: ""
           }
         ]
       }
@@ -123,87 +84,39 @@ export default {
   methods: {
     init(id, datas) {
       // this.dataForm.id = id || 0;
-      this.dataForm.sid = window.sessionStorage.getItem("sid");
+      // this.dataForm.sid = window.sessionStorage.getItem("sid");
       this.visible = true;
       console.log(datas);
       if (datas != undefined) {
         //修改
-
+      
         this.dataForm = datas;
-
+      
         this.newform = false;
       } else {
         //新建
-        this.dataForm={}
         this.newform = true;
-        // 产品类型
-        this.producttype();
+ 
       }
-    },
-    // 产品类型
-    producttype() {
-      this.$http_
-        .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
-
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
-          }
-        )
-        .then(res => {
-          console.log(res.data.data);
-          this.options = res.data.data;
-        })
-        .catch(res => {
-          console.log("err");
-        });
-    },
-    //  查询产品编号
-    modellist(val) {
-      this.$http_
-        .post(
-          this.GLOBAL.baseUrlxg + "/product/model.list",
-          {
-            productName: val
-          },
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
-          }
-        )
-        .then(res => {
-          console.log(res.data.data);
-          this.optionss = res.data.data;
-        })
-        .catch(res => {
-          console.log("err");
-        });
     },
     // 表单提交
     dataFormSubmit() {
       if (this.newform == true) {
-        console.log(this.dynamicValidateForm.domains);        
-        this.dataForm.batchInfoList=this.dynamicValidateForm.domains;
-        this.dataForm.startTime=this.productTime[0];
-        this.dataForm.endTime=this.productTime[1];
-        console.log(this.dataForm);
+     
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
-            // 添加批次
+            // 添加产品
             this.$http_
-              .post(this.GLOBAL.baseUrlxg + "/productbatch/add", this.dataForm, {
+              .post(this.GLOBAL.baseUrlxg + "/product/add", this.dataForm, {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"
                 }
               })
               .then(({ data }) => {
-                console.log(data);
-              
+                console.log(data)
+                if (data.isSuccess == "false") {
                   this.$message({
-                    message: data.msg,
+                    message: data.errorMsg,
                     type: "success",
                     duration: 1500,
                     onClose: () => {
@@ -211,7 +124,17 @@ export default {
                       this.visible = false;
                     }
                   });
-                
+                } else {
+                 this.$message({
+                    message: '新建成功',
+                    type: "success",
+                    duration: 1500,
+                    onClose: () => {
+                      this.$emit("refreshDataList");
+                      this.visible = false;
+                    }
+                  });
+                }
               });
           }
         });
@@ -263,10 +186,8 @@ export default {
     // 新增产品
     addDomain() {
       this.dynamicValidateForm.domains.push({
-        number: "",
-        productName: "",
-        productModel: "",
-        // key: Date.now()
+        value: "",
+        key: Date.now()
       });
     },
     // 删除产品

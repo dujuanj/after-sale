@@ -79,7 +79,7 @@ router.beforeEach((to, from, next) => {
               'list':null},
             { 'id': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
             { 'id': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
-            // { 'menuId': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
+            { 'id': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
 
             // { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
             // { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
@@ -92,6 +92,7 @@ router.beforeEach((to, from, next) => {
         'childList': [
           { 'id': 6, 'parentId': 0, 'parentName': null, 'name': '产品列表', 'url': 'sales/productlist', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
           { 'id': 7, 'parentId': 0, 'parentName': null, 'name': '产品批次', 'url': 'sales/productBatch', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
+          { 'id': 21, 'parentId': 0, 'parentName': null, 'name': '产品类型', 'url': 'sales/productType', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
         ] }, 
         { 'id': 32, 'parentId': 0, 'parentName': null, 'name': '帐号管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
         'childList': [

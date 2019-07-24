@@ -77,7 +77,8 @@ export default {
           // this.$cookie.set('token','ca2d91cf60136aedb47eb6103c655ef3')
           this.$http_
             .post(
-              this.GLOBAL.baseUrl + "/user.login",
+              // this.GLOBAL.baseUrl + "/user.login",
+              this.GLOBAL.baseUrl + "/user.loginEx",
               {
                 userName: this.dataForm.userName,
                 password: this.dataForm.password,
@@ -96,12 +97,12 @@ export default {
                 console.log(res.data);
                 console.log(res.data.data); //sid
                 // 验证sid是否有效互踢
-                if(res.data.data.sid){
+                if(res.data.data.loginInfo.sid){
                   this.$http_
                       .post(
                         this.GLOBAL.baseUrl + "/user.sid",
                         {
-                          sid:res.data.data.sid,
+                          sid:res.data.data.loginInfo.sid,
                          
                         },
                         {
@@ -113,11 +114,11 @@ export default {
                       .then(({ data }) => {
                         console.log(data);
                         if(data.isSuccess=='true'){
-                             window.sessionStorage.setItem('sid',res.data.data.sid);
-                             window.sessionStorage.setItem('userName',data.data.userName);
+                             window.sessionStorage.setItem('sid',res.data.data.loginInfo.sid);
+                             window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
                             //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
                              this.$router.replace({ name: 'home' }) //跳转首页--
-                              this.$cookie.set('token',res.data.data.sid);
+                              this.$cookie.set('token',res.data.data.loginInfo.sid);
                              
                         }else{
                            this.$message.error(data.errorMsg);
