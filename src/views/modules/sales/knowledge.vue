@@ -1,32 +1,40 @@
 <template>
-  <div class="mod-user">
+  <div class="mod-knowledge">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="mac" placeholder="Mac码" clearable></el-input>
-      </el-form-item>
-     <el-form-item>
-        <el-input v-model="manufacturer" placeholder="生产厂家" clearable></el-input>
-      </el-form-item>
-     <el-form-item>
-        <el-input v-model="supervisioner" placeholder="生产监督" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-select v-model="productName"  placeholder="请选择产品类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.productName" :value="item.productName"></el-option>
+        <el-form-item>
+           <el-select
+          v-model="productName"
+          placeholder="请选择产品"
+         
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.productName"
+            :value="item.productName"
+          ></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item>
+        </el-form-item> 
+        <el-form-item>
+          <el-input v-model="question" placeholder="问题" clearable></el-input>
+        </el-form-item>
+         <el-form-item>
+          <el-input v-model="createUserName" placeholder="创建人" clearable></el-input>
+        </el-form-item>
+         <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button icon="el-icon-document" @click="reset()">重置</el-button>
         <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
-      <br />
-      <el-form-item>
-        <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+        
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
-      </el-form-item>
+      </el-form-item> <br>
+       <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
     </el-form>
+    <br />
+   
     <el-table
       :data="dataList"
       border
@@ -35,25 +43,34 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="productName" header-align="center" align="center" width="80" label="产品"></el-table-column>
+      <el-table-column
+        prop="productName"
+        header-align="center"
+        align="center"
+        width="80"
+        label="产品名称"
+      ></el-table-column>
       <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
-      <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
-      <el-table-column prop="productTime" header-align="center" align="center" label="生产时间"></el-table-column>
-      <el-table-column prop="batchNumber" header-align="center" align="center" label="生产批号">
-      </el-table-column>
-      <el-table-column prop="manufacturer" header-align="center" align="center" width="180" label="生产厂家"></el-table-column>
-       <el-table-column prop="supervisioner" header-align="center" align="center" width="180" label="生产监督"></el-table-column>
-      <el-table-column prop="saleTime" header-align="center" align="center" width="180" label="售出时间"></el-table-column>
-      
-      <el-table-column fixed="right" header-align="center" align="center" width="190" label="操作">
+
+      <el-table-column prop="question" header-align="center" align="center" label="问题描述"></el-table-column>
+      <el-table-column prop="answer" header-align="center" align="center" label="解决方法"></el-table-column>
+      <el-table-column prop="createUserName" header-align="center" align="center" label="创建人"></el-table-column>
+      <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
+
+      <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
         <template slot-scope="scope">
-          
-          <!-- <el-button
+          <el-button
+            type="text"
+            size="small"
+            v-if="isAuth('sys:menu:detail')"
+            @click="detail(scope.row.id,scope.row)"
+          >详情</el-button>
+          <el-button
             v-if="isAuth('sys:user:update')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
-          >修改</el-button> -->
+          >修改</el-button>
           <el-button
             v-if="isAuth('sys:user:delete')"
             type="text"
@@ -78,11 +95,10 @@
 </template>
 
 <script>
-import AddOrUpdate from "./product-add-update";
+import AddOrUpdate from "./knowledge-update-add";
 export default {
   data() {
     return {
-      options:'',
       dataForm: {
         userName: ""
       },
@@ -93,11 +109,9 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
-      // 查询
-      mac: "",
-      manufacturer: "",
-      supervisioner: "",
-      productName:''
+      options:'',
+      productName:'',
+      createUserName:''
     };
   },
   components: {
@@ -113,16 +127,20 @@ export default {
       this.dataListLoading = true;
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/productinfo/list",
+          this.GLOBAL.baseUrlxg + "/knowledge/list",
           {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
-            mac: this.mac,
-            manufacturer: this.manufacturer,
-            supervisioner: this.supervisioner,
-            productName:this.productName
-            
+            productName:this.productName,
+            createUserName:this.createUserName,
+            question:this.question
+            // userName: this.userName,
+            // realName: this.realName,
+            // phone: this.phone,
+            // roleList: this.roleList
+            // current:this.pageIndex,
+            // size:this.pageSize
           },
           {
             headers: {
@@ -144,32 +162,11 @@ export default {
           console.log("err");
         });
     },
-    // 产品类型
-   producttype(){
-       this.$http_
-        .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
-          
-          {
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            }
-          }
-        )
-        .then(res => {
-          console.log(res.data.data);
-          this.options=res.data.data
-         
-        })
-        .catch(res => {
-          console.log("err");
-        });
-   },
+   
     reset() {
-      (this.userName = ""),
-        (this.realName = ""),
-        (this.phone = ""),
-        (this.roleList = "");
+      this.productName='';
+      this.question='';
+      this.createUserName='';
       this.getDataList();
     },
     // 每页数
@@ -212,14 +209,52 @@ export default {
         }
       )
         .then(() => {
-          // 删除用户
+          // 删除
           this.$http_
+            .post(
+              this.GLOBAL.baseUrlxg + "/knowledge/delete",
+              {
+                id: id
+                // sid:window.sessionStorage.getItem('sid')
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+                }
+              }
+            )
+            .then(res => {
+              console.log(res);
+
+              this.$message({
+                message: "操作成功",
+                type: "success",
+                duration: 1500,
+                onClose: () => {
+                  this.getDataList();
+                }
+              });
+              this.dataListLoading = false;
+            })
+            .catch(res => {
+              console.log("err");
+            });
+        })
+        .catch(() => {});
+    },
+    detail(id, detailDatas) {
+      console.log(id);
+      this.$router.push({
+        name: "knowledge-detail",
+        params: { id: id, detailDatas: detailDatas }
+      });
+    },
+    // 产品类型
+    producttype() {
+      this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/productinfo/delete",
-          {
-            id:id,
-            sid:window.sessionStorage.getItem('sid')
-          },
+          this.GLOBAL.baseUrlxg + "/product/name.list",
+
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -227,25 +262,13 @@ export default {
           }
         )
         .then(res => {
-          console.log(res);
-           
-           this.$message({
-                message: res.code == "0" ? "操作成功" : '操作失败',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-          this.dataListLoading = false;
+          console.log(res.data.data);
+          this.options = res.data.data;
         })
         .catch(res => {
           console.log("err");
         });
-        })
-        .catch(() => {});
     },
-    
   }
 };
 </script>

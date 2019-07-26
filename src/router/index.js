@@ -40,6 +40,8 @@ const mainRoutes = {
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' } },
     { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     { path: '/work-detail', component: _import('modules/detail/workorder-detail'), name: 'work-detail', meta: { title: '工单详情', isTab: true } },
+    { path: '/knowledge-detail', component: _import('modules/detail/knowledge-detail'), name: 'knowledge-detail', meta: { title: '维修知识库详情', isTab: true } },
+    { path: '/productbatch-detail', component: _import('modules/detail/productbatch-detail'), name: 'productbatch-detail', meta: { title: '产品批次详情', isTab: true } },
     { path: '/slip-detail', component: _import('modules/detail/slip-detail'), name: 'slip-detail', meta: { title: '回访单详情', isTab: true } },
     { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
   ],
@@ -79,7 +81,7 @@ router.beforeEach((to, from, next) => {
               'list':null},
             { 'id': 1, 'parentId': 1, 'parentName': null, 'name': '回访单', 'url': 'sales/return-slip', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
             { 'id': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
-            { 'id': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
+            { 'id': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/knowledge', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
 
             // { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
             // { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
@@ -93,10 +95,11 @@ router.beforeEach((to, from, next) => {
           { 'id': 6, 'parentId': 0, 'parentName': null, 'name': '产品列表', 'url': 'sales/productlist', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
           { 'id': 7, 'parentId': 0, 'parentName': null, 'name': '产品批次', 'url': 'sales/productBatch', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
           { 'id': 21, 'parentId': 0, 'parentName': null, 'name': '产品类型', 'url': 'sales/productType', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
+          { 'id': 61, 'parentId': 0, 'parentName': null, 'name': '发货记录', 'url': 'sales/delivery', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
         ] }, 
         { 'id': 32, 'parentId': 0, 'parentName': null, 'name': '帐号管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null, 
         'childList': [
-          { 'id': 3, 'parentId': 0, 'parentName': null, 'name': '帐号列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
+          { 'id': 333, 'parentId': 0, 'parentName': null, 'name': '帐号列表', 'url': 'sales/user', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null },
           { 'id': 4, 'parentId': 0, 'parentName': null, 'name': '角色管理', 'url': 'sales/role', 'perms': null, 'type': 1, 'icon': 'role', 'orderNum': 2, 'open': null, 'list': null }, 
         ] },
         { 'id': 35, 'parentId': 0, 'parentName': null, 'name': '系统管理', 'url': 'www.163.com', 'perms': 'test', 'type': 1, 'icon': 'role', 'orderNum': 0, 'open': null,

@@ -115,7 +115,8 @@ export default {
                         console.log(data);
                         if(data.isSuccess=='true'){
                              window.sessionStorage.setItem('sid',res.data.data.loginInfo.sid);
-                             window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
+                            //  window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
+                            window.sessionStorage.setItem('userName',res.data.data.userRole.userName);
                             //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
                              this.$router.replace({ name: 'home' }) //跳转首页--
                               this.$cookie.set('token',res.data.data.loginInfo.sid);

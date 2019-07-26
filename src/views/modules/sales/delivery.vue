@@ -2,31 +2,20 @@
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="mac" placeholder="生产" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="manufacturer" placeholder="生产厂家" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="supervisioner" placeholder="生产监督" clearable></el-input>
-      </el-form-item>
-      <el-form-item label size="mini" prop="roleIdList">
-        <el-select v-model="roleList" multiple placeholder="请选择产品类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button icon="el-icon-document" @click="reset()">重置</el-button>
-        <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+        <el-form-item>
+          <el-input v-model="mac" placeholder="Mac码" clearable></el-input>
+        </el-form-item>
+        <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>  -->
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
-      </el-form-item>
-      <br />
-      <el-form-item>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
+        <el-form-item>
+          <el-button @click="getDataList()">查询</el-button>
+          <el-button icon="el-icon-document" @click="reset()">重置</el-button>
+          <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+          <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
+        </el-form-item>
       </el-form-item>
     </el-form>
+    <br />
     <el-table
       :data="dataList"
       border
@@ -34,41 +23,22 @@
       @selection-change="selectionChangeHandle"
       style="width: 100%;"
     >
-      <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+      <el-table-column type="selection" header-align="center" align="center" width="80"></el-table-column>
       <el-table-column
-        prop="batchNumber"
+        prop="productName"
         header-align="center"
         align="center"
         width="80"
-        label="生产批号"
+        label="产品名称"
       ></el-table-column>
-      <el-table-column prop="productNames" header-align="center" align="center" label="产品"></el-table-column>
-      <el-table-column header-align="center" align="center" label="生产时间">
-        <template slot-scope="scope">
-          <span>{{scope.row.startTime}}</span>--
-          <span>{{scope.row.endTime}}</span>
-          <!-- <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
-          <el-tag v-else size="small">正常</el-tag>-->
-        </template>
-      </el-table-column>
-      <el-table-column prop="manufacturer" header-align="center" align="center" label="生产厂家"></el-table-column>
-      <el-table-column prop="supervisioner" header-align="center" align="center" label="生产监督"></el-table-column>
+      <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
+      <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
+      <el-table-column prop="createTime" header-align="center" align="center" label="发货时间"></el-table-column>
+      <el-table-column prop="shipper" header-align="center" align="center" label="发货人"></el-table-column>
 
-      <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
+      <!-- <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
         <template slot-scope="scope">
-          <el-button
-            v-if="isAuth('sys:log:list')"
-            type="text"
-            size="small"
-            @click="finish(scope.row.id)"
-          >生产完成</el-button>
-           <el-button type="text" size="small" v-if="isAuth('sys:menu:detail')"  @click="detail(scope.row.id,scope.row)">详情</el-button>
-          <!-- <el-button
-            v-if="isAuth('sys:user:update')"
-            type="text"
-            size="small"
-            @click="addOrUpdateHandle(scope.row.id,scope.row)"
-          >修改</el-button> -->
+         
           <el-button
             v-if="isAuth('sys:user:delete')"
             type="text"
@@ -76,7 +46,7 @@
             @click="deleteHandle(scope.row.id)"
           >删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"
@@ -93,7 +63,7 @@
 </template>
 
 <script>
-import AddOrUpdate from "./parductbatch-update-add";
+import AddOrUpdate from "./producttype-update-add";
 export default {
   data() {
     return {
@@ -107,13 +77,8 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
-      // 查询
-      userName: "",
-      realName: "",
-      phone: "",
-      role: "",
-      options: "",
-      roleList: []
+      // search
+      mac:''
     };
   },
   components: {
@@ -129,11 +94,12 @@ export default {
       this.dataListLoading = true;
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/productbatch/list",
+          this.GLOBAL.baseUrlxg + "/shipping/list",
           {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
-            sid: window.sessionStorage.getItem("sid")
+            sid: window.sessionStorage.getItem("sid"),
+            mac:this.mac
             // userName: this.userName,
             // realName: this.realName,
             // phone: this.phone,
@@ -187,10 +153,7 @@ export default {
         });
     },
     reset() {
-      (this.userName = ""),
-        (this.realName = ""),
-        (this.phone = ""),
-        (this.roleList = "");
+      this.mac='';
       this.getDataList();
     },
     // 每页数
@@ -236,10 +199,10 @@ export default {
           // 删除用户
           this.$http_
             .post(
-              this.GLOBAL.baseUrl + "/user.delete",
+              this.GLOBAL.baseUrl + "/product/delete",
               {
-                id: id,
-                sid: window.sessionStorage.getItem("sid")
+                id: id
+                // sid:window.sessionStorage.getItem('sid')
               },
               {
                 headers: {
@@ -267,20 +230,29 @@ export default {
         })
         .catch(() => {});
     },
-    // 生产完成
-    finish(id) {
-      this.$confirm("本批次生产已经全部完成？", "确认", {
+    // 登陆许可
+    allowLogin(id, value) {
+      console.log(value);
+
+      var html1 = "是否开启用户登陆权限";
+      var html2 = "是否关闭用户登陆权限";
+      this.$confirm(value == 1 ? html2 : html1, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
+          // 修改用户
           this.$http_
             .post(
-              this.GLOBAL.baseUrlxg + "/productbatch/finish",
+              this.GLOBAL.baseUrl + "/user.update",
               {
+                status: value == 1 ? 2 : 1,
                 id: id,
                 sid: window.sessionStorage.getItem("sid")
+                // createUserRealName:this.GLOBAL.createUserRealName,
+                // createUserName:this.GLOBAL.createUserName,
+                // sid:this.GLOBAL.sid
               },
               {
                 headers: {
@@ -288,37 +260,22 @@ export default {
                 }
               }
             )
-            .then(res => {
-              console.log(res);
+            .then(({ data }) => {
+              console.log(data);
               this.$message({
                 type: "success",
-                message: "操作成功!",
-                 onClose: () => {
-                  this.getDataList()
-                }
+                message: "设置成功!"
               });
-
-              this.dataListLoading = false;
+              this.getDataList();
             });
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消"
-          });
+          // this.$message({
+          //   type: 'info',
+          //   message: '已取消删除'
+          // });
         });
-    },
-     // 详情
-    detail(id, detailDatas) {
-      console.log(id);
-      window.sessionStorage.setItem('batchid',id);
-      this.$router.push({
-        name: "productbatch-detail",
-        params: { id: id, detailDatas: detailDatas }
-      });
-      // window.sessionStorage.setItem('detaiId',id);
-      // window.sessionStorage.setItem('detailDatas',JSON.stringify(detailDatas));
-    },
+    }
   }
 };
 </script>

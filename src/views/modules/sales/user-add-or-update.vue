@@ -50,17 +50,38 @@
           <el-radio :label="1">正常</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="添加头像" size="mini" style="position:absolute;top:80px;right:70px">
-        <el-upload
+      <el-form-item  size="mini" style="position:absolute;top:80px;right:70px">
+        <!-- <el-upload
           class="avatar-uploader"
+           accept="image/*"
+            list-type="picture-card"
+             name="uploadFile"
           :http-request="httpRequest"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
-          
+          :on-preview="handlePictureCardPreview"
         >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
+        </el-upload> -->
+         <el-upload
+          
+            accept="image/*"
+            
+            list-type="picture"
+            name="uploadFile"
+            :file-list="picList"
+            :http-request="httpRequest"
+            :on-remove="handleRemove"
+            limit= '1'
+            
+          >
+           
+            <el-button size="small" type="primary">点击上传头像</el-button>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -110,6 +131,8 @@ export default {
       roleIdList: [],
       imageUrl: "",
       imgurlbase:'',
+      dialogImageUrl: '',
+      dialogVisible: false,
       dataForm: {
         // id: 0,
         userName: "",
@@ -207,7 +230,7 @@ export default {
               .then(({ data }) => {
                 if (data.data.isSuccess == "false") {
                   this.$message({
-                    message: data.errorMsg,
+                    message: data.data.errorMsg,
                     type: "success",
                     duration: 1500,
                     onClose: () => {
@@ -298,25 +321,7 @@ export default {
                     });
                   });
               });
-            // 修改维修单
-            //  this.$http_
-            // .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
-            //   headers: {
-            //     "Content-Type": "application/json;charset=UTF-8"
-            //   }
-            // })
-            // .then(({ data }) => {
-            //   console.log(data.isSuccess);
-            //   _this.$message({
-            //     message: "操作成功",
-            //     type: "success",
-            //     duration: 1500,
-            //     onClose: () => {
-            //       _this.visible = false;
-            //       _this.$emit("refreshDataList");
-            //     }
-            //   });
-            // });
+           
           }
         });
       }
@@ -324,17 +329,17 @@ export default {
     //图片上传转流
     httpRequest(file) {
       console.log(file.file);
-
+      console.log(file.url);
       var reader = new FileReader();
       reader.readAsDataURL(file.file);
-
+     
       reader.onload = e => {
         var imgurlbase = e.target.result.split(",");
         imgurlbase.shift();
         imgurlbase = imgurlbase.toString();
         console.log(imgurlbase);
         this.imgurlbase=imgurlbase;
-       
+         this.imageUrl = imgurlbase;
       };
     },
     // 删除图片
@@ -361,7 +366,7 @@ export default {
     // 上传用户头像
     picupload(imgurlbase) {
       var params = new URLSearchParams();
-       params.append('worksheetId', '2');  
+      //  params.append('worksheetId', '2');  
       params.append('filePostfix', '.jpg');  
       params.append('type', 3);
        params.append('sid', window.sessionStorage.getItem('sid'));
@@ -380,7 +385,7 @@ export default {
         )
         .then(({ data }) => {
           console.log(data.data);
-          this.imageUrl=data.data;
+          // this.imageUrl=data.data;
         });
     },
     handleAvatarSuccess(res, file) {
@@ -389,8 +394,9 @@ export default {
       console.log(file);
     },
     handlePictureCardPreview(file) {
-      this.imageUrl = file.url;
-      // this.dialogVisible = true;
+       this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+    
     }
   }
 };
