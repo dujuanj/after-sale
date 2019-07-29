@@ -2,7 +2,7 @@
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="mac" placeholder="生产" clearable></el-input>
+        <el-input v-model="batchNumber" placeholder="生产批号" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-input v-model="manufacturer" placeholder="生产厂家" clearable></el-input>
@@ -11,8 +11,8 @@
         <el-input v-model="supervisioner" placeholder="生产监督" clearable></el-input>
       </el-form-item>
       <el-form-item label size="mini" prop="roleIdList">
-        <el-select v-model="roleList" multiple placeholder="请选择产品类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
+        <el-select v-model="productName"  placeholder="请选择产品类型">
+          <el-option v-for="item in options" :key="item.productName" :label="item.productName" :value="item.productName"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -108,12 +108,12 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       // 查询
-      userName: "",
-      realName: "",
-      phone: "",
-      role: "",
-      options: "",
-      roleList: []
+      batchNumber: "",
+      productName: "",
+      batchNumber: "",
+      manufacturer: "",
+      supervisioner: "",
+     
     };
   },
   components: {
@@ -133,13 +133,12 @@ export default {
           {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
-            sid: window.sessionStorage.getItem("sid")
-            // userName: this.userName,
-            // realName: this.realName,
-            // phone: this.phone,
-            // roleList: this.roleList
-            // current:this.pageIndex,
-            // size:this.pageSize
+            sid: window.sessionStorage.getItem("sid"),
+            productNames: this.productName,
+            batchNumber: this.batchNumber,
+            manufacturer: this.manufacturer,
+            supervisioner: this.supervisioner
+            
           },
           {
             headers: {
@@ -162,11 +161,11 @@ export default {
         });
     },
     getRole() {
-      // 查询角色
-      this.$http_
+      // 产品类型
+       this.$http_
         .post(
-          this.GLOBAL.baseUrl + "/role.query",
-          { sid: window.sessionStorage.getItem("sid") },
+          this.GLOBAL.baseUrlxg + "/product/name.list",
+          
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -174,23 +173,19 @@ export default {
           }
         )
         .then(res => {
-          console.log(res);
-          if (res.status == "200") {
-            console.log(res);
-            console.log(res.data);
-            console.log(res.data.data);
-            this.options = res.data.data;
-          }
+          console.log(res.data.data);
+          this.options=res.data.data
+         
         })
         .catch(res => {
           console.log("err");
         });
     },
     reset() {
-      (this.userName = ""),
-        (this.realName = ""),
-        (this.phone = ""),
-        (this.roleList = "");
+      this.productName = "",
+        this.batchNumber = "",
+        this.manufacturer = "",
+        this.supervisioner = "";
       this.getDataList();
     },
     // 每页数
@@ -312,6 +307,7 @@ export default {
     detail(id, detailDatas) {
       console.log(id);
       window.sessionStorage.setItem('batchid',id);
+      window.sessionStorage.setItem('batchnumber',detailDatas.batchNumber)
       this.$router.push({
         name: "productbatch-detail",
         params: { id: id, detailDatas: detailDatas }

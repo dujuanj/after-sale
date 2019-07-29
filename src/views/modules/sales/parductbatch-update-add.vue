@@ -122,6 +122,8 @@ export default {
   },
   methods: {
     init(id, datas) {
+        // 产品类型
+        this.producttype();
       // this.dataForm.id = id || 0;
       this.dataForm.sid = window.sessionStorage.getItem("sid");
       this.visible = true;
@@ -130,14 +132,15 @@ export default {
         //修改
 
         this.dataForm = datas;
-
+        console.log(this.dataForm);
         this.newform = false;
+         this.dynamicValidateForm.domains=datas.batchInfoList;
       } else {
         //新建
         this.dataForm={}
         this.newform = true;
-        // 产品类型
-        this.producttype();
+       
+        console.log(this.dataForm);
       }
     },
     // 产品类型
@@ -221,40 +224,13 @@ export default {
           //修改用户帐号列表
           if (valid) {
             this.$http_
-              .post(this.GLOBAL.baseUrl + "/user.update", this.dataForm, {
+              .post(this.GLOBAL.baseUrlxg + "/productbatch/update", this.dataForm, {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"
                 }
               })
               .then(({ data }) => {
-                console.log(data.isSuccess);
-                // 为用户修改角色
-                this.$http_
-                  .post(
-                    this.GLOBAL.baseUrl + "/user.grant.role",
-                    {
-                      sid: window.sessionStorage.getItem("sid"),
-                      userId: this.dataForm.id,
-                      roleIdList: this.roleIdList
-                    },
-                    {
-                      headers: {
-                        "Content-Type": "application/json;charset=UTF-8"
-                      }
-                    }
-                  )
-                  .then(({ data }) => {
-                    console.log(data.isSuccess);
-                    this.$message({
-                      message: "操作成功",
-                      type: "success",
-                      duration: 1500,
-                      onClose: () => {
-                        this.visible = false;
-                        this.$emit("refreshDataList");
-                      }
-                    });
-                  });
+                console.log(data);
               });
           }
         });

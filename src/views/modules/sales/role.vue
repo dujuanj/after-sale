@@ -34,7 +34,7 @@
             v-if="isAuth('sys:role:update')"
             type="text"
             size="small"
-            @click="addOrUpdateHandle(scope.row.roleId)"
+            @click="addOrUpdateHandle(scope.row.roleId,scope.row)"
           >配置</el-button>
           <el-button
             v-if="isAuth('sys:role:delete')"
@@ -128,10 +128,10 @@ export default {
       this.dataListSelections = val;
     },
     // 新增 / 修改
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,datas) {
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id);
+        this.$refs.addOrUpdate.init(id,datas);
       });
     },
     // 删除

@@ -185,7 +185,7 @@ export default {
           // 删除用户
           this.$http_
         .post(
-          this.GLOBAL.baseUrl + "/product/delete",
+          this.GLOBAL.baseUrlxg + "/product/delete",
           {
             id:id,
             // sid:window.sessionStorage.getItem('sid')

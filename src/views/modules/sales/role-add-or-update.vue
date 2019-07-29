@@ -60,7 +60,7 @@ export default {
     };
   },
   methods: {
-    init(id) {
+    init(id,datas) {
       this.dataForm.id = id || 0;
       this.visible = true;
       // 查询系统中所有资源,用于授权
@@ -92,6 +92,12 @@ export default {
             console.log(this.$refs.menuListTree.getCheckedKeys());
           });
         });
+        if(datas){
+          // 修改
+          this.dataForm=datas;
+        }else{
+          this.dataForm={}
+        }
     },
     // 表单提交
     dataFormSubmit() {
