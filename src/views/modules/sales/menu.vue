@@ -193,12 +193,12 @@
         )
         .then(res => {
           console.log(res);
-          if (res.status == "200") {
+        
             console.log(res.data.data);
             this.dataList = res.data.data.menuList;
             console.log(this.dataList);
             // this.totalPage = res.data.data.total;
-          }
+          
           this.dataListLoading = false;
         })
         .catch(res => {

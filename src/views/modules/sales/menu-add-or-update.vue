@@ -127,7 +127,8 @@ export default {
         perms: "",
         orderNum: 0,
         icon: "",
-        iconList: []
+        iconList: [],
+        level:''
       },
       dataRule: {
         name: [
@@ -154,12 +155,13 @@ export default {
       this.visible = true;
 
      
-      if (datas != undefined || datas != null) {
+      if (datas) {
         this.dataForm = datas;
         console.log(datas);
         console.log(this.dataForm.type);
         console.log(typeof this.dataForm.type);
         this.dataForm.type=String(datas.type);
+        this.dataForm.level=String(datas.level);
          this.newform = false;
       }else{
          this.newform=true;

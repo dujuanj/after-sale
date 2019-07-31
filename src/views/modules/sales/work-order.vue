@@ -59,20 +59,9 @@
         <el-input v-model="customerRealName" placeholder="输入客户姓名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <select v-model="productType">
-          <!-- <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>-->
-          <option value>请选择产品类型</option>
-          <option value="1">初柜</option>
-          <option value="5">门锁</option>
-          <option value="4">门禁</option>
-          <option value="2">2层屉柜</option>
-          <option value="3">3层屉柜</option>
-        </select>
+        <el-select v-model="productType"  placeholder="请选择产品类型">
+          <el-option v-for="item in options" :key="item.id" :label="item.productName" :value="item.id"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-input v-model="mac" placeholder="输入Mac地址" clearable></el-input>
@@ -84,19 +73,19 @@
         <el-input v-model="dataForm.paramKey" placeholder="输入问题关键词" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <select>
+        <select v-model="worksheetStatus">
           <!-- <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           ></el-option>-->
-          <option value>请选择执行状态</option>
-          <option value="1">新建</option>
+          <option value=''>请选择执行状态</option>
+          <option value="1">新建完成</option>
           <option value="2">已分派</option>
           <option value="3">执行中</option>
-          <option value="4">处理完成</option>
-          <option value="5">结束</option>
+          <option value="4">工单关闭</option>
+          <option value="5">已回访</option>
         </select>
       </el-form-item>
       <el-form-item>
@@ -150,13 +139,13 @@
         :show-overflow-tooltip="true"
       ></el-table-column>
       <el-table-column
-        prop="revisitTime"
+        prop="createTime"
         header-align="center"
         align="center"
         label="时间"
         :show-overflow-tooltip="true"
       ></el-table-column>
-      <el-table-column prop="serviceUserRealName" header-align="center" align="center" label="服务人员"></el-table-column>
+      <el-table-column prop="serviceUserName" header-align="center" align="center" label="服务人员"></el-table-column>
       <el-table-column header-align="center" align="center" label="执行状态">
         <template slot-scope="scope">
           <span>{{ scope.row.worksheetStatus==1?"创建":scope.row.worksheetStatus==2?"已分派":scope.row.worksheetStatus==3?"执行中":scope.row.worksheetStatus==4?"处理完成":scope.row.worksheetStatus==5?"结束":'' }}</span>
@@ -188,7 +177,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 工单弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" :productype='options'></add-or-update>
 
     <!-- 回访单弹窗，新增 -->
     <revisit-add-or-update v-if="revisitVisible" ref="revisitaddOrUpdate" @refreshDataList="getDataList"></revisit-add-or-update>
@@ -223,6 +212,7 @@ export default {
  
   data() {
     return {
+        options:'',
       values: "",
       dataForm: {
         paramKey: ""
@@ -244,7 +234,8 @@ export default {
       customerRealName: "",
       productType: "",
       mac: "",
-      serviceUserRealName: ""
+      serviceUserRealName: "",
+      worksheetStatus:''
     };
   },
   mounted() {
@@ -252,15 +243,7 @@ export default {
     this.initChartPie();
   
   },
-  activated() {
-    // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
-    if (this.chartLine) {
-      this.chartLine.resize();
-    }
-    if (this.chartPie) {
-      this.chartPie.resize();
-    }
-  },
+ 
   components: {
     AddOrUpdate,
     RevisitAddOrUpdate
@@ -268,6 +251,14 @@ export default {
   },
   activated() {
     this.getDataList();
+    this.producttype();
+     // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
+    if (this.chartLine) {
+      this.chartLine.resize();
+    }
+    if (this.chartPie) {
+      this.chartPie.resize();
+    }
   },
   methods: {
     listenCall(methodsWords, id, detailDatas) {
@@ -284,6 +275,27 @@ export default {
       // window.sessionStorage.setItem('detaiId',id);
       // window.sessionStorage.setItem('detailDatas',JSON.stringify(detailDatas));
     },
+    // 产品类型
+   producttype(){
+       this.$http_
+        .post(
+          this.GLOBAL.baseUrlxg + "/product/name.list",
+          
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res.data.data);
+          this.options=res.data.data
+         
+        })
+        .catch(res => {
+          console.log("err");
+        });
+   },
     // 折线图
     initChartLine() {
       var option = {
@@ -415,7 +427,8 @@ export default {
             productType: this.productType,
             mac: this.mac,
             serviceUserRealName: this.serviceUserRealName,
-            sid:window.sessionStorage.getItem('sid')
+            sid:window.sessionStorage.getItem('sid'),
+            worksheetStatus:this.worksheetStatus
           },
           {
             headers: {
@@ -443,9 +456,10 @@ export default {
     },
     reset() {
       (this.customerRealName = ""),
-        (this.productType = ""),
-        (this.mac = ""),
-        (this.serviceUserRealName = "")
+        this.productType = "",
+        this.mac = "",
+        this.serviceUserRealName = "",
+        this.worksheetStatus=''
         this.getDataList();
     },
     // 每页数

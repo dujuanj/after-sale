@@ -166,10 +166,10 @@ export default {
         });
    },
     reset() {
-      (this.userName = ""),
-        (this.realName = ""),
-        (this.phone = ""),
-        (this.roleList = "");
+      this.mac = "",
+      this.manufacturer = "",
+      this.supervisioner = "",
+      this.productName = "";
       this.getDataList();
     },
     // 每页数

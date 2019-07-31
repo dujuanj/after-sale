@@ -83,7 +83,7 @@ router.beforeEach((to, from, next) => {
             { 'id': 2, 'parentId': 1, 'parentName': null, 'name': '客户信息', 'url': 'sales/customer', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 2, 'open': null, 'list': null }, 
             { 'id': 3, 'parentId': 1, 'parentName': null, 'name': '维修知识库', 'url': 'sales/knowledge', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 3, 'open': null, 'list': null }, 
 
-            // { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
+            { 'menuId': 4, 'parentId': 1, 'parentName': null, 'name': '维修单', 'url': 'sales/maintenance-slip', 'perms': null, 'type': 1, 'icon': 'menu', 'orderNum': 3, 'open': null, 'list': null }, 
             // { 'menuId': 5, 'parentId': 1, 'parentName': null, 'name': 'SQL监控', 'url': 'http://localhost:8080/renren-fast/druid/sql.html', 'perms': null, 'type': 1, 'icon': 'sql', 'orderNum': 4, 'open': null, 'list': null }, 
             // { 'menuId': 6, 'parentId': 1, 'parentName': null, 'name': '定时任务', 'url': 'job/schedule', 'perms': null, 'type': 1, 'icon': 'job', 'orderNum': 5, 'open': null, 'list': null }, 
             // { 'menuId': 30, 'parentId': 1, 'parentName': null, 'name': '文件上传', 'url': 'oss/oss', 'perms': 'sys:oss:all', 'type': 1, 'icon': 'oss', 'orderNum': 6, 'open': null, 'list': null }, 
@@ -106,6 +106,7 @@ router.beforeEach((to, from, next) => {
          'childList': [
           { 'id': 8, 'par entId': 1, 'parentName': null, 'name': '菜单管理', 'url': 'sales/menu', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
           { 'id': 9, 'parentId': 1, 'parentName': null, 'name': '登陆日志', 'url': 'sales/log', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
+          { 'id': 19, 'parentId': 1, 'parentName': null, 'name': '操作日志', 'url': 'sales/operation-log', 'perms': null, 'type': 1, 'icon': 'admin', 'orderNum': 1, 'open': null, 'list': null }, 
          ] }, 
       ], 
         'code': 0, 'resList': ['sys:schedule:info', 'sys:menu:update', 'sys:menu:delete','sys:menu:detail','sys:menu:revist', 'sys:config:info', 'sys:menu:list', 'sys:config:save',
@@ -128,7 +129,7 @@ router.beforeEach((to, from, next) => {
        "http://58.87.111.66:9010/api/postsale/user.queryUserAndResource",
       {
         sid:window.sessionStorage.getItem('sid'),
-        userId:'36'
+        userId:window.sessionStorage.getItem('userId')
       
       },
       {
@@ -143,13 +144,14 @@ router.beforeEach((to, from, next) => {
         // fnAddDynamicMenuRoutes(data.data.menuList)
         // router.options.isAddDynamicMenuRoutes = true
         // sessionStorage.setItem('menuList', JSON.stringify(data.data.menuList || '[]'))
-        // // sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
+        // sessionStorage.setItem('permissions', JSON.stringify(data.data.resList || '[]'))
         // console.log(data)  // 动态一级菜单
         // next({ ...to, replace: true })
       } else {
         sessionStorage.setItem('menuList', '[]')
         sessionStorage.setItem('permissions', '[]')
         next()
+        router.push({ name: 'login' })
       }
     }).catch((e) => {
       console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')

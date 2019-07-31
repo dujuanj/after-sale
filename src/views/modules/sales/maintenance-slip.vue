@@ -1,39 +1,10 @@
 <template>
 <!-- 回访单 -->
   <div class="mod-user">
-     <el-row :gutter="12" class="marbot_15">
-      <el-col :span="2">
-        <el-card shadow="always">
-          全部回访单
-          <br>
-          <span style="color:#409EFF;font-size:24px;">128</span>
-        </el-card>
-      </el-col>
-      <el-col :span="2">
-        <el-card shadow="always">
-          满意
-          <br>
-          <span style="color:#F56C6C;font-size:24px;">128</span>
-        </el-card>
-      </el-col>
-      <el-col :span="2">
-        <el-card shadow="always">
-          不满意
-          <br>
-          <span style="color:#E6A23C;font-size:24px;">128</span>
-        </el-card>
-      </el-col>
-      <el-col :span="2">
-        <el-card shadow="hover">
-          满意度
-          <br>
-          <span style="color:#606266;font-size:24px;">128</span>
-        </el-card>
-      </el-col>
-    </el-row>
+    
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="customerRealName" placeholder="输入客户姓名 " clearable></el-input>
+        <el-input v-model="serviceUserRealName" placeholder="输入维修人员姓名 " clearable></el-input>
       </el-form-item>
        <el-form-item>
           <el-select v-model="productType"  placeholder="请选择产品类型">
@@ -48,7 +19,8 @@
          <el-button icon="el-icon-document" @click="reset()">重置</el-button>
         <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
-      </el-form-item>
+      </el-form-item> <br>
+       <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()" style='margin-bottom:15px;'>新增</el-button>
     </el-form>
     <el-table
       :data="dataList"
@@ -63,69 +35,60 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="number"
+        prop="serviceUserRealName"
         header-align="center"
         align="center"
         width="110"
-        label="工单编号">
+        label="上门人员姓名">
       </el-table-column>
       <el-table-column
-        prop="customerRealName"
+        prop="serviceUserName"
         header-align="center"
         align="center"
-        label="客户姓名">
+        label="上门人员用户名">
       </el-table-column>
       <el-table-column
-        prop="customerPhone"
+        prop="serviceAppointmentTimeType"
         header-align="center"
         align="center"
-        label="联系电话">
+        label="服务预约时间类型">
+          <template
+          slot-scope="scope"
+        >{{scope.row.serviceAppointmentTimeType==1?"随时上门":scope.row.serviceAppointmentTimeType==2?"具体时间":''}}</template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" label="产品">
+      <el-table-column header-align="center" align="center" label="服务情况">
         <template
           slot-scope="scope"
-        >{{scope.row.productType==1?"初柜":scope.row.productType==2?"2层屉柜":scope.row.productType==3?"3层屉柜":scope.row.productType==4?"门禁":scope.row.productType==5?"门锁":''}}</template>
+        >{{scope.row.serviceStatusType==5?"修好了":scope.row.serviceStatusType==6?"修不了":''}}</template>
       </el-table-column>
       <el-table-column
-        prop="contentDetail"
+        prop="serviceStatusDetail"
         header-align="center"
         align="center"
          :show-overflow-tooltip="true"
-        label="投诉内容">
+        label="服务备注">
         <!-- <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
           <el-tag v-else size="small">正常</el-tag>
         </template> -->
       </el-table-column>
       <el-table-column
-        prop="revisitTime"
+        prop="serviceFinishTime"
         header-align="center"
         align="center"
         width="180"
-        label="回访时间">
+        label="服务结束时间">
       </el-table-column>
-       <el-table-column
-        prop="revisitUserRealName"
+      <el-table-column
+        prop="serviceAppointmentTimeType"
         header-align="center"
         align="center"
-        width="180"
-        label="回访人员">
+        label="工单状态">
+          <template
+          slot-scope="scope"
+        >{{scope.row.worksheetStatus==6?"创建完成":scope.row.worksheetStatus==7?"已经分派":scope.row.worksheetStatus==8?"工人接单（处理中)":scope.row.worksheetStatus==9?"9-	工人完成（处理成功）":scope.row.worksheetStatus==10?"工单关闭":''}}</template>
       </el-table-column>
-       <el-table-column
-        prop="revisitContent"
-        header-align="center"
-        align="center"
-        width="180"
-         :show-overflow-tooltip="true"
-        label="回访信息">
-      </el-table-column>
-       <el-table-column
-        prop="revisitScore"
-        header-align="center"
-        align="center"
-        width="180"
-        label="满意度">
-      </el-table-column>
+     
       <el-table-column
         fixed="right"
         header-align="center"
@@ -134,7 +97,7 @@
         label="操作">
         <template slot-scope="scope">
           <!-- <el-button  type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button> -->
-           <el-button  type="text" v-if="isAuth('sys:menu:detail')"  size="small" index="slip-detail"  @click="listenCall(scope.row.id,scope.row)" >详情</el-button>
+           <!-- <el-button  type="text" v-if="isAuth('sys:menu:detail')"  size="small" index="slip-detail"  @click="listenCall(scope.row.id,scope.row)" >详情</el-button> -->
            <el-button type="text" v-if="isAuth('sys:menu:update')"  size="mini" @click="addOrUpdateHandle(scope.row.id,scope.row)" >修改</el-button>
           <!-- <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button> -->
         </template>
@@ -151,13 +114,13 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
    <!-- 回访单弹窗，修改 -->
-    <revisit-add-or-update v-if="revisitVisible" ref="revisitaddOrUpdate" @refreshDataList="getDataList"></revisit-add-or-update>
+    <add-or-update v-if="visible" ref="revisitaddOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './user-add-or-update'
-  import RevisitAddOrUpdate from '../sales/revisit-add-or-update'
+  import AddOrUpdate from './maintenace-update-add'
+ 
   export default {
     data () {
       return {
@@ -172,7 +135,7 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        revisitVisible:false,
+        visible:false,
         // 查询
         productType:'',
         customerRealName:'',
@@ -181,7 +144,7 @@
     },
     components: {
       AddOrUpdate,
-      RevisitAddOrUpdate
+     
     },
     activated () {
       this.getDataList();
@@ -223,16 +186,13 @@
       const _this = this;
       this.$http_
         .post(
-          this.GLOBAL.baseUrl + "/worksheet.query",
+          this.GLOBAL.baseUrl + "/repair.query",
           {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
-            customerRealName: this.customerRealName,
-            productType: this.productType,
-            mac: this.mac,
-            serviceUserRealName: this.serviceUserRealName,
+            serviceUserRealName: this.serviceUserRealName,         
             sid:window.sessionStorage.getItem('sid'),
-            revisitUserName:this.revisitUserName
+           
           },
           {
             headers: {
@@ -242,12 +202,12 @@
         )
         .then(res => {
           console.log(res);
-          if (res.status == "200") {
+          
             console.log(res.data.data);
             _this.dataList = res.data.data.list;
             console.log(_this.dataList);
             this.totalPage = res.data.data.total;
-          }
+          
           this.dataListLoading = false;
         })
         .catch(res => {
@@ -308,10 +268,10 @@
       },
         // 新增 / 修改
     addOrUpdateHandle(id,detailDatas) {
-        this.revisitVisible = true;
-      console.log(this.revisitVisible);
+        this.visible = true;
+    
         this.$nextTick(() => {
-        this.$refs.revisitaddOrUpdate.update(id, detailDatas);
+        this.$refs.revisitaddOrUpdate.init(id, detailDatas);
       });
     },
     }

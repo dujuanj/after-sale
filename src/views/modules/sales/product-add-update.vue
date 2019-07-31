@@ -48,11 +48,13 @@
         <el-input v-model="dataForm.mac" placeholder="Mac码" style="width:50%;"></el-input>
       </el-form-item>
       <el-form-item label="备注">
-        <el-input v-model="dataForm.remark" type="text" placeholder="备注" disabled></el-input>
+        <!-- <el-input v-model="dataForm.remark" type="text" placeholder="备注" disabled></el-input> -->
+        <span>{{dataForm.remark}}</span>
       </el-form-item>
       <el-form-item label="生产时间" prop="productTime">
-        <!-- <el-input v-model="dataForm.productTime" placeholder="生产时间" style="width:50%;"></el-input> -->
-        <el-date-picker
+        <!-- <el-input v-model="dataForm.productTime" placeholder="生产时间" style="width:50%;" disabled></el-input> -->
+        <span>{{dataForm.startTime}} -- {{dataForm.endTime}}</span>
+        <!-- <el-date-picker
           v-model="dataForm.productTime"
           type="datetimerange"
           align="right"
@@ -61,14 +63,16 @@
           :default-time="['12:00:00', '08:00:00']"
           value-format="timestamp"
           disabled
-        ></el-date-picker>
+        ></el-date-picker> -->
       </el-form-item>
 
       <el-form-item label="生产厂家">
-        <el-input v-model="dataForm.manufacturer" type="text" placeholder="生产厂家工号" disabled></el-input>
+        <!-- <el-input v-model="dataForm.manufacturer" type="text" placeholder="生产厂家工号" disabled></el-input> -->
+        <span>{{dataForm.manufacturer}}</span>
       </el-form-item>
       <el-form-item label="生产监督">
-        <el-input v-model="dataForm.supervisioner" type="text" placeholder="生产监督" disabled></el-input>
+        <!-- <el-input v-model="dataForm.supervisioner" type="text" placeholder="生产监督" disabled></el-input> -->
+        <span>{{dataForm.supervisioner}}</span>
       </el-form-item>
 
       <!-- <el-form-item label="售出时间">

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增批次' : '修改用户'"
+    :title="!dataForm.id ? '新增批次' : '修改批次'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -35,8 +35,8 @@
             <el-option
               v-for="item in optionss"
               :key="item.value"
-              :label="item.product_model"
-              :value="item.product_model"
+              :label="item.productModel"
+              :value="item.productModel"
             ></el-option>
           </el-select>
           <!-- 数量 -->
@@ -231,6 +231,15 @@ export default {
               })
               .then(({ data }) => {
                 console.log(data);
+                 this.$message({
+                    message: data.msg,
+                    type: "success",
+                    duration: 1500,
+                    onClose: () => {
+                      this.$emit("refreshDataList");
+                      this.visible = false;
+                    }
+                  });
               });
           }
         });

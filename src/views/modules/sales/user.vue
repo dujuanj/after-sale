@@ -68,12 +68,12 @@
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="190" label="操作">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             v-if="isAuth('sys:log:list')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id)"
-          >登陆日志</el-button>
+          >登陆日志</el-button> -->
           <el-button
             v-if="isAuth('sys:user:update')"
             type="text"

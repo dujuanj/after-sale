@@ -58,7 +58,7 @@
 
       <el-form-item label="产品类型" prop="paramValue" style="width:50%;">
         <!-- <el-input v-model="dataForm.productType" placeholder="电话"></el-input> -->
-        <select
+        <!-- <select
           v-model="dataForm.productType"
           placeholder="选择产品类型"
           style="padding:0 10px;width:100%;"
@@ -69,7 +69,10 @@
           <option value="4">门禁</option>
           <option value="2">2层屉柜</option>
           <option value="3">3层屉柜</option>
-        </select>
+        </select> -->
+         <el-select v-model="dataForm.productType"  placeholder="请选择产品类型">
+          <el-option v-for="item in productype" :key="item.value" :label="item.productName" :value="item.id"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="产品型号" prop="paramValue" style="width:50%;">
         <el-input v-model="dataForm.productModel" placeholder="电话"></el-input>
@@ -98,7 +101,7 @@
         </select>
       </el-form-item>
       <el-form-item label="服务人员" prop="paramValue">
-        <el-input v-model="dataForm.revisitUserRealName" placeholder="服务人员"></el-input>
+        <el-input v-model="dataForm.serviceUserName" placeholder="服务人员"></el-input>
       </el-form-item>
       <el-form-item label="服务时间" prop="paramValue">
         <el-date-picker
@@ -123,12 +126,10 @@
 
 <script>
 export default {
-  // props:{
-  //   dataForm:{
-  //     // type:Array,
-  //     required:true
-  //   }
-  // },
+  props: {
+          productype: Object,
+          required: true
+        },
   data() {
     return {
       visible: false,
@@ -238,25 +239,25 @@ export default {
                 });
               });
             // 新建维修单
-            this.$http_
-              .post(this.GLOBAL.baseUrl + "/repair.add", this.dataForm, {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
-                }
-              })
-              .then(({ data }) => {
-                console.log(data);
-                console.log(data.isSuccess);
-                _this.$message({
-                  message: "操作成功",
-                  type: "success",
-                  duration: 1500,
-                  onClose: () => {
-                    _this.visible = false;
-                    _this.$emit("refreshDataList");
-                  }
-                });
-              });
+            // this.$http_
+            //   .post(this.GLOBAL.baseUrl + "/repair.add", this.dataForm, {
+            //     headers: {
+            //       "Content-Type": "application/json;charset=UTF-8"
+            //     }
+            //   })
+            //   .then(({ data }) => {
+            //     console.log(data);
+            //     console.log(data.isSuccess);
+            //     _this.$message({
+            //       message: "操作成功",
+            //       type: "success",
+            //       duration: 1500,
+            //       onClose: () => {
+            //         _this.visible = false;
+            //         _this.$emit("refreshDataList");
+            //       }
+            //     });
+            //   });
           }
         });
       } else {
@@ -283,24 +284,24 @@ export default {
                 });
               });
               // 修改维修单
-               this.$http_
-              .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
-                }
-              })
-              .then(({ data }) => {
-                console.log(data.isSuccess);
-                _this.$message({
-                  message: "操作成功",
-                  type: "success",
-                  duration: 1500,
-                  onClose: () => {
-                    _this.visible = false;
-                    _this.$emit("refreshDataList");
-                  }
-                });
-              });
+              //  this.$http_
+              // .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
+              //   headers: {
+              //     "Content-Type": "application/json;charset=UTF-8"
+              //   }
+              // })
+              // .then(({ data }) => {
+              //   console.log(data.isSuccess);
+              //   _this.$message({
+              //     message: "操作成功",
+              //     type: "success",
+              //     duration: 1500,
+              //     onClose: () => {
+              //       _this.visible = false;
+              //       _this.$emit("refreshDataList");
+              //     }
+              //   });
+              // });
           }
         });
       }

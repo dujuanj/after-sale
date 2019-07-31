@@ -231,7 +231,7 @@ export default {
           // 删除用户
           this.$http_
             .post(
-              this.GLOBAL.baseUrl + "/user.delete",
+              this.GLOBAL.baseUrlxg + "/productbatch/delete",
               {
                 id: id,
                 sid: window.sessionStorage.getItem("sid")
@@ -247,7 +247,7 @@ export default {
 
               this.$message({
                 message:
-                  res.data.isSuccess == "true" ? "操作成功" : res.data.errorMsg,
+                  res.data.msg,
                 type: "success",
                 duration: 1500,
                 onClose: () => {

@@ -186,6 +186,7 @@ export default {
       } else {
         //新建
         this.newform = true;
+        this.dataForm={}
         // this.dataForm=[];
         // this.roleIdList=[];
       }

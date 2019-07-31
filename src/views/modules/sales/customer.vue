@@ -1,32 +1,18 @@
 <template>
   <div class="mod-user">
-    <el-row :gutter="12" class="marbot_15">
-      <el-col :span="2">
-        <el-card shadow="always">
-          全部客户
-          <br>
-          <span style="color:#409EFF;font-size:24px;">128</span>
-        </el-card>
-      </el-col>
-      <el-col :span="2">
-        <el-card shadow="always">
-          全部产品
-          <br>
-          <span style="color:#F56C6C;font-size:24px;">128</span>
-        </el-card>
-      </el-col>
-    </el-row>
+    
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.userName" placeholder="输入客户姓名" clearable></el-input>
+        <el-input v-model="customerRealName" placeholder="输入客户姓名" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+         <el-button @click="reset()">重置</el-button>
+        <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+        <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
-     <el-button icon="el-icon-upload" @click="addOrUpdateHandle()">导出</el-button>
+     <!-- <el-button icon="el-icon-upload" @click="addOrUpdateHandle()">导出</el-button> -->
     <el-table
       :data="dataList"
       border
@@ -40,14 +26,14 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
+        prop="customerRealName"
         header-align="center"
         align="center"
         width="80"
         label="客户姓名">
       </el-table-column>
       <el-table-column
-        prop="username"
+        prop="customerPhone"
         header-align="center"
         align="center"
         label="联系电话">
@@ -57,15 +43,18 @@
         header-align="center"
         align="center"
         label="地址">
+         <template slot-scope="scope">
+           <span>{{scope.row.customerProvince}} {{scope.row.customerCity}} {{scope.row.customerCounty}}</span>
+         </template>
       </el-table-column>
       <el-table-column
-        prop="mobile"
+        prop="productType"
         header-align="center"
         align="center"
         label="购买产品">
       </el-table-column>
           
-      <el-table-column
+      <!-- <el-table-column
         fixed="right"
         header-align="center"
         align="center"
@@ -76,7 +65,7 @@
           <el-button v-if="isAuth('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button>
           <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"
@@ -106,7 +95,8 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        customerRealName:''
       }
     },
     components: {
@@ -119,24 +109,39 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/user/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'username': this.dataForm.userName
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
+        const _this = this;
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/worksheet.query",
+          {
+            currentPage: this.pageIndex,
+            pageSize: this.pageSize,
+            customerRealName: this.customerRealName,
+            productType: this.productType,
+            mac: this.mac,
+            serviceUserRealName: this.serviceUserRealName,
+            sid:window.sessionStorage.getItem('sid'),
+            revisitUserName:this.revisitUserName
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
           }
-          this.dataListLoading = false
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res.data.data);
+            _this.dataList = res.data.data.list;
+            console.log(_this.dataList);
+            this.totalPage = res.data.data.total;
+          }
+          this.dataListLoading = false;
         })
+        .catch(res => {
+          console.log("err");
+        });
       },
       // 每页数
       sizeChangeHandle (val) {
@@ -189,6 +194,10 @@
             }
           })
         }).catch(() => {})
+      },
+      reset(){
+        this.customerRealName='',
+        this.getDataList()
       }
     }
   }

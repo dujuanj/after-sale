@@ -21,7 +21,7 @@
             <el-form-item prop="password">
               <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
             </el-form-item>
-            <el-form-item prop="captcha">
+            <!-- <el-form-item prop="captcha">
               <el-row :gutter="20">
                 <el-col :span="14">
                   <el-input v-model="dataForm.verification" placeholder="验证码"></el-input>
@@ -30,7 +30,7 @@
                   <img :src="captchaPath" @click="getCaptcha()" alt />
                 </el-col>
               </el-row>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item>
               <el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
             </el-form-item>
@@ -115,6 +115,7 @@ export default {
                         console.log(data);
                         if(data.isSuccess=='true'){
                              window.sessionStorage.setItem('sid',res.data.data.loginInfo.sid);
+                             window.sessionStorage.setItem('userId',res.data.data.loginInfo.userId);
                             //  window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
                             window.sessionStorage.setItem('userName',res.data.data.userRole.userName);
                             //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
