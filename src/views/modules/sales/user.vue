@@ -23,7 +23,7 @@
       </el-form-item>
       <br />
       <el-form-item>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('/api/postsale/user.add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -75,13 +75,13 @@
             @click="addOrUpdateHandle(scope.row.id)"
           >登陆日志</el-button> -->
           <el-button
-            v-if="isAuth('sys:user:update')"
+            v-if="isAuth('/api/postsale/user.update')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >修改</el-button>
           <el-button
-            v-if="isAuth('sys:user:delete')"
+            v-if="isAuth('/api/postsale/user.delete')"
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"

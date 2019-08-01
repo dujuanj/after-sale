@@ -23,7 +23,7 @@
       </el-form-item>
       <br />
       <el-form-item>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('/api/postsale/productbatch/add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -57,12 +57,12 @@
       <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
         <template slot-scope="scope">
           <el-button
-            v-if="isAuth('sys:log:list')"
+            v-if="isAuth('/api/postsale/productbatch/finish')"
             type="text"
             size="small"
             @click="finish(scope.row.id)"
           >生产完成</el-button>
-           <el-button type="text" size="small" v-if="isAuth('sys:menu:detail')"  @click="detail(scope.row.id,scope.row)">详情</el-button>
+           <el-button type="text" size="small"   @click="detail(scope.row.id,scope.row)">详情</el-button>
           <!-- <el-button
             v-if="isAuth('sys:user:update')"
             type="text"
@@ -70,7 +70,7 @@
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >修改</el-button> -->
           <el-button
-            v-if="isAuth('sys:user:delete')"
+            v-if="isAuth('/api/postsale/productbatch/delete')"
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"

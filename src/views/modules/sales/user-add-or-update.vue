@@ -73,15 +73,15 @@
             :file-list="picList"
             :http-request="httpRequest"
             :on-remove="handleRemove"
-            limit= '1'
+           
             
           >
            
             <el-button size="small" type="primary">点击上传头像</el-button>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
+          <!-- <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt>
-          </el-dialog>
+          </el-dialog> -->
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -164,7 +164,8 @@ export default {
           { validator: validateMobile, trigger: "blur" }
         ]
       },
-      newform: false //新建
+      newform: false, //新建
+      picList: []
     };
   },
   methods: {
@@ -173,6 +174,7 @@ export default {
       this.dataForm.sid = window.sessionStorage.getItem("sid");
       this.visible = true;
       console.log(datas);
+      this.picList=[]
       if (datas != undefined) {
         //修改
         this.roleIdList = [];
@@ -183,6 +185,10 @@ export default {
           this.roleIdList.push(val.id);
         });
         this.newform = false;
+        this.picList.push(this.dataForm.pic);
+        console.log(this.picList);
+        // this.dialogImageUrl=this.dataForm.pic.url;
+        //   this.dialogVisible = true;
       } else {
         //新建
         this.newform = true;
@@ -394,11 +400,11 @@ export default {
       console.log(res);
       console.log(file);
     },
-    handlePictureCardPreview(file) {
-       this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+    // handlePictureCardPreview(file) {
+    //    this.dialogImageUrl = file.url;
+    //     this.dialogVisible = true;
     
-    }
+    // }
   }
 };
 </script>

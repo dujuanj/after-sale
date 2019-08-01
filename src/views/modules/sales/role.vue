@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="getDataList()">查询</el-button> -->
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('/api/postsale/role.add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <!-- <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -31,13 +31,13 @@
       <el-table-column fixed="right" header-align="center" align="center" width="200" label="操作">
         <template slot-scope="scope">
           <el-button
-            v-if="isAuth('sys:role:update')"
+            v-if="isAuth('/api/postsale/role.update')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.roleId,scope.row)"
           >配置</el-button>
           <el-button
-            v-if="isAuth('sys:role:delete')"
+            v-if="isAuth('/api/postsale/role.delete')"
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"

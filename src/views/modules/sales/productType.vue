@@ -2,7 +2,7 @@
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
      
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> 
+        <el-button v-if="isAuth('/api/postsale/product/add')" type="primary" @click="addOrUpdateHandle()">新增</el-button> 
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form> <br>
@@ -25,7 +25,7 @@
         <template slot-scope="scope">
          
           <el-button
-            v-if="isAuth('sys:user:delete')"
+            v-if="isAuth('/api/postsale/product/delete')"
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"

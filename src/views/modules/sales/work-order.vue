@@ -14,42 +14,42 @@
         <el-card shadow="always">
           全部工单
           <br>
-          <span style="color:#409EFF;font-size:24px;">128</span>
+          <span style="color:#409EFF;font-size:24px;">{{counts.total}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
           待处理
           <br>
-          <span style="color:#F56C6C;font-size:24px;">128</span>
+          <span style="color:#F56C6C;font-size:24px;">{{counts.total}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
           处理中
           <br>
-          <span style="color:#E6A23C;font-size:24px;">128</span>
+          <span style="color:#E6A23C;font-size:24px;">{{counts.handled}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="hover">
           已处理
           <br>
-          <span style="color:#606266;font-size:24px;">128</span>
+          <span style="color:#606266;font-size:24px;">{{counts.dispatched}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
           已关闭
           <br>
-          <span style="color:#909399;font-size:24px;">128</span>
+          <span style="color:#909399;font-size:24px;">{{counts.closed}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
           已回访
           <br>
-          <span style="color:#67C23A;font-size:24px;">128</span>
+          <span style="color:#67C23A;font-size:24px;">{{counts.revisited}}</span>
         </el-card>
       </el-col>
     </el-row>
@@ -101,7 +101,7 @@
     </el-form>
     <!-- <el-button icon="el-icon-download" @click="addOrUpdateHandle()">导入</el-button>
     <el-button icon="el-icon-upload" @click="addOrUpdateHandle()">导出</el-button> -->
-    <el-button type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()" class="marbot_15">新增</el-button>
+    <el-button type="primary" v-if="isAuth('/api/postsale/worksheet.add')" icon="el-icon-plus" @click="addOrUpdateHandle()" class="marbot_15">新增</el-button>
     <!-- 表格 -->
     <el-table
       :data="dataList"
@@ -153,10 +153,10 @@
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="180" label="操作">
         <template slot-scope="scope">
-           <el-button type="text" size="small" v-if="isAuth('sys:menu:detail')"  @click="detail(scope.row.id,scope.row)">详情</el-button>
+           <el-button type="text" size="small"   @click="detail(scope.row.id,scope.row)">详情</el-button>
             <el-button type="text" size="small" v-if="isAuth('sys:menu:revist')" @click="revisitHandle(scope.row.id,scope.row)">回访</el-button>
-           <el-button type="text" size="small" v-if="isAuth('sys:menu:update')" @click="addOrUpdateHandle(scope.row.id,scope.row)">修改</el-button>
-          <el-button type="text" size="small" v-if="isAuth('sys:menu:delete')" @click="deleteHandle(scope.row.id)">删除</el-button>
+           <el-button type="text" size="small" v-if="isAuth('/api/postsale/worksheet.update')" @click="addOrUpdateHandle(scope.row.id,scope.row)">修改</el-button>
+          <el-button type="text" size="small" v-if="isAuth('/api/postsale/worksheet.delete')" @click="deleteHandle(scope.row.id)">删除</el-button>
           <!-- <el-button
             :id="scope.row.id"
             v-for="item in opoperation"
@@ -229,7 +229,7 @@ export default {
       chartLine: null,
       chartPie: null,
       menuList: JSON.parse(sessionStorage.getItem("menuList") || "[]"),
-    
+      counts:'',
       // 查询
       customerRealName: "",
       productType: "",
@@ -259,6 +259,7 @@ export default {
     if (this.chartPie) {
       this.chartPie.resize();
     }
+    this.worksheetcount()
   },
   methods: {
     listenCall(methodsWords, id, detailDatas) {
@@ -544,6 +545,24 @@ export default {
       if (route.length >= 1) {
         this.$router.push({ name: route[0].name });
       }
+    },
+    worksheetcount(){
+      this.$http_
+            .post(
+              this.GLOBAL.baseUrl + "/worksheet.count",
+              { 
+                sid:window.sessionStorage.getItem('sid')
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+                }
+              }
+            )
+            .then(({ data }) => {
+              console.log(data);
+              this.counts=data.data
+            });
     }
   }
 };

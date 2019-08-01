@@ -55,7 +55,7 @@
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >修改</el-button> -->
           <el-button
-            v-if="isAuth('sys:user:delete')"
+            v-if="isAuth('/api/postsale/productinfo/delete')"
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"

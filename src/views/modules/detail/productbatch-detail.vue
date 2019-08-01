@@ -42,7 +42,7 @@
       </div>
     </div>
     <el-button
-      v-if="isAuth('sys:user:save')"
+      v-if="isAuth('/api/postsale/productinfo/add')"
       type="primary"
       @click="addOrUpdateHandle()"
       style="margin-bottom:15px;"
@@ -94,13 +94,13 @@
       <el-table-column fixed="right" header-align="center" align="center" width="190" label="操作">
         <template slot-scope="scope">
           <el-button
-            v-if="isAuth('sys:user:update')"
+            v-if="isAuth('/api/postsale/productinfo/update')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >修改</el-button>
           <el-button
-            v-if="isAuth('sys:user:delete')"
+            v-if="isAuth('/api/postsale/productinfo/delete')"
             type="text"
             size="small"
             @click="deleteHandle(scope.row.id)"
