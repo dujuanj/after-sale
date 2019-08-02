@@ -17,7 +17,7 @@
       <!-- </el-form-item> -->
 
       <el-form-item label="客户姓名" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.customerRealName" placeholder="客户姓名"></el-input>
+        <el-input v-model="dataForm.customerRealName" placeholder="lwg ty 客户姓名"></el-input>
       </el-form-item>
       <el-form-item label="电话" prop="paramValue" style="width:50%;">
         <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input>

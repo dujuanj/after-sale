@@ -73,7 +73,7 @@
             :file-list="picList"
             :http-request="httpRequest"
             :on-remove="handleRemove"
-           
+            
             
           >
            
@@ -289,6 +289,9 @@ export default {
         });
       } else {
         this.dataForm.sid = window.sessionStorage.getItem("sid");
+        if(this.imageUrl){
+          this.picupload()
+        }
         this.$refs["dataForm"].validate(valid => {
           //修改用户帐号列表
           if (valid) {

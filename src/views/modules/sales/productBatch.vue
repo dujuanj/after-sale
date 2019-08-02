@@ -10,7 +10,7 @@
       <el-form-item>
         <el-input v-model="supervisioner" placeholder="生产监督" clearable></el-input>
       </el-form-item>
-      <el-form-item label size="mini" prop="roleIdList">
+      <el-form-item label  prop="roleIdList">
         <el-select v-model="productName"  placeholder="请选择产品类型">
           <el-option v-for="item in options" :key="item.productName" :label="item.productName" :value="item.productName"></el-option>
         </el-select>

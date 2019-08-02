@@ -6,14 +6,14 @@
       <el-form-item>
         <el-input v-model="serviceUserRealName" placeholder="输入维修人员姓名 " clearable></el-input>
       </el-form-item>
-       <el-form-item>
+       <!-- <el-form-item>
           <el-select v-model="productType"  placeholder="请选择产品类型">
           <el-option v-for="item in options" :key="item.value" :label="item.productName" :value="item.productName"></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item>
+      </el-form-item> -->
+      <!-- <el-form-item>
         <el-input v-model="revisitUserName" placeholder="输入回访人员 " clearable></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getDataList()">查询</el-button>
          <el-button icon="el-icon-document" @click="reset()">重置</el-button>

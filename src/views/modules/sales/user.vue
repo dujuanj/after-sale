@@ -10,7 +10,7 @@
       <el-form-item>
         <el-input v-model="phone" placeholder="输入电话号码" clearable></el-input>
       </el-form-item>
-      <el-form-item label="角色" size="mini" prop="roleIdList">
+      <el-form-item label="角色"  prop="roleIdList">
         <el-select v-model="roleList" multiple placeholder="请选择">
           <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
         </el-select>

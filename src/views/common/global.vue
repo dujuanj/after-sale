@@ -8,8 +8,8 @@
 <script>
 
 const serverSrc='www.baidu.com';
-const baseUrl='http://58.87.111.66:9010/api/postsale';
-const baseUrlxg='http://58.87.111.66:9020/api/postsale'
+const baseUrl='https://58.87.111.66:9010/api/postsale';
+const baseUrlxg='https://58.87.111.66:9020/api/postsale'
 // const baseUrl='http://192.168.11.7:9010/api/postsale';
 const sid= window.sessionStorage.getItem('sid');
 const createUserName='duju'
