@@ -35,6 +35,11 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+      <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="userName" header-align="center" align="center" width="80" label="用户名"></el-table-column>
       <el-table-column prop="realName" header-align="center" align="center" label="姓名"></el-table-column>
       <el-table-column prop="employeeNumber" header-align="center" align="center" label="工号"></el-table-column>

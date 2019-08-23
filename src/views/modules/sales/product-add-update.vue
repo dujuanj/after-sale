@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增产品' : '产品'"
+    :title="!dataForm.id ? '新增产品' : '修改产品'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -11,29 +11,25 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="生产批号" prop="batchNumber">
-        <el-input
-          v-model="dataForm.batchNumber"
-          placeholder="生产批号"
-          
-        ></el-input>
+    <el-form-item label="Mac地址" prop="mac">
+        <el-input v-model="dataForm.mac" placeholder="Mac码" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="产品名称" prop="productName">
+      <el-form-item label="产品类型" prop="productName">
         <!-- <el-input v-model="dataForm.productName" placeholder="产品名称" style="width:50%;"></el-input> -->
         <el-select
-          v-model="dataForm.productName"
+          v-model="dataForm.productType"
           placeholder="请选择产品类型"
-          @change="modellist(dataForm.productName)"
+          @change="modellist(dataForm.productType)"
         >
           <el-option
             v-for="item in options"
             :key="item.value"
-            :label="item.productName"
-            :value="item.productName"
+             :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :value="item.productType"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="产品型号" prop="productModel">
+       <el-form-item label="产品型号" prop="productModel">
         <el-select v-model="dataForm.productModel" placeholder="产品型号">
           <el-option
             v-for="item in optionss"
@@ -43,17 +39,39 @@
           ></el-option>
         </el-select>
       </el-form-item>
+       <el-form-item label="生产厂商">
+       
+         <el-select v-model="dataForm.provider" placeholder="请选择生产厂商" @change="getDataList()">
+          <el-option
+            v-for="item in manufacturerdatas"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="生产批号" prop="batchNumber">
+      
+        <el-select v-model="dataForm.batchNumber" placeholder="生产批号">
+          <el-option
+            v-for="item in btachdatas"
+            :key="item.value"
+            :label="item.batchNumber"
+            :value="item.batchNumber"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      
+     
 
-      <el-form-item label="Mac码" prop="mac">
-        <el-input v-model="dataForm.mac" placeholder="Mac码" style="width:50%;"></el-input>
-      </el-form-item>
-      <el-form-item label="备注">
+      
+      <!-- <el-form-item label="备注">
         <!-- <el-input v-model="dataForm.remark" type="text" placeholder="备注" disabled></el-input> -->
-        <span>{{dataForm.remark}}</span>
-      </el-form-item>
-      <el-form-item label="生产时间" prop="productTime">
+        <!-- <span>{{dataForm.remark}}</span>
+      </el-form-item> -->
+      <!-- <el-form-item label="生产时间" prop="productTime">
         <!-- <el-input v-model="dataForm.productTime" placeholder="生产时间" style="width:50%;" disabled></el-input> -->
-        <span>{{dataForm.startTime}} -- {{dataForm.endTime}}</span>
+        <!-- <span>{{dataForm.startTime}} -- {{dataForm.endTime}}</span> -->
         <!-- <el-date-picker
           v-model="dataForm.productTime"
           type="datetimerange"
@@ -64,16 +82,16 @@
           value-format="timestamp"
           disabled
         ></el-date-picker> -->
-      </el-form-item>
+      <!-- </el-form-item> --> 
 
-      <el-form-item label="生产厂家">
+      <!-- <el-form-item label="生产厂家">
         <!-- <el-input v-model="dataForm.manufacturer" type="text" placeholder="生产厂家工号" disabled></el-input> -->
-        <span>{{dataForm.manufacturer}}</span>
-      </el-form-item>
-      <el-form-item label="生产监督">
+        <!-- <span>{{dataForm.manufacturer}}</span> -->
+      <!-- </el-form-item> -->
+      <!-- <el-form-item label="生产监督"> -->
         <!-- <el-input v-model="dataForm.supervisioner" type="text" placeholder="生产监督" disabled></el-input> -->
-        <span>{{dataForm.supervisioner}}</span>
-      </el-form-item>
+        <!-- <span>{{dataForm.supervisioner}}</span> -->
+      <!-- </el-form-item> --> 
 
       <!-- <el-form-item label="售出时间">
       <!-- <el-input v-model="dataForm.saleTime" type="text" placeholder="售出时间"></el-input>-->
@@ -107,7 +125,7 @@ export default {
         mac: "",
         productTime: "",
         batchNumber: window.sessionStorage.getItem('batchnumber'),
-        manufacturer: "",
+        provider: "",
         supervisioner: "",
         saleTime: ""
       },
@@ -117,15 +135,26 @@ export default {
           { required: true, message: "产品批号不能为空", trigger: "blur" }
         ]
       },
+      manufacturerdatas:[
+        {
+          value: "宁波亚太",
+          label: "宁波亚太"
+        },
+        {
+          value: "宁波金泰阁",
+          label: "宁波金泰阁"
+        }
+      ],
       options: "",
       optionss: "",
+      btachdatas:'',//所有批号
       newform: false //新建
     };
   },
   methods: {
     init(id, datas) {
       this.producttype();
-      this.getInfo(this.dataForm.batchNumber,datas);
+      this.getInfo();
       // this.dataForm.id = id || 0;
       this.dataForm.sid = window.sessionStorage.getItem("sid");
       this.visible = true;
@@ -145,7 +174,7 @@ export default {
     // 表单提交
     dataFormSubmit() {
       if (this.newform == true) {
-        delete this.dataForm.id
+        this.dataForm.sid=window.sessionStorage.getItem('sid');
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
             // 新建用户
@@ -209,13 +238,15 @@ export default {
       }
     },
     // 生产批号--产品信息
-    getInfo(data,datas) {
-      console.log(data);
+    getInfo() {
+     
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/productbatch/get",
+          this.GLOBAL.baseUrlxg + "/productbatch/list",
           {
-            batchNumber: data
+            currentPage:"1",
+            pageSize:"1000",
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {
@@ -224,22 +255,22 @@ export default {
           }
         )
         .then(({ data }) => {
-          console.log(data.data);
-          this.dataForm = data.data;
-
-          if(this.newform== false){
-            this.dataForm.productName=datas.productName;
-            this.dataForm.productModel=datas.productModel;
-            this.dataForm.mac=datas.mac
-          }
+          console.log(data.data.records);
+          this.btachdatas=data.data.records;
+          
         });
     },
     // 产品类型
     producttype() {
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
-
+          this.GLOBAL.baseUrlxg + "/product/list",
+           {
+            currentPage: 1,
+            pageSize: 10000,
+            sid: window.sessionStorage.getItem("sid"),
+          
+          },
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -248,7 +279,7 @@ export default {
         )
         .then(res => {
           console.log(res.data.data);
-          this.options = res.data.data;
+          this.options = res.data.data.records;
         })
         .catch(res => {
           console.log("err");
@@ -260,7 +291,8 @@ export default {
         .post(
           this.GLOBAL.baseUrlxg + "/product/model.list",
           {
-            productName: val
+            productType: val,
+             sid: window.sessionStorage.getItem("sid"),
           },
           {
             headers: {

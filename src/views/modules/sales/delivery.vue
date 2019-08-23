@@ -1,12 +1,48 @@
 <template>
   <div class="mod-user">
+     <el-row :gutter="12" class="marbot_15">
+      <el-col :span="2">
+        <el-card shadow="always">
+          今天发出
+          <br />
+          <span style="color:#409EFF;font-size:24px;">{{countDatas.todayCount}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="always">
+          本周发出
+          <br />
+          <span style="color:#F56C6C;font-size:24px;">{{countDatas.weekCount}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="always">
+          本月发出
+          <br />
+          <span style="color:#E6A23C;font-size:24px;">{{countDatas.monthCount}}</span>
+        </el-card>
+      </el-col>
+     
+    </el-row> <br>
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-form-item>
-          <el-input v-model="mac" placeholder="Mac码" clearable></el-input>
+          <el-input v-model="fullQuery" placeholder="输入Mac地址／发货人姓名" clearable  style="width:333px;"></el-input>
         </el-form-item>
         <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>  -->
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
+         <el-form-item>
+        <div class="block">
+          <el-date-picker
+            v-model="value1"
+            type="datetimerange"
+            start-placeholder="创建日期"
+            end-placeholder="结束日期"
+          
+            value-format="yyyy-MM-dd HH:mm:ss"
+          ></el-date-picker>
+        </div>
+      </el-form-item>
         <el-form-item>
           <el-button @click="getDataList()">查询</el-button>
           <el-button icon="el-icon-document" @click="reset()">重置</el-button>
@@ -15,6 +51,13 @@
         </el-form-item>
       </el-form-item>
     </el-form>
+     <el-button
+      type="primary"
+      v-if="isAuth('/api/postsale/worksheet.add')"
+      icon="el-icon-plus"
+      @click="addOrUpdateHandle()"
+      class="marbot_15"
+    >导出</el-button>
     <br />
     <el-table
       :data="dataList"
@@ -24,13 +67,16 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="80"></el-table-column>
-      <el-table-column
-        prop="productName"
-        header-align="center"
-        align="center"
-        width="80"
-        label="产品名称"
-      ></el-table-column>
+       <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column  header-align="center" align="center" width="80" label="产品类型">
+           <template slot-scope="scope">
+         {{scope.row.productType==1?'初柜':scope.row.productType==2?'2层屉柜':scope.row.productType==3?'3层屉柜':scope.row.productType==4?'门禁':scope.row.productType==5?'门锁':''}}
+       </template>
+       </el-table-column>
       <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
       <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
       <el-table-column prop="createTime" header-align="center" align="center" label="发货时间"></el-table-column>
@@ -78,7 +124,9 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       // search
-      mac:''
+      fullQuery:'',
+      value1:'',
+      countDatas:''
     };
   },
   components: {
@@ -86,7 +134,7 @@ export default {
   },
   activated() {
     this.getDataList();
-    this.getRole();
+    this.getCount();
   },
   methods: {
     // 获取数据列表
@@ -99,7 +147,9 @@ export default {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
-            mac:this.mac
+            fullQuery:this.fullQuery,
+            startTime:this.value1[0],
+            endTime:this.value1[1]
             // userName: this.userName,
             // realName: this.realName,
             // phone: this.phone,
@@ -127,11 +177,11 @@ export default {
           console.log("err");
         });
     },
-    getRole() {
-      // 查询角色
+    getCount() {
+      // 数量统计
       this.$http_
         .post(
-          this.GLOBAL.baseUrl + "/role.query",
+          this.GLOBAL.baseUrlxg + "/shipping/count",
           { sid: window.sessionStorage.getItem("sid") },
           {
             headers: {
@@ -140,20 +190,16 @@ export default {
           }
         )
         .then(res => {
-          console.log(res);
-          if (res.status == "200") {
-            console.log(res);
-            console.log(res.data);
-            console.log(res.data.data);
-            this.options = res.data.data;
-          }
+          console.log(res.data.data);
+          this.countDatas=res.data.data;
         })
         .catch(res => {
           console.log("err");
         });
     },
     reset() {
-      this.mac='';
+      this.fullQuery='';
+      this.value1='';
       this.getDataList();
     },
     // 每页数

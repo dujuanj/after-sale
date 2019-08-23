@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="newform ? '新建回访单' : '修改回访单'"
+    :title="newform ? '工单回访' : '修改回访单'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -24,24 +24,38 @@
         <!-- <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input> -->
            <span>{{dataForm.customerPhone}}</span>
       </el-form-item>
+        <el-form-item label="地址" prop="paramValue" style="width:50%;">
+           <span>{{dataForm.customerProvince}} {{dataForm.customerCity}} {{dataForm.customerCounty}}</span>
+      </el-form-item>
+       <el-form-item label="mac地址" prop="paramValue" style="width:50%;">
+           <span>{{dataForm.mac}}</span>
+      </el-form-item>
       <el-form-item label="产品类型" prop="paramValue" style="width:50%;">
-        <!-- <el-input v-model="dataForm.productType" placeholder="电话"></el-input> -->
-        <select
-          v-model="dataForm.productType"
-          disabled 
-          placeholder="选择产品类型"
-          style="padding:0 10px;width:100%;background:#eee;" 
-        >
-          <option value>选择产品类型</option>
-          <option value="1">初柜</option>
-          <option value="5">门锁</option>
-          <option value="4">门禁</option>
-          <option value="2">2层屉柜</option>
-          <option value="3">3层屉柜</option>
-        </select>
+        <el-input v-model="dataForm.productType==1?'初柜':dataForm.productType==2?'2层屉柜':dataForm.productType==3?'3层屉柜':dataForm.productType==4?'门禁':dataForm.productType==5?'门锁':''" disabled></el-input>      
+      </el-form-item>
+        <el-form-item label="产品型号" prop="paramValue" style="width:50%;">
+        <span>{{dataForm.productModel}}</span>
+      </el-form-item>
+       <el-form-item label="投述问题" prop="paramValue" style="width:50%;">
+        <span>{{dataForm.productModel}}</span>
+      </el-form-item>
+       <el-form-item label="问题描述" prop="paramValue" style="width:100%;">
+        <span>{{dataForm.serviceStatusDetail}}</span>
+      </el-form-item>
+       <el-form-item label="处理方式" prop="paramValue" style="width:50%;">
+        <span>{{dataForm.serviceStatusType}}</span>
+      </el-form-item>
+       <el-form-item label="服务人员" prop="paramValue" style="width:50%;">
+        <span>{{dataForm.serviceUserRealName}}</span>
+      </el-form-item>
+       <el-form-item label="维修状态" prop="paramValue" style="width:50%;">
+        <span>{{dataForm.serviceUserRealName}}</span>
+      </el-form-item>
+       <el-form-item label="解决方案" prop="paramValue" style="width:50%;">
+        <span>{{dataForm.serviceUserRealName}}</span>
       </el-form-item>
      
-      <el-form-item label="回访时间" prop="paramValue">
+      <!-- <el-form-item label="回访时间" prop="paramValue">
         <el-date-picker
           v-model="dataForm.revisitTime"
           type="datetime"
@@ -50,16 +64,16 @@
           value-format="yyyy-MM-dd HH:mm:ss"
           @change="getSTime"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="备注" prop="paramValue">
         <el-input type="textarea" v-model="dataForm.serviceStatusDetail"></el-input>
       </el-form-item> -->
        <el-form-item label="回访记录" prop="paramValue">
         <el-input type="textarea" v-model="dataForm.revisitContent"></el-input>
       </el-form-item>
-       <el-form-item label="回访人员" prop="paramValue" style="width:50%;">
+       <!-- <el-form-item label="回访人员" prop="paramValue" style="width:50%;">
         <el-input v-model="dataForm.revisitUserRealName" placeholder="电话"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="满意度评分" prop="paramValue" style="width:51%;" class="score">
         <!-- <el-input v-model="dataForm.revisitScore" placeholder=""></el-input> -->
         <el-rate
@@ -105,12 +119,12 @@ export default {
     init(id, datas) {
       var _this = this;
       console.log(datas);
-      console.log("add");
+     
       this.newform = true;
       if (datas != undefined) {
         //修改
         this.dataForm = datas;       
-        // this.newform = false;
+        this.newform = false;
       };
       this.visible = true;
       this.$nextTick(() => {
@@ -174,6 +188,7 @@ export default {
           }
         });
       } else {
+        this.dataForm.sid=window.sessionStorage.getItem('sid');
         this.$refs["dataForm"].validate(valid => {
           //修改表单
           if (valid) {
@@ -227,6 +242,9 @@ select {
 }
 .el-rate{
   line-height: 2!important;
+}
+.el-form-item {
+    margin-bottom: 5px;
 }
 </style>
 

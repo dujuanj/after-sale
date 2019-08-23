@@ -8,10 +8,24 @@
       class="marbot_15"
       style="float:left;"
     >修改</el-button>
+    <el-button
+      type="primary"
+      icon="el-icon-edit-outline"
+      size="mini"
+      v-if="isAuth('/api/postsale/worksheet.update')"
+      @click="closeBtn(datas)"
+    >关闭</el-button>
+    <el-button
+      type="primary"
+      icon="el-icon-edit-outline"
+      size="mini"
+      v-if="isAuth('/api/postsale/revisit.add')"
+      @click="revisitHandle(id,datas)"
+    >回访</el-button>
     <!-- <h4>工单 {{datas.number}}</h4> -->
-    <!-- 基本信息 -->
+    <!-- 客户信息 -->
     <div class="layui-card detail" style="margin-top: 10px;">
-      <div class="layui-card-header">基本信息</div>
+      <div class="layui-card-header">客户信息</div>
       <div class="layui-card-body">
         <div class="layui-form-item">
           <label class="layui-form-label">
@@ -33,32 +47,68 @@
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>地 址:</span>
-            {{datas.customerProvince}} {{datas.customerCity}} {{datas.customerCounty}} {{datas.customerDetailAddress}}
-          </label>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
             <span>客户姓名:</span>
             {{datas.customerRealName}}
           </label>
         </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>地 址:</span>
+            {{datas.customerProvince}} {{datas.customerCity}} {{datas.customerCounty}} {{datas.customerDetailAddress}}
+          </label>
+        </div>
       </div>
     </div>
-    <!-- 工单详情 -->
+    <!-- 设备信息 -->
     <div class="layui-card detail" style="margin-top: 10px;">
-      <div class="layui-card-header">工单详情</div>
+      <div class="layui-card-header">设备信息</div>
       <div class="layui-card-body">
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>产品:</span>
+            <span>Mac地址:</span>
+            {{datas.mac}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>产品类型:</span>
             {{datas.productType==1?"初柜":datas.productType==2?"2层屉柜":datas.productType==3?"3层屉柜":datas.productType==4?"门禁":datas.productType==5?"门锁":''}}
           </label>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>Mac地址:</span>
-            {{datas.mac}}
+            <span>产品型号:</span>
+            {{datas.productModel}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>生产时间:</span>
+            {{macData.productTime}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>生产批号:</span>
+            {{macData.batchNumber}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>生产厂商:</span>
+            {{macData.provider}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>生产监督:</span>
+            {{macData.supervisioner}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>售出时间:</span>
+            {{macData.shippingTime}}
           </label>
         </div>
         <div class="layui-form-item">
@@ -79,19 +129,8 @@
             {{datas.serviceType==1?"电话支持":datas.serviceType==2?"上门解决":''}}
           </label>
         </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>服务人员:</span>
-            {{datas.serviceUserRealName}}
-          </label>
-        </div>
-        <div class="layui-form-item">
-          <label class="layui-form-label">
-            <span>服务时间:</span>
-            {{datas.serviceAppointmentTime}}
-          </label>
-        </div>
-        <div class="layui-form-item">
+
+        <!-- <div class="layui-form-item">
           <label class="layui-form-label">
             <span>完成时间:</span>
             {{datas.serviceFinishTime}}
@@ -108,13 +147,13 @@
             <span>备注:</span>
             {{datas.serviceStatusDetail}}
           </label>
-        </div>
-        <div class="layui-form-item">
+        </div>-->
+        <!-- <div class="layui-form-item">
           <!-- <label class="layui-form-label">
             <span>上传照片:</span>
-          </label>-->
-          <!-- 上传照片 -->
-          <el-upload
+        </label>-->
+        <!-- 上传照片 -->
+        <!-- <el-upload
           
             accept="image/*"
             
@@ -127,31 +166,115 @@
             
           >
             <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
+        </el-upload>-->
+        <!-- <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt>
-          </el-dialog>
+        </el-dialog>-->
+        <!-- </div> -->
+      </div>
+    </div>
+    <!-- 分配信息 -->
+    <div class="layui-card detail" style="margin-top: 10px;">
+      <div class="layui-card-header">分配信息</div>
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>服务人员:</span>
+            {{datas.serviceUserRealName}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>服务时间:</span>
+            {{datas.serviceFinishTime}}
+          </label>
         </div>
       </div>
     </div>
+    <!-- 维修信息 -->
+    <div class="layui-card detail" style="margin-top: 10px;">
+      <div class="layui-card-header">维修信息</div>
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>维修状态:</span>
+            <span
+              style="font-weight:bold;"
+            >{{datas.serviceStatusType==1?'修好了':datas.serviceStatusType==2?'修不了':''}}</span>
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>解决方案:</span>
+            {{datas.serviceStatusDetail}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>签名照片:</span>
+            <img v-for='item in datas.picList' :src="item.url" alt="" style='width:100px;height:80px;margin-right:10px;display:inline-block'>
+            
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>提交时间:</span>
+            {{datas.serviceFinishTime}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- 关闭信息 -->
+    <div class="layui-card detail" style="margin-top: 10px;">
+      <div class="layui-card-header">关闭信息</div>
+      <div class="layui-card-body">
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>关闭时间:</span>
+            <span style="font-weight:bold;">{{datas.closeTime}}</span>
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>关闭人员:</span>
+            {{datas.closeUserName}}
+          </label>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">
+            <span>关闭备注:</span>
+            {{datas.closeRemark}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- 回访信息 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <revisit-add-or-update
+      v-if="revisitVisible"
+      ref="revisitaddOrUpdate"
+      @refreshDataList="getDataList"
+    ></revisit-add-or-update>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from "../sales/config-add-or-update";
+import RevisitAddOrUpdate from "../sales/revisit-add-or-update";
 export default {
   name: "workDetail",
   data() {
     return {
       picList: [],
-       dialogImageUrl: '',
-        dialogVisible: false,
-        disabled: false,
+      dialogImageUrl: "",
+      dialogVisible: false,
+      disabled: false,
       addOrUpdateVisible: false,
+      revisitVisible: false,
       //  datas:this.$route.params.detailDatas,
       id: "",
-      datas: ""
+      datas: "",
+      macData: ""
     };
   },
   activated() {
@@ -159,23 +282,25 @@ export default {
       (this.id = this.$route.params.id),
       console.log(this.id);
     console.log(this.datas);
-    this.picquery();
+    // this.picquery();
+    this.getmac(this.datas.mac);
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    RevisitAddOrUpdate
   },
   methods: {
     // 删除图片
-     handleRemove(file) {
+    handleRemove(file) {
       //  alert('222')
-        console.log(file);
-        this.$http_
+      console.log(file);
+      this.$http_
         .post(
           this.GLOBAL.baseUrl + "/pic.delete",
           {
             id: file.id,
             // createUserRealName:this.GLOBAL.createUserRealName,
-            sid:window.sessionStorage.getItem('sid')
+            sid: window.sessionStorage.getItem("sid")
           },
           {
             headers: {
@@ -185,25 +310,25 @@ export default {
         )
         .then(({ data }) => {
           console.log(data);
-          if(data.isSuccess=='true'){
+          if (data.isSuccess == "true") {
             this.$message({
-                message: "操作成功",
-                type: "success",
-                duration: 1500,
-                onClose: () => {
-                  // this.getDataList();
-                }
-              });
+              message: "操作成功",
+              type: "success",
+              duration: 1500,
+              onClose: () => {
+                // this.getDataList();
+              }
+            });
           }
         });
-      },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-      },
-      handleDownload(file) {
-        console.log(file);
-      },
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleDownload(file) {
+      console.log(file);
+    },
     // 新增 / 修改
     addOrUpdateHandle(id, detailDatas) {
       this.addOrUpdateVisible = true;
@@ -229,43 +354,43 @@ export default {
       };
     },
     // 上传图片
-    picupload(imgurlbase){
-      var params = new URLSearchParams();
-      params.append('worksheetId', this.id);  
-      params.append('worksheetNumber', this.datas.number);
-      params.append('filePostfix', '.jpg');  
-      params.append('type', 2);
-       params.append('sid', window.sessionStorage.getItem('sid'));
-      params.append('picData', imgurlbase); 
-      params.append('ownerUserId', 36);
-       
-       this.$http_
-        .post(
-          this.GLOBAL.baseUrl + "/pic.upload",
-          params,
-         
-           {            
-            headers: {
-              // "Content-Type": "application/json;charset=UTF-8"
-              // "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-            },
-            dataType: "form"
-          }
-        )
-        .then(({ data }) => {
-          console.log(data);
-          if(data.isSuccess=='true'){
-            this.$message({
-                message: "操作成功",
-                type: "success",
-                duration: 1500,
-                onClose: () => {
-                  // this.getDataList();
-                }
-              });
-          }
-        });
-    },
+    // picupload(imgurlbase){
+    //   var params = new URLSearchParams();
+    //   params.append('worksheetId', this.id);
+    //   params.append('worksheetNumber', this.datas.number);
+    //   params.append('filePostfix', '.jpg');
+    //   params.append('type', 2);
+    //    params.append('sid', window.sessionStorage.getItem('sid'));
+    //   params.append('picData', imgurlbase);
+    //   params.append('ownerUserId', 36);
+
+    //    this.$http_
+    //     .post(
+    //       this.GLOBAL.baseUrl + "/pic.upload",
+    //       params,
+
+    //        {
+    //         headers: {
+    //           // "Content-Type": "application/json;charset=UTF-8"
+    //           // "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    //         },
+    //         dataType: "form"
+    //       }
+    //     )
+    //     .then(({ data }) => {
+    //       console.log(data);
+    //       if(data.isSuccess=='true'){
+    //         this.$message({
+    //             message: "操作成功",
+    //             type: "success",
+    //             duration: 1500,
+    //             onClose: () => {
+    //               // this.getDataList();
+    //             }
+    //           });
+    //       }
+    //     });
+    // },
     // 查询图片
     picquery() {
       this.$http_
@@ -274,7 +399,7 @@ export default {
           {
             worksheetId: this.id,
             // createUserRealName:this.GLOBAL.createUserRealName,
-            sid:window.sessionStorage.getItem('sid')
+            sid: window.sessionStorage.getItem("sid")
           },
           {
             headers: {
@@ -284,8 +409,89 @@ export default {
         )
         .then(({ data }) => {
           console.log(data.data);
-          this.picList=data.data
+          this.picList = data.data;
         });
+    },
+    closeBtn(datas) {
+      this.$prompt("请输入关闭备注", "关闭工单", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputType: "textarea"
+        // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        // inputErrorMessage: '邮箱格式不正确'
+      })
+        .then(({ value }) => {
+          datas.worksheetStatus = 4;
+          datas.sid = window.sessionStorage.getItem("sid");
+           datas.closeRemark = value;
+          this.$http_
+            .post(this.GLOBAL.baseUrl + "/worksheet.update", datas, {
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+              }
+            })
+            .then(({ data }) => {
+              console.log(data.isSuccess);
+              this.$message({
+                message: "操作成功",
+                type: "success",
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false;
+                  this.getDataList();
+                }
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入"
+          });
+        });
+    },
+    // 新增回访单
+    revisitHandle(id, detailDatas) {
+      this.revisitVisible = true;
+      console.log(this.revisitVisible);
+      this.$nextTick(() => {
+        this.$refs.revisitaddOrUpdate.init(id, detailDatas);
+      });
+    },
+    getmac(value) {
+      if (value) {
+        this.macshow = true;
+        this.macdatas = true;
+        this.$http_
+          .post(
+            this.GLOBAL.baseUrlxg + "/productinfo/get.mac",
+            {
+              // sid:window.sessionStorage.getItem('sid'),
+              mac: value,
+              // currentPage:1,
+              // pageSize:10,
+              sid: window.sessionStorage.getItem("sid")
+            },
+            {
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+              }
+            }
+          )
+          .then(({ data }) => {
+            console.log(data.data);
+            if (
+              data.data == {} ||
+              data.data == null ||
+              data.data == undefined ||
+              data.data == []
+            ) {
+              this.macdatas = false;
+            } else {
+              this.macData = data.data;
+            }
+          });
+      }
     }
   }
 };
@@ -349,8 +555,8 @@ export default {
   margin-top: 12px;
   margin-left: 16px;
 } */
-.el-upload-list--picture-card .el-upload-list__item-status-label{
-  width:0px!important;
+.el-upload-list--picture-card .el-upload-list__item-status-label {
+  width: 0px !important;
 }
 </style>
 

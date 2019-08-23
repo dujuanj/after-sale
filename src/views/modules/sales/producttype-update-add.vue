@@ -11,17 +11,17 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="产品名称" prop="productName">
-        <el-input v-model="dataForm.productName" placeholder="产品名称" style="width:50%;"></el-input>
+      <el-form-item label="产品名称" prop="productTypeName">
+        <el-input v-model="dataForm.productTypeName" placeholder="产品名称" style="width:50%;"></el-input>
       </el-form-item>
-      
+       <el-form-item label="产品类型" >
+        <el-input v-model="dataForm.productType" placeholder="输入数字 1-5" style="width:50%;"></el-input>
+      </el-form-item>
      
       <el-form-item label="产品型号" prop="productModel">
         <el-input v-model="dataForm.productModel" placeholder="产品型号" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="供应商" prop="provider">
-        <el-input v-model="dataForm.provider" placeholder="供应商" style="width:50%;"></el-input>
-      </el-form-item>
+      
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
@@ -52,10 +52,10 @@ export default {
 
       dataForm: {
         // id: 0,
-        productName: "",
-        productModel: "",
-        provider: "",
-        Remark: "",
+        // productName: "",
+        // productModel: "",
+        // provider: "",
+        // Remark: "",
        
       },
       dataRule: {
@@ -83,19 +83,22 @@ export default {
   },
   methods: {
     init(id, datas) {
-      // this.dataForm.id = id || 0;
-      // this.dataForm.sid = window.sessionStorage.getItem("sid");
+      console.log(id);
+      this.dataForm.id = id ;
+      this.dataForm.sid = window.sessionStorage.getItem("sid");
       this.visible = true;
+      console.log(this.dataForm.id)
       console.log(datas);
       if (datas != undefined) {
         //修改
-      
+
         this.dataForm = datas;
       
         this.newform = false;
       } else {
         //新建
         this.newform = true;
+        this.dataForm={}
  
       }
     },
@@ -114,8 +117,7 @@ export default {
               })
               .then(({ data }) => {
                 console.log(data)
-                if (data.isSuccess == "false") {
-                  this.$message({
+                 this.$message({
                     message: data.errorMsg,
                     type: "success",
                     duration: 1500,
@@ -124,17 +126,7 @@ export default {
                       this.visible = false;
                     }
                   });
-                } else {
-                 this.$message({
-                    message: '新建成功',
-                    type: "success",
-                    duration: 1500,
-                    onClose: () => {
-                      this.$emit("refreshDataList");
-                      this.visible = false;
-                    }
-                  });
-                }
+                
               });
           }
         });
@@ -144,59 +136,28 @@ export default {
           //修改用户帐号列表
           if (valid) {
             this.$http_
-              .post(this.GLOBAL.baseUrl + "/user.update", this.dataForm, {
+              .post(this.GLOBAL.baseUrlxg + "/product/update", this.dataForm, {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"
                 }
               })
               .then(({ data }) => {
-                console.log(data.isSuccess);
-                // 为用户修改角色
-                this.$http_
-                  .post(
-                    this.GLOBAL.baseUrl + "/user.grant.role",
-                    {
-                      sid: window.sessionStorage.getItem("sid"),
-                      userId: this.dataForm.id,
-                      roleIdList: this.roleIdList
-                    },
-                    {
-                      headers: {
-                        "Content-Type": "application/json;charset=UTF-8"
-                      }
+                this.$message({
+                    message: data.errorMsg,
+                    type: "success",
+                    duration: 1500,
+                    onClose: () => {
+                      this.$emit("refreshDataList");
+                      this.visible = false;
                     }
-                  )
-                  .then(({ data }) => {
-                    console.log(data.isSuccess);
-                    this.$message({
-                      message: "操作成功",
-                      type: "success",
-                      duration: 1500,
-                      onClose: () => {
-                        this.visible = false;
-                        this.$emit("refreshDataList");
-                      }
-                    });
                   });
+                
               });
           }
         });
       }
-    },
-    // 新增产品
-    addDomain() {
-      this.dynamicValidateForm.domains.push({
-        value: "",
-        key: Date.now()
-      });
-    },
-    // 删除产品
-    removeDomain(item) {
-      var index = this.dynamicValidateForm.domains.indexOf(item);
-      if (index !== -1) {
-        this.dynamicValidateForm.domains.splice(index, 1);
-      }
     }
+  
   }
 };
 </script>

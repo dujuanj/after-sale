@@ -1,10 +1,23 @@
 <template>
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-     
+         <el-form-item>
+        <el-input
+          v-model="fullQuery"
+          placeholder="输入产品类型/产品型号查询"
+          clearable
+          style="width:333px;"
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="getDataList()">查询</el-button>
+        <el-button icon="el-icon-document" @click="reset()">重置</el-button>
+        <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+        <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
+      </el-form-item><br>
         <el-button v-if="isAuth('/api/postsale/product/add')" type="primary" @click="addOrUpdateHandle()">新增</el-button> 
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
-      </el-form-item>
+     
     </el-form> <br>
     <el-table
       :data="dataList"
@@ -14,16 +27,31 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="productName" header-align="center" align="center" width="80" label="产品名称"></el-table-column>
+       <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column  prop='productTypeName' header-align="center" align="center" width="80" label="产品类型">
+         <!-- <template
+          slot-scope="scope"
+        >{{scope.row.productType==1?"初柜":scope.row.productType==2?"2层屉柜":scope.row.productType==3?"3层屉柜":scope.row.productType==4?"门禁":scope.row.productType==5?"门锁":''}}</template>
+      </el-table-column> -->
+      </el-table-column>
       <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
      
-      <el-table-column prop="provider" header-align="center" align="center" label="供应商"></el-table-column>
-     
-     
+      <el-table-column prop="remark" header-align="center" align="center" label="备注"></el-table-column>
+      <el-table-column prop="remark" header-align="center" align="center" label="创建人"></el-table-column>
+      <el-table-column prop="createTime" header-align="center" align="center" label="创建日期"></el-table-column>
      
       <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
         <template slot-scope="scope">
-         
+           <el-button
+            v-if="isAuth('/api/postsale/product/delete')"
+            type="text"
+            size="small"
+            @click="addOrUpdateHandle(scope.row.id,scope.row)"
+          >编辑</el-button>
           <el-button
             v-if="isAuth('/api/postsale/product/delete')"
             type="text"
@@ -62,6 +90,7 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
+      fullQuery:''
      
     };
   },
@@ -83,6 +112,7 @@ export default {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
+            fullQuery:this.fullQuery
             // userName: this.userName,
             // realName: this.realName,
             // phone: this.phone,
@@ -136,10 +166,7 @@ export default {
         });
     },
     reset() {
-      (this.userName = ""),
-        (this.realName = ""),
-        (this.phone = ""),
-        (this.roleList = "");
+      this.fullQuery='',
       this.getDataList();
     },
     // 每页数

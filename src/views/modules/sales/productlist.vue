@@ -1,19 +1,29 @@
 <template>
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="mac" placeholder="Mac码" clearable></el-input>
-      </el-form-item>
-     <el-form-item>
-        <el-input v-model="manufacturer" placeholder="生产厂家" clearable></el-input>
-      </el-form-item>
-     <el-form-item>
-        <el-input v-model="supervisioner" placeholder="生产监督" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-select v-model="productName"  placeholder="请选择产品类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.productName" :value="item.productName"></el-option>
+     
+       <el-form-item>
+        <el-select v-model="productType" placeholder="请选择产品类型" @change="getDataList()">
+          <el-option
+            v-for="item in options"
+            :key="item.id"
+            :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :value="item.productType"
+          ></el-option>
         </el-select>
+      </el-form-item>
+       <el-form-item>
+        <el-select v-model="provider" placeholder="请选择生产厂商" @change="getDataList()">
+          <el-option
+            v-for="item in manufacturerdatas"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+       <el-form-item>
+        <el-input v-model="fullQuery" placeholder="输入Mac地址 ／生产批号查询" clearable  style="width:333px;"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -24,6 +34,12 @@
       <br />
       <el-form-item>
         <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
+        <el-button
+      v-if="isAuth('/api/postsale/productinfo/add')"
+      type="primary"
+      @click="addOrUpdateHandle()"
+      style="margin-bottom:15px;"
+    >新增产品</el-button>
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -35,25 +51,36 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="productName" header-align="center" align="center" width="80" label="产品"></el-table-column>
-      <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
-      <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
-      <el-table-column prop="productTime" header-align="center" align="center" label="生产时间"></el-table-column>
-      <el-table-column prop="batchNumber" header-align="center" align="center" label="生产批号">
+       <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
       </el-table-column>
-      <el-table-column prop="manufacturer" header-align="center" align="center" width="180" label="生产厂家"></el-table-column>
-       <el-table-column prop="supervisioner" header-align="center" align="center" width="180" label="生产监督"></el-table-column>
-      <el-table-column prop="saleTime" header-align="center" align="center" width="180" label="售出时间"></el-table-column>
+       <el-table-column prop="mac" header-align="center" align="center" label="Mac码"></el-table-column>
+      <el-table-column  header-align="center" align="center" width="80" label="产品类型">
+           <template slot-scope="scope">
+         {{scope.row.productType==1?'初柜':scope.row.productType==2?'2层屉柜':scope.row.productType==3?'3层屉柜':scope.row.productType==4?'门禁':scope.row.productType==5?'门锁':''}}
+       </template>
+      </el-table-column>
+      <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
+      <el-table-column prop="provider" header-align="center" align="center" width="180" label="生产厂商"></el-table-column>
+       <el-table-column prop="batchNumber" header-align="center" align="center" label="生产批号">
+      </el-table-column>
+      <el-table-column prop="createUserRealName" header-align="center" align="center" label="创建人"></el-table-column>
+     <!-- <el-table-column prop="createTime" header-align="center" align="center" width="180" label="创建人"></el-table-column> -->
+     
+      
+      <el-table-column prop="createTime" header-align="center" align="center" width="180" label="创建日期"></el-table-column>
       
       <el-table-column fixed="right" header-align="center" align="center" width="190" label="操作">
         <template slot-scope="scope">
           
-          <!-- <el-button
-            v-if="isAuth('sys:user:update')"
+           <el-button
+            v-if="isAuth('/api/postsale/productinfo/update')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
-          >修改</el-button> -->
+          >修改</el-button>
           <el-button
             v-if="isAuth('/api/postsale/productinfo/delete')"
             type="text"
@@ -78,7 +105,8 @@
 </template>
 
 <script>
-import AddOrUpdate from "./product-add-update";
+
+import AddOrUpdate from "../sales/product-add-update";
 export default {
   data() {
     return {
@@ -95,9 +123,19 @@ export default {
       addOrUpdateVisible: false,
       // 查询
       mac: "",
-      manufacturer: "",
+      provider: "",
       supervisioner: "",
-      productName:''
+      productType:'',
+      manufacturerdatas:[
+        {
+          value: "宁波亚太",
+          label: "宁波亚太"
+        },
+        {
+          value: "宁波金泰阁",
+          label: "宁波金泰阁"
+        }
+      ]
     };
   },
   components: {
@@ -118,10 +156,10 @@ export default {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
-            mac: this.mac,
-            manufacturer: this.manufacturer,
-            supervisioner: this.supervisioner,
-            productName:this.productName
+            fullQuery: this.fullQuery,
+            provider: this.provider,
+           
+            productType:this.productType
             
           },
           {
@@ -148,8 +186,13 @@ export default {
    producttype(){
        this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
+          this.GLOBAL.baseUrlxg + "/product/list",
+           {
+            currentPage: 1,
+            pageSize: 10000,
+            sid: window.sessionStorage.getItem("sid"),
           
+          },
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -158,7 +201,7 @@ export default {
         )
         .then(res => {
           console.log(res.data.data);
-          this.options=res.data.data
+          this.options=res.data.data.records;
          
         })
         .catch(res => {
@@ -166,10 +209,10 @@ export default {
         });
    },
     reset() {
-      this.mac = "",
-      this.manufacturer = "",
-      this.supervisioner = "",
-      this.productName = "";
+     
+      this.provider = "",
+      this.fullQuery = "",
+      this.productType = "";
       this.getDataList();
     },
     // 每页数

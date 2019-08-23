@@ -13,6 +13,11 @@
       border
       v-loading="dataListLoading"
       style="width: 100%">
+      <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="userName"
         header-align="center"

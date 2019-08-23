@@ -16,7 +16,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">
             <span>产品名称:</span>
-            <span style="font-weight:bold;">{{datas.productName}}</span>
+            <span style="font-weight:bold;">{{datas.productType==1?'初柜':datas.productType==2?'2层屉柜':datas.productType==3?'3层屉柜':datas.productType==4?'门禁':datas.productType==5?'门锁':''}}</span>
           </label>
         </div>
         <div class="layui-form-item">

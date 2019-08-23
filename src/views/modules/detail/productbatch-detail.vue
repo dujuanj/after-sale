@@ -1,52 +1,65 @@
 <template>
   <div class="mod-home">
     <!-- 批次详情 -->
+     <el-button  type="primary"
+      icon="el-icon-edit-outline"
+      size="mini" @click="batchupdate(id,datas)">修改批次</el-button>
     <div class="layui-card detail" style="margin-top: 10px;">
       <div class="layui-card-header" style="font-weight:bold;">
-        <span>生产批号:</span>
-        <span>{{dataList.batchNumber}}</span>
-        <el-button size="mini"  round type="" @click="batchupdate(dataList.id,dataList)">修改批次</el-button>
+        <span>批次详情</span>
+      
+       
       </div>
-      <div style="float:left">
+     
         <div class="layui-card-body">
+            <div class="layui-form-item">
+            <label class="layui-form-label">
+              <span>生产批号:</span>
+              <span style="font-weight:bold;">{{datas.batchNumber}}</span>
+            </label>
+          </div>
           <div class="layui-form-item">
             <label class="layui-form-label">
               <span>生产厂商:</span>
-              <span style="font-weight:bold;">{{dataList.manufacturer}}</span>
+              <span style="font-weight:bold;">{{datas.provider}}</span>
             </label>
           </div>
           <div class="layui-form-item">
             <label class="layui-form-label">
               <span>生产监督:</span>
-              <span>{{ dataList.supervisioner}} </span>
+              <span>{{ datas.supervisioner}} </span>
               <!-- <div style="margin-left:13%;color:#E6A23C">多个监督人员请用,号隔开</div> -->
             </label>
           </div>
           <div class="layui-form-item">
             <label class="layui-form-label">
               <span>生产时间:</span>
-              {{dataList.startTime}} -- {{dataList.endTime}}
+              {{datas.startTime}} -- {{datas.endTime}}
             </label>
           </div>
-        </div>
-      </div>
-      <div style="float:left;width:25%;">
-        <div class="layui-form-item">
+           <div class="layui-form-item">
           <label class="layui-form-label">
-            <span>产品:</span>
-            <ul style='margin-left:13%;'>
-              <li v-for="item in dataList.batchInfoList" > <span style='display:inline-block;width:70px'>{{item.productName}}</span> <span style='display:inline-block;width:100px'>{{item.productModel}}</span> <span style='display:inline-block'>{{item.number}}</span>个</li>
+            <span>产品内容:</span>
+            <ul style='margin-left:5%'>
+              <li v-for="item in datas.batchInfoList" > 
+                <span style='display:inline-block;width:100px'>{{item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''}}</span> 
+                <span style='display:inline-block;width:100px'>{{item.productModel}}</span> 
+                <span style='display:inline-block'>{{item.count}}</span>个</li>
             </ul>
           </label>
         </div>
-      </div>
+        </div>
+     
+     
+       
+    
     </div>
-    <el-button
+    <!-- <el-button
       v-if="isAuth('/api/postsale/productinfo/add')"
       type="primary"
       @click="addOrUpdateHandle()"
       style="margin-bottom:15px;"
-    >新增产品</el-button>
+    >新增产品</el-button> -->
     <!-- <el-button
       type="primary"
       icon="el-icon-edit-outline"
@@ -57,7 +70,7 @@
     >修改</el-button>-->
     <!-- <h4>工单 {{datas.number}}</h4> -->
     <!-- 基本信息 -->
-    <el-table
+    <!-- <el-table
       :data="batchList"
       border
       v-loading="dataListLoading"
@@ -107,8 +120,8 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
-    <el-pagination
+    </el-table> -->
+    <!-- <el-pagination
       @size-change="sizeChangeHandle"
       @current-change="currentChangeHandle"
       :current-page="pageIndex"
@@ -116,7 +129,7 @@
       :page-size="pageSize"
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
+    ></el-pagination> -->
 
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getlistByBatchNumber(batchNum)"></add-or-update>
     <batch-update v-if="batchaddOrUpdateVisible" ref="batchaddOrUpdate" @refreshDataList="getDataList"></batch-update>
@@ -136,8 +149,8 @@ export default {
       addOrUpdateVisible: false,
       batchaddOrUpdateVisible:false,
       //  datas:this.$route.params.detailDatas,
-      id: "",
-      datas: "",
+      id: window.sessionStorage.getItem("batchid"),
+      datas:JSON.parse(window.sessionStorage.getItem('detailDatas')) ,
       dataList: [],
       batchid: window.sessionStorage.getItem("batchid"),
       batchNum:window.sessionStorage.getItem('batchnumber'),
@@ -148,12 +161,10 @@ export default {
     };
   },
   activated() {
-    (this.datas = this.$route.params.detailDatas),
-      (this.id = this.$route.params.id),
-      console.log(this.id);
+   
     console.log(this.datas);
-    this.getDataList(this.batchid);
-    this.getlistByBatchNumber(this.batchNum)
+    // this.getDataList(this.batchid);
+    // this.getlistByBatchNumber(this.batchNum)
   },
   components: {
     AddOrUpdate,

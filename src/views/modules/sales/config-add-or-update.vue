@@ -12,14 +12,14 @@
       label-width="80px"
     >
       <!-- <el-form-item label="工单编号" style="width:50%;"> -->
-        <!-- <el-input v-model="dataForm.number" placeholder="工单编号"></el-input> -->
-        <!-- <span>{{dataForm.number}}</span> -->
+      <!-- <el-input v-model="dataForm.number" placeholder="工单编号"></el-input> -->
+      <!-- <span>{{dataForm.number}}</span> -->
       <!-- </el-form-item> -->
 
-      <el-form-item label="客户姓名" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.customerRealName" placeholder="lwg ty 客户姓名"></el-input>
+      <el-form-item label="客户姓名" prop="customerRealName" style="width:50%;">
+        <el-input v-model="dataForm.customerRealName" placeholder="客户姓名"></el-input>
       </el-form-item>
-      <el-form-item label="电话" prop="paramValue" style="width:50%;">
+      <el-form-item label="电话" prop="customerPhone" style="width:50%;">
         <el-input v-model="dataForm.customerPhone" placeholder="电话"></el-input>
       </el-form-item>
       <!-- 地址省市区 -->
@@ -51,36 +51,43 @@
       <el-form-item label="详细地址" prop="paramValue">
         <el-input v-model="dataForm.customerDetailAddress" placeholder="输入地址"></el-input>
       </el-form-item>
-
-      <el-form-item label="Mac地址" prop="paramValue">
-        <el-input v-model="dataForm.mac" placeholder="Mac地址"></el-input>
+      <el-divider class="divider"></el-divider>
+      <el-form-item label="Mac地址" prop="mac">
+        <el-input v-model="dataForm.mac" placeholder="Mac地址" @blur='getmac(dataForm.mac)'></el-input>
       </el-form-item>
+    <!-- mac显示信息 -->
+    <div v-if='macshow'>
+      <div v-if='macdatas'>
 
-      <el-form-item label="产品类型" prop="paramValue" style="width:50%;">
-        <!-- <el-input v-model="dataForm.productType" placeholder="电话"></el-input> -->
-        <!-- <select
-          v-model="dataForm.productType"
-          placeholder="选择产品类型"
-          style="padding:0 10px;width:100%;"
-        >
-          <option value>选择产品类型</option>
-          <option value="1">初柜</option>
-          <option value="5">门锁</option>
-          <option value="4">门禁</option>
-          <option value="2">2层屉柜</option>
-          <option value="3">3层屉柜</option>
-        </select> -->
-         <el-select v-model="dataForm.productType"  placeholder="请选择产品类型">
-          <el-option v-for="item in productype" :key="item.value" :label="item.productName" :value="item.id"></el-option>
-        </el-select>
+        <el-form-item label="产品类型" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.productType==1?'初柜':macData.productType==2?'2层屉柜':macData.productType==3?'3层屉柜':macData.productType==4?'门禁':macData.productType==5?'门锁':''" disabled></el-input>       
       </el-form-item>
-      <el-form-item label="产品型号" prop="paramValue" style="width:50%;">
-        <el-input v-model="dataForm.productModel" placeholder="电话"></el-input>
+      <el-form-item label="产品型号" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.productModel" disabled></el-input>
       </el-form-item>
-
-      <el-form-item label="投诉问题" prop="paramValue" style="width:50%;">
+       <el-form-item label="生产时间" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.productTime" disabled></el-input>
+      </el-form-item>
+       <el-form-item label="生产批号" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.batchNumber" disabled></el-input>
+      </el-form-item>
+       <el-form-item label="生产厂商" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.provider" disabled></el-input>
+      </el-form-item>
+       <el-form-item label="生产监督" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.supervisioner" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="售出时间" prop="paramValue" style="width:45%;float:left;">
+        <el-input v-model="macData.shippingTime" disabled></el-input>
+      </el-form-item>
+      </div>
+      <div v-else style='color:#E6A23C;margin-left:10px;margin-bottom:17px;'>未查到该产品信息</div> 
+    </div>
+    
+  <!-- mac显示结束 -->
+      <el-form-item label="投诉问题" prop="contentType" style="width:50%;">
         <select name v-model="dataForm.contentType" id style="padding:0 10px;width:100%;">
-          <option value>请选择投诉问题类型</option>
+          <option value=''>请选择投诉问题类型</option>
           <option value="1">指示灯不亮</option>
           <option value="2">无法配网</option>
           <option value="3">开门不成功</option>
@@ -90,18 +97,19 @@
           <option value="0">其它</option>
         </select>
       </el-form-item>
-      <el-form-item label="问题描述" prop="paramValue">
+      <el-form-item label="问题描述" prop="contentDetail">
         <el-input type="textarea" v-model="dataForm.contentDetail"></el-input>
       </el-form-item>
-      <el-form-item label="处理方式" prop="paramValue" style="width:50%;">
+      <el-form-item label="处理方式" prop="serviceType" style="width:50%;">
         <select v-model="dataForm.serviceType" name id style="padding:0 10px;width:100%;">
           <option value>请选择处理方式</option>
           <option value="2">上门维修</option>
-          <option value="1">电话支持</option>
+          <option value="1">远程协助</option>
         </select>
       </el-form-item>
+        <el-divider class="divider"></el-divider>
       <el-form-item label="服务人员" prop="paramValue">
-        <el-input v-model="dataForm.serviceUserName" placeholder="服务人员"></el-input>
+        <el-input v-model="dataForm.serviceUserRealName" placeholder="服务人员"></el-input>
       </el-form-item>
       <el-form-item label="服务时间" prop="paramValue">
         <el-date-picker
@@ -113,9 +121,9 @@
           @change="getSTime"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="备注" prop="paramValue">
+      <!-- <el-form-item label="备注" prop="paramValue">
         <el-input type="textarea" v-model="dataForm.serviceStatusDetail"></el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -127,20 +135,32 @@
 <script>
 export default {
   props: {
-          productype: Object,
-          required: true
-        },
+    productype: Object,
+    required: true
+  },
   data() {
     return {
       visible: false,
-      dataForm: { number: "2" },
+      dataForm: { number: "2",contentType:'' },
       dataRule: {
-        // paramKey: [
-        //   { required: true, message: "参数名不能为空", trigger: "blur" }
-        // ],
-        // paramValue: [
-        //   { required: true, message: "参数值不能为空", trigger: "blur" }
-        // ]
+        customerRealName: [
+          { required: true, message: "客户姓名不能为空", trigger: "blur" }
+        ],
+        customerPhone: [
+          { required: true, message: "电话不能为空", trigger: "blur" }
+        ],
+         mac: [
+          { required: true, message: "mac不能为空", trigger: "blur" }
+        ],
+        contentType:[
+          { required: true, message: "投诉问题不能为空", trigger: "blur" }
+        ],
+        contentDetail:[
+           { required: true, message: "投诉的内容不能为空", trigger: "blur" }
+        ],
+        serviceType:[
+           { required: true, message: "处理方式不能为空", trigger: "blur" }
+        ]
       },
       // 省市区
       arr: this.GLOBAL.arrAll,
@@ -155,6 +175,9 @@ export default {
       // 处理类型的省市区
       value3: "",
       newform: false,
+      macshow:false,
+      macdatas:false,
+      macData:'',//mac带出的数据
       createNum: "" //新建工单编号
     };
   },
@@ -172,10 +195,13 @@ export default {
         this.ddistrict = this.dataForm.customerCounty;
         this.value3 = this.dataForm.serviceAppointmentTime; //服务时间
         this.newform = false;
+        this.macshow = true;
+        this.macdatas = true;
+        this.getmac(this.dataForm.mac);
       } else {
         //新建
         this.newform = true;
-
+        this.macData={}
         // console.log(this.createNum);
         // this.dataForm.number=this.createNum;
       }
@@ -203,6 +229,33 @@ export default {
         // }
       });
     },
+    getmac(value){
+      if(value){
+        this.macshow=true;
+        this.macdatas=true;
+        this.$http_
+              .post(this.GLOBAL.baseUrlxg + "/productinfo/get.mac", 
+              {
+                // sid:window.sessionStorage.getItem('sid'),
+                mac:value,
+                // currentPage:1,
+                // pageSize:10,
+                sid:window.sessionStorage.getItem('sid')
+              }, {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+                }
+              })
+              .then(({ data }) => {
+                console.log(data.data);
+                if(data.data=={} ||data.data==null ||data.data==undefined||data.data==[]){
+                  this.macdatas=false;
+                }else{
+                  this.macData=data.data;
+                }
+              });
+      }
+    },
     getSTime() {
       //时间处理
       console.log(this.value3);
@@ -213,7 +266,10 @@ export default {
       this.dataForm.customerCity = this.dcity;
       this.dataForm.customerCounty = this.ddistrict;
       this.dataForm.serviceAppointmentTime = this.value3;
-      this.dataForm.sid=window.sessionStorage.getItem('sid')
+      this.dataForm.sid = window.sessionStorage.getItem("sid");
+      // this.dataForm.productType=this.macData.productType;
+      // this.dataForm.productModel=this.macData.productModel;
+      // this.dataForm.mac=this.macData.mac
       const _this = this;
       if (this.newform == true) {
         //新建表单
@@ -283,25 +339,25 @@ export default {
                   }
                 });
               });
-              // 修改维修单
-              //  this.$http_
-              // .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
-              //   headers: {
-              //     "Content-Type": "application/json;charset=UTF-8"
-              //   }
-              // })
-              // .then(({ data }) => {
-              //   console.log(data.isSuccess);
-              //   _this.$message({
-              //     message: "操作成功",
-              //     type: "success",
-              //     duration: 1500,
-              //     onClose: () => {
-              //       _this.visible = false;
-              //       _this.$emit("refreshDataList");
-              //     }
-              //   });
-              // });
+            // 修改维修单
+            //  this.$http_
+            // .post(this.GLOBAL.baseUrl + "/repair.update", this.dataForm, {
+            //   headers: {
+            //     "Content-Type": "application/json;charset=UTF-8"
+            //   }
+            // })
+            // .then(({ data }) => {
+            //   console.log(data.isSuccess);
+            //   _this.$message({
+            //     message: "操作成功",
+            //     type: "success",
+            //     duration: 1500,
+            //     onClose: () => {
+            //       _this.visible = false;
+            //       _this.$emit("refreshDataList");
+            //     }
+            //   });
+            // });
           }
         });
       }
@@ -334,7 +390,7 @@ export default {
       } else {
         this.ddistrict = "";
       }
-    },
+    }
     // 省市区方法结束
     // createNumber() {
     //   //新售后工单编号
@@ -396,6 +452,13 @@ select {
   div {
     width: 72.4%;
   }
+}
+.divider {
+  width: 100%;
+  height: 1px;
+  display: inline-block;
+  background-color: #909399;
+  margin-bottom: 11px;
 }
 </style>
 

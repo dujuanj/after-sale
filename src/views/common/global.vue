@@ -8,15 +8,15 @@
 <script>
 
 const serverSrc='www.baidu.com';
-const baseUrl='https://58.87.111.66:9010/api/postsale';
-const baseUrlxg='https://58.87.111.66:9020/api/postsale'
+const baseUrl='https://sale.zeepson.com/api/postsale';
+const baseUrlxg='https://sale.zeepson.com/api/product'
 // const baseUrl='http://192.168.11.7:9010/api/postsale';
 const sid= window.sessionStorage.getItem('sid');
 const createUserName='duju'
 const createUserRealName='dj'
 const token='12345678';
 const hasEnter=false;
-const userSite="中国钓鱼岛";
+
 //const imgUrl='http://140.143.218.207';
 const imgUrl='http://118.89.225.162:8114';
 //const imgUrl='http://116.196.90.98:57073';
@@ -2026,7 +2026,7 @@ var arrAll =[
 		]
   export default
   {
-    userSite,//用户地址
+   
     token,//用户token身份
     serverSrc,//服务器地址
     hasEnter,//用户登录状态

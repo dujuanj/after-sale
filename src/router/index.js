@@ -126,7 +126,7 @@ router.beforeEach((to, from, next) => {
  
     http
     .post(
-       "http://58.87.111.66:9010/api/postsale/user.queryUserAndResource",
+       "https://sale.zeepson.com/api/postsale/user.queryUserAndResource",
       {
         sid:window.sessionStorage.getItem('sid'),
         userId:window.sessionStorage.getItem('userId')

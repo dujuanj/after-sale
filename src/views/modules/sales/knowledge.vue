@@ -1,27 +1,79 @@
 <template>
   <div class="mod-knowledge">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+       <el-row :gutter="12" class="marbot_15">
+      <el-col :span="2">
+        <el-card shadow="always">
+          初柜
+          <br />
+          <span style="color:#409EFF;font-size:24px;">{{countDatas.firstCabinet}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="always">
+       2层屉柜<br />
+          <span style="color:#F56C6C;font-size:24px;">{{countDatas.drawerCabinet2}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="always">
+          3层屉柜
+          <br />
+          <span style="color:#E6A23C;font-size:24px;">{{countDatas.drawerCabinet3}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="hover">
+          智能门禁
+          <br />
+          <span style="color:#606266;font-size:24px;">{{countDatas.accessControl}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="always">
+          抽屉锁
+          <br />
+          <span style="color:#909399;font-size:24px;">{{countDatas.cabinetLcock}}</span>
+        </el-card>
+      </el-col>
+      <el-col :span="2">
+        <el-card shadow="always">
+          蓝牙锁
+          <br />
+          <span style="color:#67C23A;font-size:24px;">{{countDatas.bluetoothLcock}}</span>
+        </el-card>
+      </el-col>
+    </el-row> <br>
       <el-form-item>
         <el-form-item>
            <el-select
-          v-model="productName"
+          v-model="productType"
           placeholder="请选择产品"
-         
+          @change="getDataList()"
         >
           <el-option
             v-for="item in options"
             :key="item.value"
-            :label="item.productName"
-            :value="item.productName"
+            :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :value="item.productType"
           ></el-option>
         </el-select>
         </el-form-item> 
         <el-form-item>
-          <el-input v-model="question" placeholder="问题" clearable></el-input>
+          <el-input v-model="fullQuery" placeholder="输入问题描述／解决办法查询" clearable  style="width:333px;"></el-input>
         </el-form-item>
          <el-form-item>
-          <el-input v-model="createUserName" placeholder="创建人" clearable></el-input>
-        </el-form-item>
+        <div class="block">
+          <el-date-picker
+            v-model="value1"
+            type="datetimerange"
+            start-placeholder="创建日期"
+            end-placeholder="结束日期"
+          
+            value-format="yyyy-MM-dd HH:mm:ss"
+          ></el-date-picker>
+        </div>
+      </el-form-item>
          <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button icon="el-icon-document" @click="reset()">重置</el-button>
@@ -43,13 +95,22 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+       <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="productName"
+        
         header-align="center"
         align="center"
         width="80"
         label="产品名称"
-      ></el-table-column>
+      >
+       <template slot-scope="scope">
+         {{scope.row.productType==1?'初柜':scope.row.productType==2?'2层屉柜':scope.row.productType==3?'3层屉柜':scope.row.productType==4?'门禁':scope.row.productType==5?'门锁':''}}
+       </template>
+      </el-table-column>
       <el-table-column prop="productModel" header-align="center" align="center" label="产品型号"></el-table-column>
 
       <el-table-column prop="question" header-align="center" align="center" label="问题描述"></el-table-column>
@@ -111,7 +172,10 @@ export default {
       addOrUpdateVisible: false,
       options:'',
       productName:'',
-      createUserName:''
+      createUserName:'',
+      fullQuery:'',
+      value1:[],
+      countDatas:''
     };
   },
   components: {
@@ -120,6 +184,7 @@ export default {
   activated() {
     this.getDataList();
     this.producttype();
+    this.getCount()
   },
   methods: {
     // 获取数据列表
@@ -132,15 +197,11 @@ export default {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
-            productName:this.productName,
-            createUserName:this.createUserName,
-            question:this.question
-            // userName: this.userName,
-            // realName: this.realName,
-            // phone: this.phone,
-            // roleList: this.roleList
-            // current:this.pageIndex,
-            // size:this.pageSize
+            productType:this.productType,
+            startTime:this.value1[0],
+            endTime:this.value1[1],
+            fullQuery:this.fullQuery
+           
           },
           {
             headers: {
@@ -164,9 +225,9 @@ export default {
     },
    
     reset() {
-      this.productName='';
-      this.question='';
-      this.createUserName='';
+      this.productType='';
+      this.value1=[];
+      this.fullQuery='';
       this.getDataList();
     },
     // 每页数
@@ -253,8 +314,12 @@ export default {
     producttype() {
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
-
+          this.GLOBAL.baseUrlxg + "/product/list",
+          {
+            currentPage: 1,
+            pageSize: 10000,
+            sid: window.sessionStorage.getItem("sid")
+          },
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -263,12 +328,33 @@ export default {
         )
         .then(res => {
           console.log(res.data.data);
-          this.options = res.data.data;
+          this.options = res.data.data.records;
         })
         .catch(res => {
           console.log("err");
         });
     },
+    getCount(){
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrlxg + "/knowledge/count",
+          {
+            sid: window.sessionStorage.getItem("sid")
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res.data.data);
+          this.countDatas = res.data.data;
+        })
+        .catch(res => {
+          console.log("err");
+        });
+    }
   }
 };
 </script>

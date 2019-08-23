@@ -13,15 +13,15 @@
     >
       <el-form-item label="产品名称" prop="productName">
         <el-select
-          v-model="dataForm.productName"
+          v-model="dataForm.productType"
           placeholder="请选择产品"
-          @change="modellist(dataForm.productName)"
+          @change="modellist(dataForm.productType)"
         >
           <el-option
             v-for="item in options"
             :key="item.value"
-            :label="item.productName"
-            :value="item.productName"
+            :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :value="item.productType"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -42,9 +42,9 @@
       <el-form-item label="解决方案" prop="remark">
         <el-input v-model="dataForm.answer" placeholder="解决方案"></el-input>
       </el-form-item>
-      <el-form-item label="创建人" prop="remark">
+      <!-- <el-form-item label="创建人" prop="remark">
         <el-input v-model="dataForm.createUserName" placeholder="创建人"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="创建日期" prop="remark">
         <el-date-picker
           v-model="dataForm.createTime"
@@ -89,9 +89,9 @@ export default {
         createTime:''
       },
       dataRule: {
-        productName: [
-          { required: true, message: "产品名称不能为空", trigger: "blur" }
-        ],
+        // productName: [
+        //   { required: true, message: "产品名称不能为空", trigger: "blur" }
+        // ],
 
         productModel: [
           { required: true, message: "产品型号不能为空", trigger: "blur" }
@@ -167,8 +167,15 @@ export default {
         });
       } else {
         // 修改知识库
+        var datas={};
+        datas.productType=this.dataForm.productType;
+        datas.productModel=this.dataForm.productModel;
+        datas.answer=this.dataForm.answer;
+        datas.question=this.dataForm.question;
+        datas.sid=window.sessionStorage.getItem('sid');
+        datas.id=this.dataForm.id
          this.$http_
-              .post(this.GLOBAL.baseUrlxg + "/knowledge/update", this.dataForm, {
+              .post(this.GLOBAL.baseUrlxg + "/knowledge/update", datas, {
                 headers: {
                   "Content-Type": "application/json;charset=UTF-8"
                 }
@@ -217,8 +224,12 @@ export default {
     producttype() {
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
-
+          this.GLOBAL.baseUrlxg + "/product/list",
+          {
+            currentPage: 1,
+            pageSize: 10000,
+            sid: window.sessionStorage.getItem("sid")
+          },
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -227,7 +238,7 @@ export default {
         )
         .then(res => {
           console.log(res.data.data);
-          this.options = res.data.data;
+          this.options = res.data.data.records;
         })
         .catch(res => {
           console.log("err");
@@ -239,7 +250,8 @@ export default {
         .post(
           this.GLOBAL.baseUrlxg + "/product/model.list",
           {
-            productName: val
+            productType: val,
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {

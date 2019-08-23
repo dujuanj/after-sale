@@ -11,26 +11,25 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="生产批号" >
+      <el-form-item label="生产批号">
         <el-input v-model="dataForm.batchNumber" placeholder="生产批号" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="产品" >
-        <el-form-item
-          v-for="(domain, index) in dynamicValidateForm.domains"
-          :key="domain.key"
-          
-        
-        >
+      <el-form-item label="生产内容">
+        <el-form-item v-for="(domain, index) in dynamicValidateForm.domains" :key="domain.key">
           <!-- 产品列表  -->
-          <el-select v-model="domain.productName" placeholder="请选择产品" @change="modellist(domain.productName)">
+          <el-select
+            v-model="domain.productType"
+            placeholder="请选择产品"
+            @change="modellist(domain.productType)"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
-              :label="item.productName"
-              :value="item.productName"
+              :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :value="item.productType"
             ></el-option>
           </el-select>
-           <!-- <el-input v-model="domain.productModel" style="width:20%;" placeholder="产品型号"></el-input> -->
+          <!-- <el-input v-model="domain.productModel" style="width:20%;" placeholder="产品型号"></el-input> -->
           <el-select v-model="domain.productModel" placeholder="产品型号">
             <el-option
               v-for="item in optionss"
@@ -40,7 +39,7 @@
             ></el-option>
           </el-select>
           <!-- 数量 -->
-          <el-input v-model="domain.number" style="width:20%;" placeholder="输入数量"></el-input>
+          <el-input v-model="domain.count" style="width:20%;" placeholder="输入数量"></el-input>
           <el-button @click.prevent="removeDomain(domain)">删除</el-button>
         </el-form-item>
         <el-button @click="addDomain" style="margin-top:10px;">新增产品</el-button>
@@ -52,19 +51,36 @@
           align="right"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :default-time="['12:00:00', '08:00:00']"
-          value-format="timestamp"
-          
+         
+          value-format="yyyy-MM-dd HH:mm:ss"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="生产厂商" >
-        <el-input v-model="dataForm.manufacturer" placeholder="生产厂商" style="width:50%;"></el-input>
+      <el-form-item label="生产厂商">
+        <!-- <el-input v-model="dataForm.manufacturer" placeholder="生产厂商" style="width:50%;"></el-input> -->
+          <el-select v-model="dataForm.provider" placeholder="请选择生产厂商" @change="getDataList()">
+          <el-option
+            v-for="item in manufacturerdatas"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="生产监督">
         <el-input v-model="dataForm.supervisioner" placeholder="多个监督人以逗号 , 隔开" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="备注" >
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+      <el-form-item label="生产状态">
+        <el-select v-model="dataForm.status" placeholder="请选择">
+          <el-option
+      v-for="item in status"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="备注">
+        <el-input type="textarea" v-model="dataForm.remark"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -92,11 +108,19 @@ export default {
       productTime: "",
       value: "",
       valuetype: "",
-
+      manufacturerdatas:[
+        {
+          value: "宁波亚太",
+          label: "宁波亚太"
+        },
+        {
+          value: "宁波金泰阁",
+          label: "宁波金泰阁"
+        }
+      ],
       dataForm: {
         // id: 0,
-        batchNumber: "",
-       
+        batchNumber: ""
       },
       dataRule: {
         batchNumber: [
@@ -117,13 +141,23 @@ export default {
             productName: ""
           }
         ]
-      }
+      },
+      status:[{
+          value: 1 ,
+          label: '未开始生产'
+        }, {
+          value: 2 ,
+          label: '生产中'
+        }, {
+          value: 3 ,
+          label: '生产完成'
+        }]
     };
   },
   methods: {
     init(id, datas) {
-        // 产品类型
-        this.producttype();
+      // 产品类型
+      this.producttype();
       // this.dataForm.id = id || 0;
       this.dataForm.sid = window.sessionStorage.getItem("sid");
       this.visible = true;
@@ -134,12 +168,19 @@ export default {
         this.dataForm = datas;
         console.log(this.dataForm);
         this.newform = false;
-         this.dynamicValidateForm.domains=datas.batchInfoList;
+        this.dynamicValidateForm.domains = datas.batchInfoList;
+        this.productTime=[datas.startTime,datas.endTime]
       } else {
         //新建
-        this.dataForm={}
+        this.productTime=[];
+        this.dynamicValidateForm.domains=[ {
+            number: "",
+            productModel: "",
+            productName: ""
+          }];
+        this.dataForm = {};
         this.newform = true;
-       
+
         console.log(this.dataForm);
       }
     },
@@ -147,8 +188,13 @@ export default {
     producttype() {
       this.$http_
         .post(
-          this.GLOBAL.baseUrlxg + "/product/name.list",
-
+          this.GLOBAL.baseUrlxg + "/product/list",
+          {
+            currentPage: 1,
+            pageSize: 10000,
+            sid: window.sessionStorage.getItem("sid"),
+          
+          },
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -157,7 +203,7 @@ export default {
         )
         .then(res => {
           console.log(res.data.data);
-          this.options = res.data.data;
+          this.options=res.data.data.records;
         })
         .catch(res => {
           console.log("err");
@@ -169,7 +215,7 @@ export default {
         .post(
           this.GLOBAL.baseUrlxg + "/product/model.list",
           {
-            productName: val
+            productType: val
           },
           {
             headers: {
@@ -188,58 +234,68 @@ export default {
     // 表单提交
     dataFormSubmit() {
       if (this.newform == true) {
-        console.log(this.dynamicValidateForm.domains);        
-        this.dataForm.batchInfoList=this.dynamicValidateForm.domains;
-        this.dataForm.startTime=this.productTime[0];
-        this.dataForm.endTime=this.productTime[1];
+        console.log(this.dynamicValidateForm.domains);
+        this.dataForm.batchInfoList = this.dynamicValidateForm.domains;
+        this.dataForm.startTime = this.productTime[0];
+        this.dataForm.endTime = this.productTime[1];
         console.log(this.dataForm);
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
             // 添加批次
             this.$http_
-              .post(this.GLOBAL.baseUrlxg + "/productbatch/add", this.dataForm, {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
+              .post(
+                this.GLOBAL.baseUrlxg + "/productbatch/add",
+                this.dataForm,
+                {
+                  headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                  }
                 }
-              })
+              )
               .then(({ data }) => {
                 console.log(data);
-              
-                  this.$message({
-                    message: data.msg,
-                    type: "success",
-                    duration: 1500,
-                    onClose: () => {
-                      this.$emit("refreshDataList");
-                      this.visible = false;
-                    }
-                  });
-                
+
+                this.$message({
+                  message: data.errorMsg,
+                  type: "success",
+                  duration: 1500,
+                  onClose: () => {
+                    this.$emit("refreshDataList");
+                    this.visible = false;
+                  }
+                });
               });
           }
         });
       } else {
         this.dataForm.sid = window.sessionStorage.getItem("sid");
+        this.dataForm.startTime = this.productTime[0];
+        this.dataForm.endTime = this.productTime[1];
+        this.dataForm.batchInfoList = this.dynamicValidateForm.domains;
         this.$refs["dataForm"].validate(valid => {
           //修改用户帐号列表
           if (valid) {
             this.$http_
-              .post(this.GLOBAL.baseUrlxg + "/productbatch/update", this.dataForm, {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
+              .post(
+                this.GLOBAL.baseUrlxg + "/productbatch/update",
+                this.dataForm,
+                {
+                  headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                  }
                 }
-              })
+              )
               .then(({ data }) => {
                 console.log(data);
-                 this.$message({
-                    message: data.msg,
-                    type: "success",
-                    duration: 1500,
-                    onClose: () => {
-                      this.$emit("refreshDataList");
-                      this.visible = false;
-                    }
-                  });
+                this.$message({
+                  message: data.errorMsg,
+                  type: "success",
+                  duration: 1500,
+                  onClose: () => {
+                    this.$emit("refreshDataList");
+                    this.visible = false;
+                  }
+                });
               });
           }
         });
@@ -250,7 +306,7 @@ export default {
       this.dynamicValidateForm.domains.push({
         number: "",
         productName: "",
-        productModel: "",
+        productModel: ""
         // key: Date.now()
       });
     },

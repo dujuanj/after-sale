@@ -2,18 +2,33 @@
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="batchNumber" placeholder="生产批号" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="manufacturer" placeholder="生产厂家" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="supervisioner" placeholder="生产监督" clearable></el-input>
-      </el-form-item>
-      <el-form-item label  prop="roleIdList">
-        <el-select v-model="productName"  placeholder="请选择产品类型">
-          <el-option v-for="item in options" :key="item.productName" :label="item.productName" :value="item.productName"></el-option>
+        
+        <el-select v-model="provider" placeholder="请选择生产厂商" @change="getDataList()">
+          <el-option
+            v-for="item in manufacturerdatas"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="status" placeholder="请选择生产状态" @change="getDataList()">
+          <el-option
+            v-for="item in statuss"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-input
+          v-model="fullQuery"
+          placeholder="输入生产批号 ／产品内容／监督人姓名查询"
+          clearable
+          style="width:333px;"
+        ></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -23,7 +38,11 @@
       </el-form-item>
       <br />
       <el-form-item>
-        <el-button v-if="isAuth('/api/postsale/productbatch/add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button
+          v-if="isAuth('/api/postsale/productbatch/add')"
+          type="primary"
+          @click="addOrUpdateHandle()"
+        >新增</el-button>
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -35,40 +54,71 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+       <el-table-column fixed label="序号" width="50" align="center">
+        <template scope="scope">
+          <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="provider" header-align="center" align="center" label="生产厂商"></el-table-column>
       <el-table-column
         prop="batchNumber"
         header-align="center"
         align="center"
         width="80"
         label="生产批号"
+        :show-overflow-tooltip="true"
       ></el-table-column>
-      <el-table-column prop="productNames" header-align="center" align="center" label="产品"></el-table-column>
-      <el-table-column header-align="center" align="center" label="生产时间">
+      <el-table-column
+        header-align="center"
+        align="center"
+        label="生产内容"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
-          <span>{{scope.row.startTime}}</span>--
+          <span v-for="item in scope.row.batchInfoList">
+            {{item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''}}
+            - {{item.productModel}} &nbsp;
+          </span>
+          <!-- {{scope.row.productType==1?'初柜':scope.row.productType==2?'2层屉柜':scope.row.productType==3?'3层屉柜':scope.row.productType==4?'门禁':scope.row.productType==5?'门锁':''}} -->
+        </template>
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        align="center"
+        label="生产时间"
+        :show-overflow-tooltip="true"
+      >
+        <template slot-scope="scope">
+          <span>{{scope.row.startTime}}</span> --
           <span>{{scope.row.endTime}}</span>
           <!-- <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
           <el-tag v-else size="small">正常</el-tag>-->
         </template>
       </el-table-column>
-      <el-table-column prop="manufacturer" header-align="center" align="center" label="生产厂家"></el-table-column>
-      <el-table-column prop="supervisioner" header-align="center" align="center" label="生产监督"></el-table-column>
 
+      <el-table-column prop="supervisioner" header-align="center" align="center" label="生产监督"></el-table-column>
+      <el-table-column header-align="center" align="center" label="生产状态">
+        <template
+          slot-scope="scope"
+        >{{scope.row.status==1?'未开始生产':scope.row.status==2?'生产中':scope.row.status==3?'生产完成':''}}</template>
+      </el-table-column>
+      <el-table-column prop="remark" header-align="center" align="center" label="备注"></el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             v-if="isAuth('/api/postsale/productbatch/finish')"
             type="text"
             size="small"
             @click="finish(scope.row.id)"
-          >生产完成</el-button>
-           <el-button type="text" size="small"   @click="detail(scope.row.id,scope.row)">详情</el-button>
-          <!-- <el-button
-            v-if="isAuth('sys:user:update')"
+          >生产完成</el-button>-->
+          <el-button type="text" size="small" @click="detail(scope.row.id,scope.row)">详情</el-button>
+          <el-button
+            v-if="isAuth('/api/postsale/productbatch/delete')"
             type="text"
             size="small"
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
-          >修改</el-button> -->
+          >修改</el-button>
+          <!-- <el-button size="mini"  round type="" @click="batchupdate(dataList.id,dataList)">修改批次</el-button> -->
           <el-button
             v-if="isAuth('/api/postsale/productbatch/delete')"
             type="text"
@@ -111,9 +161,33 @@ export default {
       batchNumber: "",
       productName: "",
       batchNumber: "",
-      manufacturer: "",
+      provider: "",
       supervisioner: "",
-     
+      status: "", //生产状态
+      statuss: [
+        {
+          value: "1",
+          label: "未开始生产"
+        },
+        {
+          value: "2",
+          label: "生产中"
+        },
+        {
+          value: "3",
+          label: "生产完成"
+        }
+      ],
+      manufacturerdatas:[
+        {
+          value: "宁波亚太",
+          label: "宁波亚太"
+        },
+        {
+          value: "宁波金泰阁",
+          label: "宁波金泰阁"
+        }
+      ]
     };
   },
   components: {
@@ -134,11 +208,9 @@ export default {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
-            productNames: this.productName,
-            batchNumber: this.batchNumber,
-            manufacturer: this.manufacturer,
-            supervisioner: this.supervisioner
-            
+            fullQuery: this.fullQuery,
+            provider: this.provider,            
+            status: this.status
           },
           {
             headers: {
@@ -162,10 +234,10 @@ export default {
     },
     getRole() {
       // 产品类型
-       this.$http_
+      this.$http_
         .post(
           this.GLOBAL.baseUrlxg + "/product/name.list",
-          
+
           {
             headers: {
               "Content-Type": "application/json;charset=UTF-8"
@@ -174,19 +246,17 @@ export default {
         )
         .then(res => {
           console.log(res.data.data);
-          this.options=res.data.data
-         
+          this.options = res.data.data;
         })
         .catch(res => {
           console.log("err");
         });
     },
     reset() {
-      this.productName = "",
-        this.batchNumber = "",
-        this.manufacturer = "",
-        this.supervisioner = "";
-      this.getDataList();
+      (this.status = ""), 
+      (this.fullQuery = ""),
+      this.provider='', 
+      this.getDataList()
     },
     // 每页数
     sizeChangeHandle(val) {
@@ -246,8 +316,7 @@ export default {
               console.log(res);
 
               this.$message({
-                message:
-                  res.data.msg,
+                message: res.data.errorMsg,
                 type: "success",
                 duration: 1500,
                 onClose: () => {
@@ -288,8 +357,8 @@ export default {
               this.$message({
                 type: "success",
                 message: "操作成功!",
-                 onClose: () => {
-                  this.getDataList()
+                onClose: () => {
+                  this.getDataList();
                 }
               });
 
@@ -303,18 +372,20 @@ export default {
           });
         });
     },
-     // 详情
+    // 详情
     detail(id, detailDatas) {
       console.log(id);
-      window.sessionStorage.setItem('batchid',id);
-      window.sessionStorage.setItem('batchnumber',detailDatas.batchNumber)
+      window.sessionStorage.setItem("batchid", id);
+      window.sessionStorage.setItem("detailDatas", JSON.stringify(detailDatas));
+      // window.sessionStorage.setItem('batchnumber',detailDatas.batchNumber);
+
       this.$router.push({
         name: "productbatch-detail",
         params: { id: id, detailDatas: detailDatas }
       });
       // window.sessionStorage.setItem('detaiId',id);
       // window.sessionStorage.setItem('detailDatas',JSON.stringify(detailDatas));
-    },
+    }
   }
 };
 </script>
