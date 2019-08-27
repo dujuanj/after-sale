@@ -75,7 +75,7 @@
         </div>
       </el-form-item>
          <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-button  type="primary" icon="el-icon-search"  size="mini" @click="getDataList()">查询</el-button>
         <el-button icon="el-icon-document" @click="reset()">重置</el-button>
         <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
@@ -83,7 +83,24 @@
         
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item> <br>
-       <el-button v-if="isAuth('/api/postsale/knowledge/add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+       <el-button v-if="isAuth('/api/postsale/knowledge/add')" type="primary"   icon="el-icon-plus"  size="mini" @click="addOrUpdateHandle()">新增</el-button>
+      <!-- 导入 -->
+     <el-button
+      type="primary"
+      v-if="isAuth('/api/postsale/worksheet.add')"
+      icon="el-icon-download"
+      size="mini"
+      class="marbot_15"
+    >导入</el-button>
+    <!-- 导出 -->
+     <el-button
+      type="primary"
+      v-if="isAuth('/api/postsale/worksheet.add')"
+      icon="el-icon-upload2"
+      size="mini"
+      class="marbot_15"
+      @click="importandexportHandle('知识库导出')"
+    >导出</el-button>
     </el-form>
     <br />
    
@@ -152,11 +169,18 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 导入导出 -->
+     <import-and-export
+      v-if="exportVisible"
+      ref="exportandimport"
+      @refreshDataList="getDataList"
+    ></import-and-export>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from "./knowledge-update-add";
+import ImportAndExport from './import-and-export'
 export default {
   data() {
     return {
@@ -175,11 +199,14 @@ export default {
       createUserName:'',
       fullQuery:'',
       value1:[],
-      countDatas:''
+      countDatas:'',
+      flag:'',
+      exportVisible:false
     };
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+     ImportAndExport
   },
   activated() {
     this.getDataList();
@@ -223,7 +250,14 @@ export default {
           console.log("err");
         });
     },
-   
+    // 导入导出弹框
+    importandexportHandle(flag){
+      
+      this.exportVisible = true;
+      this.$nextTick(() => {
+         this.$refs.exportandimport.init(flag);
+      })
+    },
     reset() {
       this.productType='';
       this.value1=[];

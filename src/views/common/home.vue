@@ -10,35 +10,41 @@
     </el-alert>-->
 
     <el-row :gutter="20">
-      <el-col :span="8">
+      <!-- 产品数量 -->
+      <el-col :span="12">
         <el-card>
           <div id="productCounts" class="chart-box"></div>
         </el-card>
       </el-col>
-      <el-col :span="8">
+      <!-- 产品销量 -->
+      <el-col :span="12">
         <el-card>
           <div id="J_chartLineBox" class="chart-box"></div>
         </el-card>
       </el-col>
-      <el-col :span="24">
+      <!-- 销量占比 -->
+      <el-col :span="12">
         <el-card>
           <div id="J_chartLineBox1" class="chart-box"></div>
         </el-card>
       </el-col>
-      <el-col :span="24">
-        <el-card>
-          <div id="J_chartBarBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
+       <!-- 产品投诉占比 -->
       <el-col :span="12">
         <el-card>
           <div id="J_chartPieBox" class="chart-box"></div>
         </el-card>
       </el-col>
-      <el-col :span="12">
+      <!-- 各省位产品数量统计 -->
+      <el-col :span="24">
         <el-card>
-          <div id="J_chartScatterBox" class="chart-box"></div>
+          <div id="J_chartBarBox" class="chart-box"></div>
         </el-card>
+      </el-col>
+     <!-- 工单统计 -->
+      <el-col :span="12">
+        <!-- <el-card>
+          <div id="J_chartScatterBox" class="chart-box"></div>
+        </el-card> -->
       </el-col>
     </el-row>
   </div>
@@ -50,17 +56,19 @@ export default {
   data() {
     return {
       chartLine: null,
+      chartPie1: null,
       chartBar: null,
       chartPie: null,
       chartScatter: null
     };
   },
   mounted() {
-    this.initChartLine();
+    this.initChartLine(); //产品销量统计
     this.initChartBar();
-    this.initChartPie();
-    this.initChartScatter();
-    this.initProductCount();
+    this.initChartPie(); //投述占比
+    // this.initChartScatter();
+    this.initProductCount(); //产品数量统计
+    this.salesShare() //销量占比
   },
   activated() {
     // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
@@ -72,6 +80,9 @@ export default {
     }
     if (this.chartPie) {
       this.chartPie.resize();
+    }
+     if (this.chartPie1) {
+      this.chartPie1.resize();
     }
     if (this.chartScatter) {
       this.chartScatter.resize();
@@ -121,13 +132,13 @@ export default {
           }
         ]
       };
-       this.chartLine = echarts.init(document.getElementById("productCounts"));
-      this.chartLine.setOption(option);
+       this.chartBar = echarts.init(document.getElementById("productCounts"));
+      this.chartBar.setOption(option);
       window.addEventListener("resize", () => {
-        this.chartLine.resize();
+        this.chartBar.resize();
       });
     },
-    // 折线图
+    // 销量统计
     initChartLine() {
       var option = {
         title: {
@@ -137,7 +148,11 @@ export default {
           trigger: "axis"
         },
         legend: {
-          default: 'right',
+        //  orient: 'vertical',
+        //  left: 'center',
+        //  bottom:'bottom',
+        //  margin: '50',
+        
           data: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"]
           
         },
@@ -199,9 +214,82 @@ export default {
         this.chartLine.resize();
       });
     },
-    // 柱状图
+    // 销量占比
+    salesShare(){
+      
+    var  option = {
+       title: {
+          text: "产品销量占比"
+        },
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'right',
+        data:['初柜','2层屉柜','3层屉柜','门禁','蓝牙锁']
+    },
+    emphasis:{
+      show:true
+    },
+     graphic:{       //图形中间文字
+            type:"text",
+            left:"center",
+            top:"center",
+            style:{
+                text:"销售总量1250",
+                textAlign:"center",
+                fill:"#000",
+                fontSize:16
+            }
+        },
+    series: [
+        {
+            name:'销量占比',
+            type:'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                normal: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    show: false,
+                    textStyle: {
+                        fontSize: '30',
+                        fontWeight: 'bold'
+                    }
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            data:[
+                {value:335, name:'初柜'},
+                {value:310, name:'2层屉柜'},
+                {value:234, name:'3层屉柜'},
+                {value:135, name:'门禁'},
+                {value:1548, name:'蓝牙锁'}
+            ]
+        }
+    ]
+};
+  this.chartLine = echarts.init(document.getElementById("J_chartLineBox1"));
+      this.chartLine.setOption(option);
+      window.addEventListener("resize", () => {
+        this.chartLine.resize();
+      });
+    },
+    // 各省份产品数量统计  
     initChartBar() {
       var option = {
+          title: {
+          text: "各省份产品数量统计"
+        },
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -210,15 +298,12 @@ export default {
         },
         legend: {
           data: [
-            "直接访问",
-            "邮件营销",
-            "联盟广告",
-            "视频广告",
-            "搜索引擎",
-            "百度",
-            "谷歌",
-            "必应",
-            "其他"
+            "初柜",
+            "2层屉柜",
+            "3层屉柜",
+            "门禁",
+            "蓝牙锁"
+            
           ]
         },
         grid: {
@@ -230,7 +315,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+            data: ["北京", "天津", "上海", "河北", "山西", "重庆", "辽宁","山东","河南","湖南","湖北"]
           }
         ],
         yAxis: [
@@ -240,30 +325,30 @@ export default {
         ],
         series: [
           {
-            name: "直接访问",
+            name: "初柜",
             type: "bar",
-            data: [320, 332, 301, 334, 390, 330, 320]
+            data: [320, 332, 301, 334, 390, 330, 320,390, 330, 320,334]
           },
           {
-            name: "邮件营销",
-            type: "bar",
-            stack: "广告",
-            data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: "联盟广告",
+            name: "2层屉柜",
             type: "bar",
             stack: "广告",
-            data: [220, 182, 191, 234, 290, 330, 310]
+            data: [120, 132, 101, 134, 90, 230, 210, 134, 90, 230, 210]
           },
           {
-            name: "视频广告",
+            name: "3层屉柜",
             type: "bar",
             stack: "广告",
-            data: [150, 232, 201, 154, 190, 330, 410]
+            data: [220, 182, 191, 234, 290, 330, 310,191, 234, 290, 330]
           },
           {
-            name: "搜索引擎",
+            name: "门禁",
+            type: "bar",
+            stack: "广告",
+            data: [150, 232, 201, 154, 190, 330, 410,150, 232, 201, 154]
+          },
+          {
+            name: "蓝牙锁",
             type: "bar",
             data: [862, 1018, 964, 1026, 1679, 1600, 1570],
             markLine: {
@@ -274,31 +359,6 @@ export default {
               },
               data: [[{ type: "min" }, { type: "max" }]]
             }
-          },
-          {
-            name: "百度",
-            type: "bar",
-            barWidth: 5,
-            stack: "搜索引擎",
-            data: [620, 732, 701, 734, 1090, 1130, 1120]
-          },
-          {
-            name: "谷歌",
-            type: "bar",
-            stack: "搜索引擎",
-            data: [120, 132, 101, 134, 290, 230, 220]
-          },
-          {
-            name: "必应",
-            type: "bar",
-            stack: "搜索引擎",
-            data: [60, 72, 71, 74, 190, 130, 110]
-          },
-          {
-            name: "其他",
-            type: "bar",
-            stack: "搜索引擎",
-            data: [62, 82, 91, 84, 109, 110, 120]
           }
         ]
       };
@@ -308,12 +368,12 @@ export default {
         this.chartBar.resize();
       });
     },
-    // 饼状图
+    // 投述占比
     initChartPie() {
       var option = {
         backgroundColor: "#2c343c",
         title: {
-          text: "Customized Pie",
+          text: "产品投诉占比 - 投诉总量125",
           left: "center",
           top: 20,
           textStyle: {
@@ -334,16 +394,16 @@ export default {
         },
         series: [
           {
-            name: "访问来源",
+            name: "投述占比",
             type: "pie",
             radius: "55%",
             center: ["50%", "50%"],
-            data: [
-              { value: 335, name: "直接访问" },
-              { value: 310, name: "邮件营销" },
-              { value: 274, name: "联盟广告" },
-              { value: 235, name: "视频广告" },
-              { value: 400, name: "搜索引擎" }
+            data:[
+                {value:335, name:'初柜'},
+                {value:310, name:'2层屉柜'},
+                {value:234, name:'3层屉柜'},
+                {value:135, name:'门禁'},
+                {value:154, name:'蓝牙锁'}
             ].sort(function(a, b) {
               return a.value - b.value;
             }),

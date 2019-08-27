@@ -16,14 +16,14 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button icon="el-icon-document" @click="reset()">重置</el-button>
+        <el-button icon="el-icon-search" type="primary"  size="mini"  @click="getDataList()">查询</el-button>
+        <el-button icon="el-icon-document" size="mini" @click="reset()">重置</el-button>
         <!-- <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button> -->
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
       <br />
       <el-form-item>
-        <el-button v-if="isAuth('/api/postsale/user.add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('/api/postsale/user.add')" type="primary" size="mini"  icon="el-icon-plus" @click="addOrUpdateHandle()">新增</el-button>
         <!-- <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -50,12 +50,13 @@
           <el-tag v-else size="small">正常</el-tag>
         </template>-->
       </el-table-column>
-      <el-table-column prop="password" header-align="center" align="center" width="180" label="密码"></el-table-column>
+      <!-- <el-table-column prop="password" header-align="center" align="center" width="180" label="密码"></el-table-column> -->
       <el-table-column
         prop="roleList.name"
         header-align="center"
         align="center"
         width="180"
+        :show-overflow-tooltip="true"
         label="用户角色"
       >
         <template slot-scope="scope">

@@ -102,8 +102,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="getDataList()">查询</el-button>
-        <el-button icon="el-icon-document" @click="reset()">重置</el-button>
+        <el-button type="primary" icon="el-icon-search"  size="mini" @click="getDataList()">查询</el-button>
+        <el-button icon="el-icon-document"  size="mini" @click="reset()">重置</el-button>
 
         <!-- <el-button
           type="danger"
@@ -118,9 +118,30 @@
       type="primary"
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-plus"
+      size="mini"
       @click="addOrUpdateHandle()"
       class="marbot_15"
     >新增</el-button>
+    <!-- 导入 -->
+     <el-button
+      type="primary"
+      v-if="isAuth('/api/postsale/worksheet.add')"
+      icon="el-icon-download"
+      size="mini"
+       @click="importandexportHandle('工单导入')"
+      class="marbot_15"
+     
+    >导入</el-button>
+    <!-- 导出 -->
+     <el-button
+      type="primary"
+      v-if="isAuth('/api/postsale/worksheet.add')"
+      icon="el-icon-upload2"
+      size="mini"
+       @click="importandexportHandle('工单导出')"
+      class="marbot_15"
+      
+    >导出</el-button>
     <!-- 表格 -->
     <el-table
       :data="dataList"
@@ -259,6 +280,12 @@
       ref="revisitaddOrUpdate"
       @refreshDataList="getDataList"
     ></revisit-add-or-update>
+    <!-- 导入导出 -->
+     <import-and-export
+      v-if="exportVisible"
+      ref="exportandimport"
+      @refreshDataList="getDataList"
+    ></import-and-export>
   </div>
 </template>
 
@@ -266,6 +293,7 @@
 import echarts from "echarts";
 import AddOrUpdate from "./config-add-or-update";
 import RevisitAddOrUpdate from "./revisit-add-or-update";
+import ImportAndExport from './import-and-export'
 
 export default {
   data() {
@@ -283,7 +311,7 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       revisitVisible: false,
-
+      exportVisible:false,
       menuList: JSON.parse(sessionStorage.getItem("menuList") || "[]"),
       counts: "",
       // 查询
@@ -305,7 +333,8 @@ export default {
 
   components: {
     AddOrUpdate,
-    RevisitAddOrUpdate
+    RevisitAddOrUpdate,
+    ImportAndExport
   },
   activated() {
     this.getDataList();
@@ -444,6 +473,14 @@ export default {
       this.$nextTick(() => {
         this.$refs.revisitaddOrUpdate.init(id, detailDatas);
       });
+    },
+    // 导入导出弹框
+    importandexportHandle(flag){
+      
+      this.exportVisible = true;
+      this.$nextTick(() => {
+         this.$refs.exportandimport.init(flag);
+      })
     },
     // 删除
     deleteHandle(id) {

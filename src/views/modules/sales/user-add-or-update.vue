@@ -14,7 +14,7 @@
       <el-form-item label="帐号名" prop="userName">
         <el-input v-model="dataForm.userName" placeholder="登录帐号" style="width:50%;"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item label="密码" prop="password" v-if='newform'>
         <el-input v-model="dataForm.password" type="text" placeholder="密码" style="width:50%;"></el-input>
       </el-form-item>
 
@@ -192,6 +192,7 @@ export default {
       } else {
         //新建
         this.newform = true;
+        this.roleIdList=[];
         this.dataForm={}
         // this.dataForm=[];
         // this.roleIdList=[];
@@ -227,6 +228,7 @@ export default {
         console.log(this.roleIdList);
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
+            this.dataForm.sid=window.sessionStorage.getItem('sid');
             // 新建用户
             this.$http_
               .post(this.GLOBAL.baseUrl + "/user.add", this.dataForm, {
@@ -235,7 +237,7 @@ export default {
                 }
               })
               .then(({ data }) => {
-                if (data.data.isSuccess == "false") {
+                if (data.isSuccess == "false") {
                   this.$message({
                     message: data.data.errorMsg,
                     type: "success",

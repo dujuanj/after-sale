@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="getDataList()">查询</el-button> -->
-        <el-button v-if="isAuth('/api/postsale/role.add')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('/api/postsale/role.add')" type="primary" size="mini"  icon="el-icon-plus" @click="addOrUpdateHandle()">新增</el-button>
         <!-- <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
       </el-form-item>
     </el-form>
@@ -34,7 +34,7 @@
             v-if="isAuth('/api/postsale/role.update')"
             type="text"
             size="small"
-            @click="addOrUpdateHandle(scope.row.roleId,scope.row)"
+            @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >配置</el-button>
           <el-button
             v-if="isAuth('/api/postsale/role.delete')"
@@ -55,12 +55,13 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"  v-bind:menuList='menuList'></add-or-update>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from "./role-add-or-update";
+import { treeDataTranslate } from "@/utils";
 export default {
   data() {
     return {
@@ -68,12 +69,18 @@ export default {
         roleName: ""
       },
       dataList: [],
+       menuList: [],
+      menuListTreeProps: {
+        label: "name",
+        children: "childList"
+      },
       pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      addOrUpdateVisible: false
+      addOrUpdateVisible: false,
+       tempKey: -666666 // 临时key, 用于解决tree半选中状态项不能传给后台接口问题. # 待优化
     };
   },
   components: {
@@ -81,6 +88,7 @@ export default {
   },
   activated() {
     this.getDataList();
+    this.searchAll();
   },
   methods: {
     // 获取数据列表
@@ -191,7 +199,38 @@ export default {
             });
         })
         .catch(() => {});
-    }
+    },
+    // 查询所有资源，用于授权
+    searchAll(){
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/resource.queryAll",
+          {
+            sid: window.sessionStorage.getItem("sid")
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(({ data }) => {
+          console.log(data.data.menuList);
+          var data = data.data.menuList;
+          this.menuList = data;
+          // this.menuList = treeDataTranslate(data, 'id')
+          console.log(this.menuList);
+        })
+        .then(() => {
+          this.visible = true;
+          this.$nextTick(() => {
+            this.$refs["dataForm"].resetFields();
+            // this.$refs.menuListTree.setCheckedKeys([]);
+            // console.log(this.$refs.menuListTree.setCheckedKeys([]))
+            // console.log(this.$refs.menuListTree.getCheckedKeys());
+          });
+        });
+    },
   }
 };
 </script>
