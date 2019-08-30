@@ -139,7 +139,8 @@ export default {
     addOrUpdateHandle(id,datas) {
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id,datas);
+        
+        this.$refs.addOrUpdate.init(id, datas);
       });
     },
     // 删除

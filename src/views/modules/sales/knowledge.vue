@@ -90,6 +90,7 @@
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-download"
       size="mini"
+        @click="importandexportHandle('知识库导入','https://sale.zeepson.com/api/product/knowledge/import')"
       class="marbot_15"
     >导入</el-button>
     <!-- 导出 -->
@@ -251,11 +252,11 @@ export default {
         });
     },
     // 导入导出弹框
-    importandexportHandle(flag){
+    importandexportHandle(flag,importurl){
       
       this.exportVisible = true;
       this.$nextTick(() => {
-         this.$refs.exportandimport.init(flag);
+         this.$refs.exportandimport.init(flag,importurl);
       })
     },
     reset() {

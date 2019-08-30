@@ -56,6 +56,7 @@
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-upload2"
       size="mini"
+       @click="importandexportHandle('发货记录导出')"
       class="marbot_15"
     >导出</el-button>
     <br />
@@ -105,11 +106,18 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+     <!-- 导入导出 -->
+     <import-and-export
+      v-if="exportVisible"
+      ref="exportandimport"
+      @refreshDataList="getDataList"
+    ></import-and-export>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from "./producttype-update-add";
+import ImportAndExport from './import-and-export'
 export default {
   data() {
     return {
@@ -121,6 +129,7 @@ export default {
       pageSize: 10,
       totalPage: 0,
       dataListLoading: false,
+       exportVisible:false,
       dataListSelections: [],
       addOrUpdateVisible: false,
       // search
@@ -130,7 +139,9 @@ export default {
     };
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    ImportAndExport
+
   },
   activated() {
     this.getDataList();
@@ -176,6 +187,14 @@ export default {
         .catch(res => {
           console.log("err");
         });
+    },
+     // 导入导出弹框
+    importandexportHandle(flag){
+      
+      this.exportVisible = true;
+      this.$nextTick(() => {
+         this.$refs.exportandimport.init(flag);
+      })
     },
     getCount() {
       // 数量统计

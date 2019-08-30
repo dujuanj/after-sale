@@ -66,7 +66,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <select v-model="worksheetStatus" @change="getDataList()">
+        <select v-model="worksheetStatus" @change="getDataList()" style='border:1px solid #ccc'>
           <!-- <el-option
             v-for="item in options"
             :key="item.value"
@@ -128,7 +128,7 @@
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-download"
       size="mini"
-       @click="importandexportHandle('工单导入')"
+       @click="importandexportHandle('工单导入','https://sale.zeepson.com/api/postsale/worksheet.import')"
       class="marbot_15"
      
     >导入</el-button>
@@ -475,11 +475,11 @@ export default {
       });
     },
     // 导入导出弹框
-    importandexportHandle(flag){
+    importandexportHandle(flag,importurl){
       
       this.exportVisible = true;
       this.$nextTick(() => {
-         this.$refs.exportandimport.init(flag);
+         this.$refs.exportandimport.init(flag,importurl);
       })
     },
     // 删除

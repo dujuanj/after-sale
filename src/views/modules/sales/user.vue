@@ -1,20 +1,17 @@
 <template>
   <div class="mod-user">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="userName" placeholder="输入用户名" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="realName" placeholder="输入姓名" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="phone" placeholder="输入电话号码" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="角色"  prop="roleIdList">
-        <el-select v-model="roleList" multiple placeholder="请选择">
+       <el-form-item label="角色"  prop="roleIdList">
+        <el-select v-model="roleId"  placeholder="请选择">
           <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-input v-model="fullQuery" placeholder="输入用户名/用户姓名" clearable></el-input>
+      </el-form-item>
+     
+     
+     
       <el-form-item>
         <el-button icon="el-icon-search" type="primary"  size="mini"  @click="getDataList()">查询</el-button>
         <el-button icon="el-icon-document" size="mini" @click="reset()">重置</el-button>
@@ -84,6 +81,7 @@
             v-if="isAuth('/api/postsale/user.update')"
             type="text"
             size="small"
+            :disabled="isAble(scope.row.userName)"
             @click="addOrUpdateHandle(scope.row.id,scope.row)"
           >修改</el-button>
           <el-button
@@ -130,7 +128,10 @@ export default {
       phone: "",
       role: "",
       options: "",
-      roleList: []
+      roleList: [],
+      fullQuery:'',
+      roleId:'',
+      username:window.sessionStorage.getItem('userName')
     };
   },
   components: {
@@ -139,6 +140,7 @@ export default {
   activated() {
     this.getDataList();
     this.getRole();
+    console.log(this.username);
   },
   methods: {
     // 获取数据列表
@@ -151,10 +153,8 @@ export default {
             currentPage: this.pageIndex,
             pageSize: this.pageSize,
             sid: window.sessionStorage.getItem("sid"),
-            userName: this.userName,
-            realName: this.realName,
-            phone: this.phone,
-            roleList: this.roleList
+            fullQuery:this.fullQuery,
+            roleId: this.roleId
           },
           {
             headers: {
@@ -175,6 +175,10 @@ export default {
         .catch(res => {
           console.log("err");
         });
+    },
+    isAble(name){
+        console.log(name);
+        return  !(this.username ==name)
     },
     getRole() {
       // 查询角色
@@ -202,11 +206,9 @@ export default {
         });
     },
     reset() {
-      (this.userName = ""),
-        (this.realName = ""),
-        (this.phone = ""),
-        (this.roleList = "");
-      this.getDataList();
+      this.fullQuery='';
+      this.roleId='';
+      this.getDataList()
     },
     // 每页数
     sizeChangeHandle(val) {

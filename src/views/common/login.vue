@@ -82,7 +82,9 @@ export default {
               {
                 userName: this.dataForm.userName,
                 password: this.dataForm.password,
-                verification: this.dataForm.verification
+                verification: this.dataForm.verification,
+                clientType:'1',
+                clientIp:'127.0.0.1'
               },
               {
                 headers: {

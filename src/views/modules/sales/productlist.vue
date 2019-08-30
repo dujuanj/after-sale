@@ -49,6 +49,7 @@
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-download"
       size="mini"
+        @click="importandexportHandle('产品列表导入','https://sale.zeepson.com/api/product/productinfo/import')"
       class="marbot_15"
     >导入</el-button>
     <!-- 导出 -->
@@ -57,6 +58,7 @@
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-upload2"
       size="mini"
+       @click="importandexportHandle('产品列表导出')"
       class="marbot_15"
     >导出</el-button>
       </el-form-item>
@@ -119,12 +121,19 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 导入导出 -->
+     <import-and-export
+      v-if="exportVisible"
+      ref="exportandimport"
+      @refreshDataList="getDataList"
+    ></import-and-export>
   </div>
 </template>
 
 <script>
 
 import AddOrUpdate from "../sales/product-add-update";
+import ImportAndExport from './import-and-export'
 export default {
   data() {
     return {
@@ -139,6 +148,7 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
+       exportVisible:false,
       // 查询
       mac: "",
       provider: "",
@@ -157,7 +167,8 @@ export default {
     };
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    ImportAndExport
   },
   activated() {
     this.getDataList();
@@ -199,6 +210,14 @@ export default {
         .catch(res => {
           console.log("err");
         });
+    },
+     // 导入导出弹框
+    importandexportHandle(flag,importurl){
+      
+      this.exportVisible = true;
+      this.$nextTick(() => {
+         this.$refs.exportandimport.init(flag,importurl);
+      })
     },
     // 产品类型
    producttype(){

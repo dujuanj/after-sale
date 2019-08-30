@@ -73,7 +73,7 @@
             :file-list="picList"
             :http-request="httpRequest"
             :on-remove="handleRemove"
-            
+            limit= '1'
             
           >
            
@@ -185,7 +185,12 @@ export default {
           this.roleIdList.push(val.id);
         });
         this.newform = false;
-        this.picList.push(this.dataForm.pic);
+        if(this.dataForm.pic==null){
+          this.picList=[]
+        }else{
+          this.picList.push(this.dataForm.pic); 
+        }
+      
         console.log(this.picList);
         // this.dialogImageUrl=this.dataForm.pic.url;
         //   this.dialogVisible = true;
@@ -291,9 +296,9 @@ export default {
         });
       } else {
         this.dataForm.sid = window.sessionStorage.getItem("sid");
-        if(this.imageUrl){
-          this.picupload()
-        }
+        // if(this.imageUrl){
+        //   this.picupload()
+        // }
         this.$refs["dataForm"].validate(valid => {
           //修改用户帐号列表
           if (valid) {
@@ -353,6 +358,7 @@ export default {
         this.imgurlbase=imgurlbase;
          this.imageUrl = imgurlbase;
       };
+      this.picupload(this.imageUrl);
     },
     // 删除图片
     handleRemove(file) {

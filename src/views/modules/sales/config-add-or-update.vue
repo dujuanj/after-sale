@@ -273,6 +273,7 @@ export default {
       const _this = this;
       if (this.newform == true) {
         //新建表单
+        this.dataForm.worksheetStatus= 1;
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
             // 新建工单
