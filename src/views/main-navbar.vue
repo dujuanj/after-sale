@@ -27,7 +27,7 @@
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
-              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}
+              <img :src="url" :alt="userName">{{ userName }}
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="updatePasswordHandle(userName)">修改密码</el-dropdown-item>
@@ -49,7 +49,8 @@
     data () {
       return {
         updatePassowrdVisible: false,
-        userName:window.sessionStorage.getItem('userName')
+        userName:window.sessionStorage.getItem('userName'),
+        url:window.sessionStorage.getItem('usrImg')
       }
     },
     components: {

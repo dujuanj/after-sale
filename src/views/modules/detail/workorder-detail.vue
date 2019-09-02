@@ -200,7 +200,7 @@
             <span>维修状态:</span>
             <span
               style="font-weight:bold;"
-            >{{datas.serviceStatusType==1?'修好了':datas.serviceStatusType==2?'修不了':''}}</span>
+            >{{datas.serviceStatusType==1?'维修完成':datas.serviceStatusType==2?'无法维修':''}}</span>
           </label>
         </div>
         <div class="layui-form-item">

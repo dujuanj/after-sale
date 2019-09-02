@@ -120,6 +120,7 @@ export default {
                              window.sessionStorage.setItem('userId',res.data.data.loginInfo.userId);
                             //  window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
                             window.sessionStorage.setItem('userName',res.data.data.userRole.userName);
+                            window.sessionStorage.setItem('usrImg',res.data.data.pic.url)
                             //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
                              this.$router.replace({ name: 'home' }) //跳转首页--
                               this.$cookie.set('token',res.data.data.loginInfo.sid);
