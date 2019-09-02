@@ -67,7 +67,7 @@
       @selection-change="selectionChangeHandle"
       style="width: 100%;"
     >
-      <el-table-column type="selection" header-align="center" align="center" width="80"></el-table-column>
+      <!-- <el-table-column type="selection" header-align="center" align="center" width="80"></el-table-column> -->
        <el-table-column fixed label="序号" width="50" align="center">
         <template scope="scope">
           <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>

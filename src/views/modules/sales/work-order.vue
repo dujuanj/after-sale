@@ -150,7 +150,7 @@
       @selection-change="selectionChangeHandle"
       style="width: 100%;"
     >
-      <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+      <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
       <el-table-column fixed label="序号" width="50" align="center">
         <template scope="scope">
           <span>{{(pageIndex-1)*10+(scope.$index + 1)}}</span>
@@ -239,6 +239,7 @@
             type="text"
             size="small"
             v-if="isAuth('/api/postsale/worksheet.update')"
+            :disabled="scope.row.worksheetStatus==4"
             @click="closeBtn(scope.row)"
           >关闭</el-button>
           <el-button
