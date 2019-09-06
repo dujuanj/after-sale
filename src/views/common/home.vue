@@ -194,15 +194,8 @@ export default {
         .then(({ data }) => {
           console.log(data.data);
           var productDatas = data.data;
-          var productName=[]// 产品名称
-          
-          var createDate=[];//日期
-          for (let key in productDatas) {
-            console.log(productDatas[key]);
-            createDate.push(productDatas[key].createDate);
-            productName.push(productDatas[key].createDate)
-          }
-         console.log(createDate);
+         
+         console.log(productDatas);
           var option = {
             title: {
               text: "产品销量统计"
@@ -215,8 +208,8 @@ export default {
               //  left: 'center',
               //  bottom:'bottom',
               //  margin: '50',
-
-              data: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"]
+              data:productDatas.name
+              // data: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"]
             },
             grid: {
               left: "3%",
@@ -232,43 +225,14 @@ export default {
             xAxis: {
               type: "category",
               boundaryGap: false,
-              data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+              data:productDatas.date
+              // data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
             },
             yAxis: {
               type: "value"
             },
-            series: [
-              {
-                name: "初柜",
-                type: "line",
-             
-                data: [120, 132, 101, 134, 90, 230, 210]
-              },
-              {
-                name: "2层屉柜",
-                type: "line",
-               
-                data: [220, 182, 191, 234, 290, 330, 310]
-              },
-              {
-                name: "3层屉柜",
-                type: "line",
-              
-                data: [150, 232, 201, 154, 190, 330, 410]
-              },
-              {
-                name: "门禁",
-                type: "line",
-               
-                data: [320, 332, 301, 334, 390, 330, 320]
-              },
-              {
-                name: "蓝牙锁",
-                type: "line",
-              
-                data: [820, 932, 901, 934, 1290, 1330, 1320]
-              }
-            ]
+            series:productDatas.series
+          
           };
           this.chartLine = echarts.init(
             document.getElementById("J_chartLineBox")
@@ -281,18 +245,35 @@ export default {
     },
     // 销量占比
     salesShare() {
-      var datas = {
-        total: 1250,
-        name: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"],
-        datas: [
-          { value: 335, name: "初柜" },
-          { value: 310, name: "2层屉柜" },
-          { value: 234, name: "3层屉柜" },
-          { value: 135, name: "门禁" },
-          { value: 1548, name: "蓝牙锁" }
-        ]
-      };
-      var option = {
+      // var datas = {
+      //   total: 1250,
+      //   name: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"],
+      //   datas: [
+      //     { value: 335, name: "初柜" },
+      //     { value: 310, name: "2层屉柜" },
+      //     { value: 234, name: "3层屉柜" },
+      //     { value: 135, name: "门禁" },
+      //     { value: 1548, name: "蓝牙锁" }
+      //   ]
+      // };
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrlxg + "/shipping/echarts.sell.count.proportion",
+          {
+            sid: window.sessionStorage.getItem("sid")
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(({ data }) => {
+          console.log(data.data);
+          var datas = data.data;
+         
+         console.log(datas);
+          var option = {
         title: {
           text: "产品销量占比"
         },
@@ -345,7 +326,7 @@ export default {
                 show: false
               }
             },
-            data: datas.datas
+            data: datas.data
             // data:[
             //     {value:335, name:'初柜'},
             //     {value:310, name:'2层屉柜'},
@@ -361,22 +342,41 @@ export default {
       window.addEventListener("resize", () => {
         this.chartLine.resize();
       });
+        })
+      
     },
 
     // 投述占比
     initChartPie() {
-      var datas = {
-        total: 1250,
-        name: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"],
-        datas: [
-          { value: 335, name: "初柜" },
-          { value: 310, name: "2层屉柜" },
-          { value: 234, name: "3层屉柜" },
-          { value: 135, name: "门禁" },
-          { value: 1548, name: "蓝牙锁" }
-        ]
-      };
-      var option = {
+      // var datas = {
+      //   total: 1250,
+      //   name: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"],
+      //   datas: [
+      //     { value: 335, name: "初柜" },
+      //     { value: 310, name: "2层屉柜" },
+      //     { value: 234, name: "3层屉柜" },
+      //     { value: 135, name: "门禁" },
+      //     { value: 1548, name: "蓝牙锁" }
+      //   ]
+      // };
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/worksheet.count.proportion",
+          {
+            sid: window.sessionStorage.getItem("sid")
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(({ data }) => {
+          console.log(data.data);
+          var datas = data.data;
+         
+         console.log(datas);
+            var option = {
         backgroundColor: "#2c343c",
         title: {
           text: "产品投诉占比 - 投诉总量" + datas.total,
@@ -411,7 +411,7 @@ export default {
             //     {value:135, name:'门禁'},
             //     {value:154, name:'蓝牙锁'}
             // ]
-            data: datas.datas.sort(function(a, b) {
+            data: datas.data.sort(function(a, b) {
               return a.value - b.value;
             }),
             roseType: "radius",
@@ -452,10 +452,29 @@ export default {
       window.addEventListener("resize", () => {
         this.chartPie.resize();
       });
+        })
+    
     },
     // 工单统计
     initChartScatter() {
-      var option = {
+       this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/worksheet.countByType",
+          {
+            sid: window.sessionStorage.getItem("sid")
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(({ data }) => {
+          console.log(data.data);
+          var datas = data.data;
+         
+         console.log(datas);
+          var option = {
         title: {
           text: "工单统计"
         },
@@ -467,8 +486,8 @@ export default {
           //  left: 'center',
           //  bottom:'bottom',
           //  margin: '50',
-
-          data: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"]
+          data:datas.name
+          // data: ["初柜", "2层屉柜", "3层屉柜", "门禁", "蓝牙锁"]
         },
         grid: {
           left: "3%",
@@ -484,43 +503,45 @@ export default {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+          data:datas.date
+          // data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
         },
         yAxis: {
           type: "value"
         },
-        series: [
-          {
-            name: "初柜",
-            type: "line",
-            stack: "总量",
-            data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: "2层屉柜",
-            type: "line",
-            stack: "总量",
-            data: [220, 182, 191, 234, 290, 330, 310]
-          },
-          {
-            name: "3层屉柜",
-            type: "line",
-            stack: "总量",
-            data: [150, 232, 201, 154, 190, 330, 410]
-          },
-          {
-            name: "门禁",
-            type: "line",
-            stack: "总量",
-            data: [320, 332, 301, 334, 390, 330, 320]
-          },
-          {
-            name: "蓝牙锁",
-            type: "line",
-            stack: "总量",
-            data: [820, 932, 901, 934, 1290, 1330, 1320]
-          }
-        ]
+        series:datas.series
+        // series: [
+        //   {
+        //     name: "初柜",
+        //     type: "line",
+        //     stack: "总量",
+        //     data: [120, 132, 101, 134, 90, 230, 210]
+        //   },
+        //   {
+        //     name: "2层屉柜",
+        //     type: "line",
+        //     stack: "总量",
+        //     data: [220, 182, 191, 234, 290, 330, 310]
+        //   },
+        //   {
+        //     name: "3层屉柜",
+        //     type: "line",
+        //     stack: "总量",
+        //     data: [150, 232, 201, 154, 190, 330, 410]
+        //   },
+        //   {
+        //     name: "门禁",
+        //     type: "line",
+        //     stack: "总量",
+        //     data: [320, 332, 301, 334, 390, 330, 320]
+        //   },
+        //   {
+        //     name: "蓝牙锁",
+        //     type: "line",
+        //     stack: "总量",
+        //     data: [820, 932, 901, 934, 1290, 1330, 1320]
+        //   }
+        // ]
       };
       this.chartScatter = echarts.init(
         document.getElementById("J_chartBarBox")
@@ -529,6 +550,8 @@ export default {
       window.addEventListener("resize", () => {
         this.chartScatter.resize();
       });
+        })
+      
     }
   }
 };

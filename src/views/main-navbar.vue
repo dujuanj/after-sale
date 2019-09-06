@@ -89,6 +89,7 @@
         }).then(() => {
                clearLoginInfo()
               this.$router.push({ name: 'login' })
+              window.sessionStorage.setItem('usrImg','')
           // this.$http({
           //   url: this.$http.adornUrl('/sys/logout'),
           //   method: 'post',

@@ -19,28 +19,28 @@
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
-          待处理
+          未分配
           <br />
-          <span style="color:#F56C6C;font-size:24px;">{{counts.total}}</span>
+          <span style="color:#F56C6C;font-size:24px;">{{counts.created}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
-          处理中
+          待确认
           <br />
           <span style="color:#E6A23C;font-size:24px;">{{counts.handled}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="hover">
-          已处理
+          执行中
           <br />
           <span style="color:#606266;font-size:24px;">{{counts.dispatched}}</span>
         </el-card>
       </el-col>
       <el-col :span="2">
         <el-card shadow="always">
-          已关闭
+          已完成
           <br />
           <span style="color:#909399;font-size:24px;">{{counts.closed}}</span>
         </el-card>
@@ -60,7 +60,7 @@
           <el-option
             v-for="item in options"
             :key="item.id"
-            :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :label="item.productType==1?'初柜':item.productType==2?'二层屉柜':item.productType==3?'三层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':item.productType==6?'保管柜':''"
             :value="item.productType"
           ></el-option>
         </el-select>
@@ -74,10 +74,10 @@
             :value="item.value"
           ></el-option>-->
           <option value>请选择执行状态</option>
-          <option value="1">新建完成</option>
-          <option value="2">已分派</option>
-          <option value="3">执行中</option>
-          <option value="4">工单关闭</option>
+          <option value="1">未分配</option>
+          <option value="2">执行中</option>
+          <option value="3">待确认</option>
+          <option value="4">已完成</option>
           <option value="5">已回访</option>
         </select>
       </el-form-item>
@@ -94,7 +94,7 @@
           <el-date-picker
             v-model="value1"
             type="datetimerange"
-            start-placeholder="创建日期"
+            start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
           ></el-date-picker>
@@ -102,7 +102,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search"  size="mini" @click="getDataList()">查询</el-button>
+        <el-button type="primary" icon="el-icon-search"  size="mini" @click="getDataList(pageIndex=1)">查询</el-button>
         <el-button icon="el-icon-document"  size="mini" @click="reset()">重置</el-button>
 
         <!-- <el-button
@@ -217,7 +217,7 @@
         <template slot-scope="scope">
           <span
             :class="{'red':scope.row.worksheetStatus==4,'green':scope.row.worksheetStatus==1}"
-          >{{ scope.row.worksheetStatus==1?"创建":scope.row.worksheetStatus==2?"已分派":scope.row.worksheetStatus==3?"执行中":scope.row.worksheetStatus==4?"处理完成":scope.row.worksheetStatus==5?"结束":'' }}</span>
+          >{{ scope.row.worksheetStatus==1?"未分配":scope.row.worksheetStatus==2?"执行中":scope.row.worksheetStatus==3?"待确认":scope.row.worksheetStatus==4?"已完成":scope.row.worksheetStatus==5?"已回访":'' }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="220" label="操作">
@@ -226,7 +226,9 @@
           <el-button
             type="text"
             size="small"
-            v-if="isAuth('/api/postsale/revisit.add')"
+            v-if="isAuth('/api/postsale/worksheet.update')"
+            :disabled="scope.row.worksheetStatus!=4"
+           
             @click="revisitHandle(scope.row.id,scope.row)"
           >回访</el-button>
           <el-button
@@ -625,4 +627,5 @@ select {
 .green {
   color: green;
 }
+
 </style>

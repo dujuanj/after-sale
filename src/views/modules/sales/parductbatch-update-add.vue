@@ -238,6 +238,7 @@ export default {
         this.dataForm.batchInfoList = this.dynamicValidateForm.domains;
         this.dataForm.startTime = this.productTime[0];
         this.dataForm.endTime = this.productTime[1];
+        this.dataForm.sid=window.sessionStorage.getItem('sid')
         console.log(this.dataForm);
         this.$refs["dataForm"].validate(valid => {
           if (valid) {

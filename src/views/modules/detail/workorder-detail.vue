@@ -12,6 +12,7 @@
       type="primary"
       icon="el-icon-edit-outline"
       size="mini"
+      :disabled="datas.worksheetStatus==4"
       v-if="isAuth('/api/postsale/worksheet.update')"
       @click="closeBtn(datas)"
     >关闭</el-button>

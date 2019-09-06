@@ -16,11 +16,32 @@
             status-icon
           >
             <el-form-item prop="userName">
-              <el-input v-model="dataForm.userName" placeholder="帐号"></el-input>
+              <el-input v-model="dataForm.userName" placeholder="帐号" clearable></el-input>
             </el-form-item>
             <el-form-item prop="password">
-              <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
+              <el-input placeholder="请输入密码"
+               v-model="dataForm.password"
+               :type="passForm.show.old?'text':'password'"
+              clearable >
+               
+              </el-input>
+              <!-- <el-input v-model="dataForm.password"   show-password placeholder="密码"></el-input> -->
             </el-form-item>
+             <el-form-item >
+             
+                
+               
+                  <img
+                  :src="passForm.show.old?'../../../static/img/close.png':'../../../static/img/open.png'"
+                
+                  style="margin: 0 10px;width:25px;cursor:pointer;vertical-align:middle"
+                  @click="passForm.show.old=!passForm.show.old"
+                />
+                <span style='vertical-align:middle'>点击图标显示/隐藏密码</span>
+              
+             
+            </el-form-item>
+            
             <!-- <el-form-item prop="captcha">
               <el-row :gutter="20">
                 <el-col :span="14">
@@ -30,7 +51,7 @@
                   <img :src="captchaPath" @click="getCaptcha()" alt />
                 </el-col>
               </el-row>
-            </el-form-item> -->
+            </el-form-item>-->
             <el-form-item>
               <el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
             </el-form-item>
@@ -42,7 +63,7 @@
 </template>
 
 <script>
-import { getUUID,clearLoginInfo } from "@/utils";
+import { getUUID, clearLoginInfo } from "@/utils";
 export default {
   data() {
     return {
@@ -62,7 +83,13 @@ export default {
         // ]
       },
       captchaPath: "",
-      navs:''
+      navs: "",
+      passForm: {    
+        show: {
+          old: false,
+          new: false,       
+        }
+      }
     };
   },
   created() {
@@ -83,8 +110,8 @@ export default {
                 userName: this.dataForm.userName,
                 password: this.dataForm.password,
                 verification: this.dataForm.verification,
-                clientType:'1',
-                clientIp:'127.0.0.1'
+                clientType: "1",
+                clientIp: "127.0.0.1"
               },
               {
                 headers: {
@@ -98,45 +125,59 @@ export default {
                 console.log(res);
                 console.log(res.data);
                 console.log(res.data.data); //sid
+                console.log(res.data.data.resList);
+                if (
+                  res.data.data.resList == [] ||
+                  res.data.data.resList.length == 0
+                ) {
+                  this.$message.error("该用户没有权限登陆");
+                }
                 // 验证sid是否有效互踢
-                if(res.data.data.loginInfo.sid){
+                if (res.data.data.loginInfo.sid) {
                   this.$http_
-                      .post(
-                        this.GLOBAL.baseUrl + "/user.sid",
-                        {
-                          sid:res.data.data.loginInfo.sid,
-                         
-                        },
-                        {
-                          headers: {
-                            "Content-Type": "application/json;charset=UTF-8"
-                          }
+                    .post(
+                      this.GLOBAL.baseUrl + "/user.sid",
+                      {
+                        sid: res.data.data.loginInfo.sid
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json;charset=UTF-8"
                         }
-                      )
-                      .then(({ data }) => {
-                        console.log(data);
-                        if(data.isSuccess=='true'){
-                             window.sessionStorage.setItem('sid',res.data.data.loginInfo.sid);
-                             window.sessionStorage.setItem('userId',res.data.data.loginInfo.userId);
-                            //  window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
-                            window.sessionStorage.setItem('userName',res.data.data.userRole.userName);
-                            window.sessionStorage.setItem('usrImg',res.data.data.pic.url)
-                            //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
-                             this.$router.replace({ name: 'home' }) //跳转首页--
-                              this.$cookie.set('token',res.data.data.loginInfo.sid);
-                             
-                        }else{
-                           this.$message.error(data.errorMsg);
-                           clearLoginInfo();
-                        }
-                      });
+                      }
+                    )
+                    .then(({ data }) => {
+                      console.log(data);
+                      if (data.isSuccess == "true") {
+                        window.sessionStorage.setItem(
+                          "sid",
+                          res.data.data.loginInfo.sid
+                        );
+                        window.sessionStorage.setItem(
+                          "userId",
+                          res.data.data.loginInfo.userId
+                        );
+                        //  window.sessionStorage.setItem('userName',res.data.data.userInfo.userName);
+                        window.sessionStorage.setItem(
+                          "userName",
+                          res.data.data.userRole.userName
+                        );
+                        window.sessionStorage.setItem(
+                          "usrImg",
+                          res.data.data.pic.url
+                        );
+                        //  this.getnav(res.data.data.sid,data.data.userId); //获取菜单列表
+                        this.$router.replace({ name: "home" }); //跳转首页--
+                        this.$cookie.set("token", res.data.data.loginInfo.sid);
+                      } else {
+                        this.$message.error(data.errorMsg);
+                        clearLoginInfo();
+                      }
+                    });
                 }
                 // 互踢结束
-               
-              
-              
-              }else{
-                 this.$message.error(res.data.errorMsg);
+              } else {
+                this.$message.error(res.data.errorMsg);
               }
               this.dataListLoading = false;
             })
@@ -168,48 +209,48 @@ export default {
       });
     },
     // 获取菜单
-  getnav(sid,userId){
-    console.log(sid);
-    this.$http_
-            .post(
-              this.GLOBAL.baseUrl + "/user.queryUserAndResource",
-              {
-                sid:sid,
-                userId:userId
-              
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
-                }
-              }
-            )
-            .then(res => {
-              console.log(res);
-              if (res.status == "200") {
-                console.log(res);
-                console.log(res.data);
-                console.log(res.data.data); 
-                window.sessionStorage.setItem('menuData', JSON.stringify(res.data.data))
-              //   window.sessionStorage.setItem('sid',res.data.data);
-              //   this.$router.replace({ name: 'home' }) //跳转首页--
-              //  this.$cookie.set('token',res.data.data);
-
-              }
-              this.dataListLoading = false;
-            })
-            .catch(res => {
-              console.log("err");
-            });
-  },
+    getnav(sid, userId) {
+      console.log(sid);
+      this.$http_
+        .post(
+          this.GLOBAL.baseUrl + "/user.queryUserAndResource",
+          {
+            sid: sid,
+            userId: userId
+          },
+          {
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+          if (res.status == "200") {
+            console.log(res);
+            console.log(res.data);
+            console.log(res.data.data);
+            window.sessionStorage.setItem(
+              "menuData",
+              JSON.stringify(res.data.data)
+            );
+            //   window.sessionStorage.setItem('sid',res.data.data);
+            //   this.$router.replace({ name: 'home' }) //跳转首页--
+            //  this.$cookie.set('token',res.data.data);
+          }
+          this.dataListLoading = false;
+        })
+        .catch(res => {
+          console.log("err");
+        });
+    },
     // 获取验证码
     getCaptcha() {
       // this.dataForm.uuid = getUUID()
       // console.log( this.dataForm.uuid)
       // this.captchaPath = this.$http.adornUrl(`/captcha.jpg?uuid=${this.dataForm.uuid}`)
     }
-  },
-  
+  }
 };
 </script>
 

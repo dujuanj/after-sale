@@ -2,7 +2,7 @@
   <div class="mod-log">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="用户名／用户操作" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="用户名" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -25,39 +25,42 @@
         width="80"
         label="账号名">
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="username"
         header-align="center"
         align="center"
         label="姓名">
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         prop="operation"
         header-align="center"
         align="center"
         label="角色">
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
-        prop="method"
+        prop="clientIp"
         header-align="center"
         align="center"
-        width="150"
+        width="350"
         :show-overflow-tooltip="true"
         label="登录IP">
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="params"
         header-align="center"
         align="center"
         width="150"
         :show-overflow-tooltip="true"
         label="登录位置">
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
-        prop="time"
+        prop="clientType"
         header-align="center"
         align="center"
         label="登录方式">
+        <template slot-scope="scope">
+          <span>{{scope.row.clientType==1?"pc端登陆":scope.row.clientType==2?"小程序登陆":''}}</span>
+          </template>  
       </el-table-column>
       <el-table-column
         prop="loginTime"

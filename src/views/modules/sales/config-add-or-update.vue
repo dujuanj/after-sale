@@ -101,17 +101,29 @@
         <el-input type="textarea" v-model="dataForm.contentDetail"></el-input>
       </el-form-item>
       <el-form-item label="处理方式" prop="serviceType" style="width:50%;">
-        <select v-model="dataForm.serviceType" name id style="padding:0 10px;width:100%;">
-          <option value>请选择处理方式</option>
-          <option value="2">上门维修</option>
-          <option value="1">远程协助</option>
-        </select>
+        <el-select 
+        :disabled="dataForm.worksheetStatus==4"
+        v-model="dataForm.serviceType" 
+       
+         placeholder="请选择"
+        >
+          <!-- <el-option value=''>请选择处理方式</el-option>
+          <el-option value="2">上门维修</el-option>
+          <el-option value="1">远程协助</el-option> -->
+           <el-option v-for='item in serviceTypedatas' :label="item.name" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
         <el-divider class="divider"></el-divider>
       <el-form-item label="服务人员" prop="paramValue">
-        <el-input v-model="dataForm.serviceUserRealName" placeholder="服务人员"></el-input>
+        <!-- <el-input v-model="dataForm.serviceUserRealName" placeholder="服务人员" :disabled="dataForm.worksheetStatus==4"></el-input> -->
+         <el-select 
+           :disabled="dataForm.worksheetStatus==4"
+          v-model="dataForm.serviceUserRealName"  
+          placeholder="请选择">
+          <el-option v-for="item in options" :key="item.id" :label="item.realName" :value="item.realName"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="服务时间" prop="paramValue">
+      <el-form-item label="服务时间" prop="paramValue" >
         <el-date-picker
           v-model="value3"
           type="datetime"
@@ -119,6 +131,7 @@
           default-time="12:00:00"
           value-format="yyyy-MM-dd HH:mm:ss"
           @change="getSTime"
+          :disabled="dataForm.worksheetStatus==4"
         ></el-date-picker>
       </el-form-item>
       <!-- <el-form-item label="备注" prop="paramValue">
@@ -141,6 +154,8 @@ export default {
   data() {
     return {
       visible: false,
+      options:'',//服务人员
+      serviceTypedatas:[{name:'上门维修',value:2},{name:'远程协助',value:1}],
       dataForm: { number: "2",contentType:'' },
       dataRule: {
         customerRealName: [
@@ -185,6 +200,7 @@ export default {
     init(id, datas) {
       var _this = this;
       // console.log(datas);
+      this.getServersname();
       console.log("add");
 
       if (datas != undefined) {
@@ -196,7 +212,7 @@ export default {
         this.value3 = this.dataForm.serviceAppointmentTime; //服务时间
         this.newform = false;
         this.macshow = true;
-        this.macdatas = true;
+       this.macdatas=true;
         this.getmac(this.dataForm.mac);
       } else {
         //新建
@@ -248,13 +264,33 @@ export default {
               })
               .then(({ data }) => {
                 console.log(data.data);
-                if(data.data=={} ||data.data==null ||data.data==undefined||data.data==[]){
+                if(data.data=={} ||data.data==null ||data.data==undefined||data.data==[]||data.data.productType==null){
                   this.macdatas=false;
                 }else{
                   this.macData=data.data;
                 }
               });
       }
+    },
+    getServersname(){  //获取服务人员
+      this.$http_
+              .post(this.GLOBAL.baseUrl + "/role.user.query", 
+              {
+                roleId:3,
+               
+                currentPage:1,
+                pageSize:1000,
+                sid:window.sessionStorage.getItem('sid')
+              }, {
+                headers: {
+                  "Content-Type": "application/json;charset=UTF-8"
+                }
+              })
+              .then(({ data }) => {
+                console.log(data.data);
+                this.options=data.data.list;
+               
+              });
     },
     getSTime() {
       //时间处理

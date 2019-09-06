@@ -49,10 +49,10 @@
         <span>{{dataForm.serviceUserRealName}}</span>
       </el-form-item>
        <el-form-item label="维修状态" prop="paramValue" style="width:50%;">
-        <span>{{dataForm.serviceUserRealName}}</span>
+        <span>{{dataForm.serviceStatusType==1?'维修完成':dataForm.serviceStatusType==2?'无法维修':''}}</span>
       </el-form-item>
        <el-form-item label="解决方案" prop="paramValue" style="width:50%;">
-        <span>{{dataForm.serviceUserRealName}}</span>
+        <span>{{dataForm.serviceStatusDetail}}</span>
       </el-form-item>
      
       <!-- <el-form-item label="回访时间" prop="paramValue">

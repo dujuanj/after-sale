@@ -49,12 +49,12 @@
            <el-select
           v-model="productType"
           placeholder="请选择产品"
-          @change="getDataList()"
+          @change="getDataList(pageIndex=1)"
         >
           <el-option
             v-for="item in options"
             :key="item.value"
-            :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+            :label="item.productType==1?'初柜':item.productType==2?'二层屉柜':item.productType==3?'三层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':item.productType==6?'保管柜':''"
             :value="item.productType"
           ></el-option>
         </el-select>
@@ -67,7 +67,7 @@
           <el-date-picker
             v-model="value1"
             type="datetimerange"
-            start-placeholder="创建日期"
+            start-placeholder="开始日期"
             end-placeholder="结束日期"
           
             value-format="yyyy-MM-dd HH:mm:ss"

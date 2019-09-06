@@ -15,7 +15,8 @@
         <el-input v-model="dataForm.userName" placeholder="登录帐号" style="width:50%;"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password" v-if='newform'>
-        <el-input v-model="dataForm.password" type="text" placeholder="密码" style="width:50%;"></el-input>
+        <!-- <el-input v-model="dataForm.password" type="text" placeholder="密码" style="width:50%;"></el-input> -->
+        <span>默认密码为:123456</span>
       </el-form-item>
 
       <el-form-item label="邮箱" prop="email">
@@ -33,7 +34,7 @@
       <el-form-item label="职位">
         <el-input v-model="dataForm.position" type="text" placeholder="职位"></el-input>
       </el-form-item>
-      <el-form-item label="性别">
+      <el-form-item label="性别" prop="sex">
         <el-radio-group v-model="dataForm.sex">
           <el-radio label="男">男</el-radio>
           <el-radio label="女">女</el-radio>
@@ -50,7 +51,7 @@
           <el-radio :label="1">正常</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item  size="mini" style="position:absolute;top:80px;right:70px">
+      <el-form-item  size="mini" style="position:absolute;top:80px;left:45.5%">
         <!-- <el-upload
           class="avatar-uploader"
            accept="image/*"
@@ -162,6 +163,12 @@ export default {
         mobile: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
           { validator: validateMobile, trigger: "blur" }
+        ],
+        sex:[
+           { required: true, message: "性别不能为空", trigger: "change" },
+        ],
+        roleIdList:[
+            { required: true, message: "角色不能为空", trigger: "blur",type: 'array' },
         ]
       },
       newform: false, //新建
@@ -345,8 +352,9 @@ export default {
     },
     //图片上传转流
     httpRequest(file) {
+      var _this=this;
       console.log(file.file);
-      console.log(file.url);
+      // console.log(file.url);
       var reader = new FileReader();
       reader.readAsDataURL(file.file);
      
@@ -355,10 +363,13 @@ export default {
         imgurlbase.shift();
         imgurlbase = imgurlbase.toString();
         console.log(imgurlbase);
-        this.imgurlbase=imgurlbase;
-         this.imageUrl = imgurlbase;
+        _this.imgurlbase=imgurlbase;
+         _this.imageUrl = imgurlbase;
+         console.log(_this.imageUrl);
+         this.picupload(_this.imageUrl)
       };
-      this.picupload(this.imageUrl);
+      // console.log(_this.imageUrl);
+      // this.picupload(this.imageUrl);
     },
     // 删除图片
     handleRemove(file) {
@@ -383,6 +394,7 @@ export default {
     },
     // 上传用户头像
     picupload(imgurlbase) {
+      console.log(imgurlbase);
       var params = new URLSearchParams();
       //  params.append('worksheetId', '2');  
       params.append('filePostfix', '.jpg');  
