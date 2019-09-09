@@ -25,7 +25,7 @@
             <el-option
               v-for="item in options"
               :key="item.value"
-              :label="item.productType==1?'初柜':item.productType==2?'2层屉柜':item.productType==3?'3层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':''"
+             :label="item.productType==1?'初柜':item.productType==2?'二层屉柜':item.productType==3?'三层屉柜':item.productType==4?'门禁':item.productType==5?'门锁':item.productType==6?'保管柜':''"
             :value="item.productType"
             ></el-option>
           </el-select>
@@ -215,7 +215,8 @@ export default {
         .post(
           this.GLOBAL.baseUrlxg + "/product/model.list",
           {
-            productType: val
+            productType: val,
+            sid:window.sessionStorage.getItem('sid')
           },
           {
             headers: {

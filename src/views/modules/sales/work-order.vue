@@ -138,7 +138,7 @@
       v-if="isAuth('/api/postsale/worksheet.add')"
       icon="el-icon-upload2"
       size="mini"
-       @click="importandexportHandle('工单导出')"
+       @click="importandexportHandle('工单导出',)"
       class="marbot_15"
       
     >导出</el-button>
@@ -482,7 +482,7 @@ export default {
       
       this.exportVisible = true;
       this.$nextTick(() => {
-         this.$refs.exportandimport.init(flag,importurl);
+         this.$refs.exportandimport.init(flag,importurl,this.fullQuery);
       })
     },
     // 删除

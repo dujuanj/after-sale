@@ -41,7 +41,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="角色" size="mini" prop="roleIdList">
-        <el-select v-model="roleIdList" multiple placeholder="请选择">
+        <el-select v-model="dataForm.roleIdList" multiple placeholder="请选择" @change="selectChange">
           <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
@@ -144,7 +144,8 @@ export default {
         position: "",
         status: 1,
         sex: "女",
-        phone: ""
+        phone: "",
+        roleIdList:[]
       },
       dataRule: {
         userName: [
@@ -168,7 +169,7 @@ export default {
            { required: true, message: "性别不能为空", trigger: "change" },
         ],
         roleIdList:[
-            { required: true, message: "角色不能为空", trigger: "blur",type: 'array' },
+            { required: true, message: "角色不能为空", trigger: "change"},
         ]
       },
       newform: false, //新建
@@ -184,12 +185,13 @@ export default {
       this.picList=[]
       if (datas != undefined) {
         //修改
-        this.roleIdList = [];
+       
         this.dataForm = datas;
+         this.dataForm.roleIdList = [];
         // this.roleIdList=datas.roleList
         datas.roleList.forEach((val, index, val_arr) => {
           console.log(val.id);
-          this.roleIdList.push(val.id);
+          this.dataForm.roleIdList.push(val.id);
         });
         this.newform = false;
         if(this.dataForm.pic==null){
@@ -204,7 +206,7 @@ export default {
       } else {
         //新建
         this.newform = true;
-        this.roleIdList=[];
+        this.dataForm.roleIdList=[];
         this.dataForm={}
         // this.dataForm=[];
         // this.roleIdList=[];
@@ -237,18 +239,39 @@ export default {
     // 表单提交
     dataFormSubmit() {
       if (this.newform == true) {
-        console.log(this.roleIdList);
+        console.log(this.dataForm.roleIdList);
+        var dataForm=this.dataForm;
+          var params = new URLSearchParams();
+          params.append('picData', this.imageUrl);  
+          params.append('filePostfix', '.jpg');  
+          params.append('type', '3');
+          params.append('sid', window.sessionStorage.getItem('sid')); 
+          params.append('userName', dataForm.userName);  
+           params.append('realName', dataForm.realName);  
+            params.append('employeeNumber',dataForm.employeeNumber);  
+             params.append('position', dataForm.position);
+             params.append('sex', dataForm.sex);  
+             params.append('phone', dataForm.phone);  
+             params.append('email',dataForm.email);
+             params.append('content', dataForm.content);
+             params.append('roleIdList', dataForm.roleIdList);  
+             params.append('status', dataForm.status); 
+             console.log(params); 
+               console.log(params.sid); 
+               console.log(this.dataForm)  
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
             this.dataForm.sid=window.sessionStorage.getItem('sid');
             // 新建用户
             this.$http_
-              .post(this.GLOBAL.baseUrl + "/user.add", this.dataForm, {
+              .post(this.GLOBAL.baseUrl + "/user.addWithRoleAndPic",params, {
                 headers: {
-                  "Content-Type": "application/json;charset=UTF-8"
-                }
+                  // "Content-Type": "application/json;charset=UTF-8"
+                },
+                 dataType: "form"
               })
               .then(({ data }) => {
+                console.log(data);
                 if (data.isSuccess == "false") {
                   this.$message({
                     message: data.data.errorMsg,
@@ -261,51 +284,50 @@ export default {
                   });
                 } else {                 
                   console.log(data);
-                  console.log(data.data.userId);
-                  this.picupload(this.imgurlbase);
-                  var userId = data.data.userId; //新建用户的用户id
+                  // console.log(data.data.userId);
+                 
+                  // var userId = data.data.userId; //新建用户的用户id
                   // 为新建用户添加角色
-                  if (
-                    data.data.userId != "" ||
-                    data.data.userId != null ||
-                    data.data.userId != undefined
-                  ) {
-                    this.$http_
-                      .post(
-                        this.GLOBAL.baseUrl + "/user.grant.role",
-                        {
-                          sid: window.sessionStorage.getItem("sid"),
-                          userId: userId,
-                          roleIdList: this.roleIdList
-                        },
-                        {
-                          headers: {
-                            "Content-Type": "application/json;charset=UTF-8"
-                          }
-                        }
-                      )
-                      .then(({ data }) => {
-                        console.log(data.isSuccess);
-                        this.$message({
-                          message: "操作成功",
-                          type: "success",
-                          duration: 1500,
-                          onClose: () => {
-                             this.$emit("refreshDataList");
-                            this.visible=false;
-                          }
-                        });
-                      });
-                  }
+                  //  this.picupload(this.imgurlbase,userId);
+                  // if (
+                  //   data.data.userId != "" ||
+                  //   data.data.userId != null ||
+                  //   data.data.userId != undefined
+                  // ) {
+                  //   this.$http_
+                  //     .post(
+                  //       this.GLOBAL.baseUrl + "/user.grant.role",
+                  //       {
+                  //         sid: window.sessionStorage.getItem("sid"),
+                  //         userId: userId,
+                  //         roleIdList: this.dataForm.roleIdList
+                  //       },
+                  //       {
+                  //         headers: {
+                  //           "Content-Type": "application/json;charset=UTF-8"
+                  //         }
+                  //       }
+                  //     )
+                  //     .then(({ data }) => {
+                  //       console.log(data.isSuccess);
+                  //       this.$message({
+                  //         message: "操作成功",
+                  //         type: "success",
+                  //         duration: 1500,
+                  //         onClose: () => {
+                  //            this.$emit("refreshDataList");
+                  //           this.visible=false;
+                  //         }
+                  //       });
+                  //     });
+                  // }
                 }
               });
           }
         });
       } else {
         this.dataForm.sid = window.sessionStorage.getItem("sid");
-        // if(this.imageUrl){
-        //   this.picupload()
-        // }
+        
         this.$refs["dataForm"].validate(valid => {
           //修改用户帐号列表
           if (valid) {
@@ -324,7 +346,7 @@ export default {
                     {
                       sid: window.sessionStorage.getItem("sid"),
                       userId: this.dataForm.id,
-                      roleIdList: this.roleIdList
+                      roleIdList: this.dataForm.roleIdList
                     },
                     {
                       headers: {
@@ -366,10 +388,12 @@ export default {
         _this.imgurlbase=imgurlbase;
          _this.imageUrl = imgurlbase;
          console.log(_this.imageUrl);
-         this.picupload(_this.imageUrl)
+         if(this.newform==false){
+            this.picupload(_this.imageUrl)
+         }
+         
       };
-      // console.log(_this.imageUrl);
-      // this.picupload(this.imageUrl);
+    
     },
     // 删除图片
     handleRemove(file) {
@@ -395,12 +419,15 @@ export default {
     // 上传用户头像
     picupload(imgurlbase) {
       console.log(imgurlbase);
+      var datas=this.dataForm;
+      console.log(this.dataForm);
       var params = new URLSearchParams();
       //  params.append('worksheetId', '2');  
       params.append('filePostfix', '.jpg');  
       params.append('type', 3);
        params.append('sid', window.sessionStorage.getItem('sid'));
-      params.append('picData', imgurlbase); 
+      params.append('picData', imgurlbase);
+      params.append('userId',datas.id); 
       // params.append('ownerUserId', 36);
       this.$http_
         .post(
@@ -423,6 +450,9 @@ export default {
       console.log(res);
       console.log(file);
     },
+    selectChange(val){
+      this.$forceUpdate()
+    }
     // handlePictureCardPreview(file) {
     //    this.dialogImageUrl = file.url;
     //     this.dialogVisible = true;

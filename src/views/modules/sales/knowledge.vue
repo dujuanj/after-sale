@@ -310,8 +310,8 @@ export default {
             .post(
               this.GLOBAL.baseUrlxg + "/knowledge/delete",
               {
-                id: id
-                // sid:window.sessionStorage.getItem('sid')
+                id: id,
+                sid:window.sessionStorage.getItem('sid')
               },
               {
                 headers: {
